@@ -15,7 +15,9 @@ def main(*argv):
   if len(argv) > 3 and argv[3] != '-':
     sys.stdout = open(argv[3], 'w')
 
+  # TODO: Find useful collector set(s)
   data = [collect(path, ItemCountCollector) for path in argv[1:3]]
+
   # TODO: Analyse collector results
   print(str(data[0][1]), str(data[1][1]), sep='\n', file=sys.stderr)
 
