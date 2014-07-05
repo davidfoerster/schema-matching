@@ -10,21 +10,21 @@ class UnexpectedLineException(Exception):
       'Unexpected content in line {}: {}'.format(idx, repr(content)))
 
 
-def main(argv):
+def main(*argv):
   if len(argv) > 3 and argv[3] != '-':
     sys.stdout = open(argv[3], 'w')
 
-  data = [collect(path) for path in [argv[1:3]]]
+  data = [collect(path) for path in argv[1:3]]
   # TODO: Analyse collector results
 
 
 def collect(path, *collector_types):
   with open(path, 'r') as f:
-    data = list(csv.reader(f, separator=';', skipinitialspace=True))
-    row_collector = RowCollector((map(ItemCollectorSet, collector_types) for _ in data[0])) # TODO: does this work as expected?
-    utilities.each(row_collector.collect, data) # TODO: Maybe mangle items before collection
+    data = list(csv.reader(f, delimiter=';', skipinitialspace=True))
+    row_collector = RowCollector((ItemCollectorSet(collector_types) for _ in data[0])) # TODO: does this work as expected?
+    utilities.each_unpack(row_collector.collect, data) # TODO: Maybe mangle items before collection
     return data, row_collector
 
 
 if __name__ == '__main__':
-  main(sys.argv)
+  main(*sys.argv)

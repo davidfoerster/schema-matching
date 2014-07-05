@@ -31,11 +31,11 @@ class ItemCollector(object):
 class ItemCollectorSet(ItemCollector, dict):
   """Manages a set of collectors for a single column"""
 
-  def __init__(self, *args):
+  def __init__(self, collectors = ()):
     ItemCollector.__init__(self)
     dict.__init__(self)
     self.__semiordered_keylist = list()
-    utilities.each(self.add, args)
+    utilities.each(self.add, collectors)
 
 
   def collect(self, item, collector_set = None):
@@ -75,8 +75,8 @@ class RowCollector(list):
 
   def collect(self, *items):
     """Collects the data of all columns of a row"""
-    utilities.each(lambda collector, item: collector.collect(item), itertools.izip(self, items))
     if __debug__ and len(self) != len(items):
       print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file=sys.stderr)
 
     assert len(self) <= len(items)
+    utilities.each_unpack(lambda collector, item: collector.collect(item), itertools.izip(self, items))
