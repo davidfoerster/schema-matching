@@ -51,6 +51,11 @@ class ItemCollectorSet(ItemCollector, dict):
     return (collector.get_result(self) for collector in self.itervalues())
 
 
+  def __str__(self):
+    return '{{{}}}'.format(', '.join(
+      ('{}: {}'.format(cls.__name__, collector.get_result()) for cls, collector in self.iteritems())))
+
+
   def add(self, collector):
     """Adds an item collector and all its dependencies to this set with its type a key,
     if one of the same type isn't in the set already.
@@ -80,3 +85,7 @@ class RowCollector(list):
 
     assert len(self) <= len(items)
     utilities.each_unpack(lambda collector, item: collector.collect(item), itertools.izip(self, items))
+
+
+  def __str__(self):
+    return '[{}]'.format(', '.join(map(str, self)))
