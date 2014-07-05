@@ -1,4 +1,8 @@
+from __future__ import print_function
 import utilities, itertools
+
+if __debug__:
+  import sys
 
 
 class ItemCollector(object):
@@ -71,5 +75,8 @@ class RowCollector(list):
 
   def collect(self, *items):
     """Collects the data of all columns of a row"""
-    assert len(self) == len(items)
     utilities.each(lambda collector, item: collector.collect(item), itertools.izip(self, items))
+    if __debug__ and len(self) != len(items):
+      print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file=sys.stderr)
+
+    assert len(self) <= len(items)
