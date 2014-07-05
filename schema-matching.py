@@ -2,6 +2,7 @@
 from __future__ import print_function
 import csv, sys
 from collector import *
+from collector.count import ItemCountCollector
 
 
 class UnexpectedLineException(Exception):
@@ -14,8 +15,9 @@ def main(*argv):
   if len(argv) > 3 and argv[3] != '-':
     sys.stdout = open(argv[3], 'w')
 
-  data = [collect(path) for path in argv[1:3]]
+  data = [collect(path, ItemCountCollector) for path in argv[1:3]]
   # TODO: Analyse collector results
+  print(str(data[0][1]), str(data[1][1]), sep='\n', file=sys.stderr)
 
 
 def collect(path, *collector_types):
