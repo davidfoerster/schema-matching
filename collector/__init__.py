@@ -11,7 +11,10 @@ class ItemCollector(object):
 
 
   def collect(self, item, collector_set = None):
-    """Called for every item in a column. Override this in subclasses."""
+    """Called for every item in a column.
+    Dependencies are guaranteed to have collected the same value before this collected.
+    Override this in subclasses.
+    """
     pass
 
 
