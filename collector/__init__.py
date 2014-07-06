@@ -1,5 +1,5 @@
 from __future__ import print_function
-import utilities, itertools, operator
+import utilities, itertools, operator, copy
 
 if __debug__:
   import sys
@@ -94,6 +94,9 @@ class ItemCollectorSet(ItemCollector, dict):
     """
     if isinstance(collector, type):
       collector = collector(self.predecessor)
+    else:
+      collector = copy.copy(collector)
+    assert isinstance(collector, ItemCollector)
 
     utilities.each(self.add, collector.dependencies)
     result = self.setdefault(collector.__class__, collector)
