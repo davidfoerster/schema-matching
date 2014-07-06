@@ -9,6 +9,13 @@ class ItemCollector(object):
   """Base class for collecting information about a column"""
 
 
+  def __init__(self, previous_collector_set = None):
+    """Initialises a new collector from a set of collectors of a previous phase.
+    This may be relevant for some derived collectors.
+    """
+    object.__init__(self)
+
+
   def dependencies(self):
     """Return collector types this collector depends on"""
     return ()
@@ -41,9 +48,10 @@ class ItemCollector(object):
 class ItemCollectorSet(ItemCollector, dict):
   """Manages a set of collectors for a single column"""
 
-  def __init__(self, collectors = ()):
+  def __init__(self, collectors = (), predecessor = None):
     ItemCollector.__init__(self)
     dict.__init__(self)
+    self.predecessor = predecessor
     self.__semiordered_keylist = list()
     utilities.each(self.add, collectors)
 
@@ -73,7 +81,7 @@ class ItemCollectorSet(ItemCollector, dict):
     Returns the collector the same type from this set, possibly the one just added.
     """
     if isinstance(collector, type):
-      collector = collector()
+      collector = collector(self.predecessor)
 
     utilities.each(self.add, collector.dependencies())
     result = self.setdefault(collector.__class__, collector)
