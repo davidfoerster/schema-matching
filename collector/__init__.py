@@ -19,7 +19,7 @@ class ItemCollector(object):
   dependencies = ()
 
 
-  def collect(self, item, collector_set = None):
+  def collect(self, item, collector_set):
     """Called for every item in a column.
 
     Dependencies are guaranteed to have collected the same item before this collector.
@@ -28,7 +28,7 @@ class ItemCollector(object):
     pass
 
 
-  def get_result(self, collector_set = None):
+  def get_result(self, collector_set):
     """Returns the result of this collector after all items have been collected."""
     return NotImplemented
 
@@ -40,6 +40,10 @@ class ItemCollector(object):
     """
     assert self.__class__ is other.__class__
     return abs(self.get_result() - other.get_result())
+
+
+  def __str__(self):
+    return str(self.get_result())
 
 
 
@@ -55,7 +59,7 @@ class ItemCollectorSet(ItemCollector, dict):
 
 
   def collect(self, item, collector_set = None):
-    assert collector_set is None
+    assert collector_set is self
     ItemCollector.collect(self, item, self)
     utilities.each(
       lambda collector: collector.collect(item, self),
@@ -69,7 +73,7 @@ class ItemCollectorSet(ItemCollector, dict):
 
   def __str__(self):
     return '{{{}}}'.format(', '.join(
-      ('{}: {}'.format(cls.__name__, collector.get_result(self)) for cls, collector in self.iteritems())))
+      ('{}: {}'.format(cls.__name__, collector) for cls, collector in self.iteritems())))
 
 
   def add(self, collector):
@@ -94,17 +98,27 @@ class ItemCollectorSet(ItemCollector, dict):
 class RowCollector(list):
   """Manages collectors for a set of rows"""
 
-  def collect(self, *items):
+  def collect(self, items):
     """Collects the data of all columns of a row"""
     if __debug__ and len(self) != len(items):
       print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file=sys.stderr)
 
     assert len(self) <= len(items)
-    utilities.each_unpack(lambda collector, item: collector.collect(item), itertools.izip(self, items))
+    utilities.each_unpack(lambda collector, item: collector.collect(item, collector), itertools.izip(self, items))
+
+
+  def get_transformer(self):
+    item_transformers = tuple(filter(lambda i: i[1], enumerate((c.get_transformer() for c in self))))
+
+    def transform(items):
+      for i, t in item_transformers:
+        items[i] = t(items[i])
+
+    return transform
 
 
   def __str__(self):
-    return '[{}]'.format(', '.join(map(str, self)))
+    return '({})'.format(', '.join(map(str, self)))
 
 
 
