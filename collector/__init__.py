@@ -135,6 +135,10 @@ class RowCollector(list):
     return transform
 
 
+  def transform_all(self, rows):
+    utilities.each(self.get_transformer(), rows)
+
+
   def __str__(self):
     return '({})'.format(', '.join(map(str, self)))
 
