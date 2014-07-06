@@ -16,6 +16,7 @@ class ItemCollector(object):
 
   def collect(self, item, collector_set = None):
     """Called for every item in a column.
+
     Dependencies are guaranteed to have collected the same value before this collected.
     Override this in subclasses.
     """
@@ -25,6 +26,15 @@ class ItemCollector(object):
   def get_result(self, collector_set = None):
     """Returns the result of this collector after all items have been collected."""
     return NotImplemented
+
+
+  def distance(self, other):
+    """Returns the distance between the results of two collector of the same class.
+
+    For simplicity the base implementation assumes that the collector results are numeric.
+    """
+    assert self.__class__ is other.__class__
+    return abs(self.get_result() - other.get_result())
 
 
 
