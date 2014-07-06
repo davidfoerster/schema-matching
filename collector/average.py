@@ -4,10 +4,12 @@ from collector.count import ItemCountCollector
 
 
 class ItemAverageCollector(ItemCollector):
-  def __init__(self):
-    self.sum = 0
 
   dependencies = (ItemCountCollector, ItemSumCollector)
+
+  def __init__(self, previous_collector_set = None):
+    ItemCollector.__init__(self, previous_collector_set)
+
 
   def get_result(self, collector_set):
     count_collector, sum_collector = collector_set
