@@ -3,7 +3,8 @@ from collector import ItemCollector
 
 class ItemSumCollector(ItemCollector):
 
-  def __init__(self, numeric_type):
+  def __init__(self, previous_collector_set = None):
+    ItemCollector.__init__(self, previous_collector_set)
     self.sum = 0
 
 

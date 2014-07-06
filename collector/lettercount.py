@@ -3,7 +3,8 @@ from collector import ItemCollector
 
 class ItemLetterCountCollector(ItemCollector):
 
-  def __init__(self):
+  def __init__(self, previous_collector_set = None):
+    ItemCollector.__init__(self, previous_collector_set)
     self.letter_count = 0
 
 
