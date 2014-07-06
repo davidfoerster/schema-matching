@@ -157,7 +157,8 @@ class MultiphaseCollector(object):
 
 
   def do_phase(self, *collectors):
-    predecessors = self.phases[-1] if self.phases else itertools.repeat(None, self.rowset[0])
+    predecessors = self.phases[-1] if self.phases else itertools.repeat(None, len(self.rowset[0]))
     phase = RowCollector((ItemCollectorSet(collectors, predecessor) for predecessor in predecessors))
-    phase.collect(self.rowset)
+    phase.collect_all(self.rowset)
+    phase.transform_all(self.rowset)
     self.phases.append(phase)

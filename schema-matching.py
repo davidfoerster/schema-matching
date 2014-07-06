@@ -17,7 +17,7 @@ def main(*argv):
     sys.stdout = open(argv[3], 'w')
 
   # TODO: Find useful collector set(s)
-  data = [collect(path, ItemCountCollector) for path in argv[1:3]]
+  multiphasecollector = [collect(path, ItemCountCollector) for path in argv[1:3]]
 
   # TODO: Analyse collector results
 
@@ -26,19 +26,17 @@ def collect(path, *collector_types):
   print(path, end=':\n', file=sys.stderr)
 
   with open(path, 'r') as f:
-    data = list(csv.reader(f, delimiter=';', skipinitialspace=True))
-    utilities.map_inplace(str.strip, data, 1)
+    multiphasecollector = MultiphaseCollector(
+      csv.reader(f, delimiter=';', skipinitialspace=True))
+    utilities.map_inplace(str.strip, multiphasecollector.rowset, 1)
 
-    row_collector = RowCollector((ItemCollectorSet((ColumnTypeItemCollector(len(data)),)) for _ in data[0]))
-    row_collector.collect_all(data)
-    print(row_collector, file=sys.stderr)
-    utilities.each(row_collector.get_transformer(), data)
+    multiphasecollector.do_phase(ColumnTypeItemCollector(len(multiphasecollector.rowset)))
+    print(multiphasecollector.phases[-1], file=sys.stderr)
 
-    row_collector.reset((ItemCollectorSet(collector_types) for _ in data[0]))
-    row_collector.collect_all(data) # TODO: Maybe mangle items before collection
-    print(row_collector, end='\n\n', file=sys.stderr)
+    multiphasecollector.do_phase(*collector_types)
+    print(multiphasecollector.phases[-1], end='\n\n', file=sys.stderr)
 
-    return data, row_collector
+    return multiphasecollector
 
 
 if __name__ == '__main__':
