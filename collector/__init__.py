@@ -17,7 +17,7 @@ class ItemCollector(object):
   def collect(self, item, collector_set = None):
     """Called for every item in a column.
 
-    Dependencies are guaranteed to have collected the same value before this collected.
+    Dependencies are guaranteed to have collected the same item before this collector.
     Override this in subclasses.
     """
     pass
@@ -63,7 +63,7 @@ class ItemCollectorSet(ItemCollector, dict):
 
   def __str__(self):
     return '{{{}}}'.format(', '.join(
-      ('{}: {}'.format(cls.__name__, collector.get_result()) for cls, collector in self.iteritems())))
+      ('{}: {}'.format(cls.__name__, collector.get_result(self)) for cls, collector in self.iteritems())))
 
 
   def add(self, collector):
