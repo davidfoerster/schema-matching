@@ -9,9 +9,8 @@ class ItemLetterAverageCollector(ItemCollector):
       ItemCollector.__init__(self, previous_collector_set)
 
 
-    def dependencies(self):
-        """Return collector types this collector depends on"""
-        return ItemLetterCountCollector, ItemCountCollector
+    dependencies = (ItemLetterCountCollector, ItemCountCollector)
+
 
     def get_result(self, collector_set):
         return collector_set[ItemLetterCountCollector].get_result() / collector_set[ItemCountCollector].get_result()

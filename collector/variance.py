@@ -5,15 +5,14 @@ from collector.count import ItemCountCollector
 
 
 class ItemVarianceCollector(ItemCollector):
+
+  dependencies = (ItemCountCollector,)
+
+
   def __init__(self, previous_collector_set):
     ItemCollector.__init__(self, previous_collector_set)
     self.average = previous_collector_set[ItemAverageCollector].get_result()
     self.sum_of_squares = 0
-
-
-  def dependencies(self):
-    """Return collector types this collector depends on"""
-    return ItemCountCollector
 
 
   def collect(self, item, collector_set=None):

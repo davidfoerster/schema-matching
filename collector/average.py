@@ -7,9 +7,7 @@ class ItemAverageCollector(ItemCollector):
   def __init__(self):
     self.sum = 0
 
-  def dependencies(self):
-    """Return collector types this collector depends on"""
-    return ItemCountCollector, ItemSumCollector
+  dependencies = (ItemCountCollector, ItemSumCollector)
 
   def get_result(self, collector_set):
     count_collector, sum_collector = collector_set

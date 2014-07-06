@@ -16,9 +16,7 @@ class ItemCollector(object):
     object.__init__(self)
 
 
-  def dependencies(self):
-    """Return collector types this collector depends on"""
-    return ()
+  dependencies = ()
 
 
   def collect(self, item, collector_set = None):
@@ -83,7 +81,7 @@ class ItemCollectorSet(ItemCollector, dict):
     if isinstance(collector, type):
       collector = collector(self.predecessor)
 
-    utilities.each(self.add, collector.dependencies())
+    utilities.each(self.add, collector.dependencies)
     result = self.setdefault(collector.__class__, collector)
     if result is collector:
       self.__semiordered_keylist.append(collector.__class__)
