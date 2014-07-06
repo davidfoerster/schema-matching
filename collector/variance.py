@@ -16,8 +16,6 @@ class ItemVarianceCollector(ItemCollector):
 
 
   def collect(self, item, collector_set=None):
-    value = item
-
     try:
       value = int(item)
     except ValueError:
