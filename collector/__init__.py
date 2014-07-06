@@ -1,5 +1,5 @@
 from __future__ import print_function
-import utilities, itertools
+import utilities, itertools, operator
 
 if __debug__:
   import sys
@@ -107,3 +107,20 @@ class RowCollector(list):
 
   def __str__(self):
     return '[{}]'.format(', '.join(map(str, self)))
+
+
+
+class MultiphaseCollector(object):
+  """Manages a sequence of collection phases"""
+
+  def __init__(self, rowset):
+    self.phases = list()
+    self.rowset = rowset if isinstance(rowset, tuple) else tuple(rowset)
+    #assert operator.eq(*utilities.minmax(map(len, self.rowset)))
+
+
+  def do_phase(self, *collectors):
+    predecessors = self.phases[-1] if self.phases else itertools.repeat(None, self.rowset[0])
+    phase = RowCollector((ItemCollectorSet(collectors, predecessor) for predecessor in predecessors))
+    phase.collect(self.rowset)
+    self.phases.append(phase)
