@@ -19,6 +19,10 @@ class ItemCollector(object):
   dependencies = ()
 
 
+  def get_transformer(self):
+    return None
+
+
   def collect(self, item, collector_set):
     """Called for every item in a column.
 
@@ -69,6 +73,12 @@ class ItemCollectorSet(ItemCollector, dict):
   def get_result(self, collector_set = None):
     assert collector_set is None
     return (collector.get_result(self) for collector in self.itervalues())
+
+
+  def get_transformer(self):
+    for t in filter(None, (self[c].get_transformer() for c in self.__semiordered_keylist)):
+      return t
+    return None
 
 
   def __str__(self):
