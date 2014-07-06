@@ -19,7 +19,7 @@ def main(*argv):
   data = [collect(path, ItemCountCollector, ItemLetterAverageCollector) for path in argv[1:3]]
 
   # TODO: Analyse collector results
-  print(str(data[0][1]), str(data[1][1]), sep='\n', file=sys.stderr)
+  print(*(str(i[1]) for i in data), sep='\n', file=sys.stderr)
 
 
 def collect(path, *collector_types):
