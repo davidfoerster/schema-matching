@@ -31,10 +31,10 @@ def collect(path, *collector_types):
     utilities.map_inplace(str.strip, multiphasecollector.rowset, 1)
 
     multiphasecollector.do_phase(ColumnTypeItemCollector(len(multiphasecollector.rowset)))
-    print(multiphasecollector.phases[-1], file=sys.stderr)
+    print(multiphasecollector.merged_predecessors, file=sys.stderr)
 
     multiphasecollector.do_phase(*collector_types)
-    print(multiphasecollector.phases[-1], end='\n\n', file=sys.stderr)
+    print(multiphasecollector.merged_predecessors, end='\n\n', file=sys.stderr)
 
     return multiphasecollector
 

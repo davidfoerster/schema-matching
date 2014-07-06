@@ -151,14 +151,17 @@ class MultiphaseCollector(object):
   """Manages a sequence of collection phases"""
 
   def __init__(self, rowset):
-    self.phases = list()
     self.rowset = rowset if isinstance(rowset, tuple) else tuple(rowset)
     #assert operator.eq(*utilities.minmax(map(len, self.rowset)))
+    self.merged_predecessors = itertools.repeat(None, len(self.rowset[0]))
 
 
   def do_phase(self, *collectors):
-    predecessors = self.phases[-1] if self.phases else itertools.repeat(None, len(self.rowset[0]))
-    phase = RowCollector((ItemCollectorSet(collectors, predecessor) for predecessor in predecessors))
+    phase = RowCollector((ItemCollectorSet(collectors, predecessor) for predecessor in self.merged_predecessors))
     phase.collect_all(self.rowset)
     phase.transform_all(self.rowset)
-    self.phases.append(phase)
+
+    if isinstance(self.merged_predecessors, RowCollector):
+      utilities.each_unpack(ItemCollectorSet.update, itertools.izip(self.merged_predecessors, phase))
+    else:
+      self.merged_predecessors = phase
