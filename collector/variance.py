@@ -16,6 +16,7 @@ class ItemVarianceCollector(ItemCollector):
 
 
   def collect(self, item, collector_set=None):
+    # TODO: remove type check because we will have "coerced" types later on
     try:
       value = int(item)
     except ValueError:
@@ -24,6 +25,7 @@ class ItemVarianceCollector(ItemCollector):
       except ValueError:
         return
 
+    # TODO: check for NaN
     self.sum_of_squares += (value - self.average)**2
 
 
