@@ -16,10 +16,6 @@ class ItemVarianceCollector(ItemCollector):
     return ItemCountCollector
 
 
-  def sqr(x):
-    return x * x
-
-
   def collect(self, item, collector_set=None):
     value = item
 
@@ -31,7 +27,7 @@ class ItemVarianceCollector(ItemCollector):
       except ValueError:
         return
 
-    self.sum_of_squares += self.sqr(value - self.average)
+    self.sum_of_squares += (value - self.average)**2
 
 
   def get_result(self, collector_set):
