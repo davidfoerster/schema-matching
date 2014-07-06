@@ -108,6 +108,10 @@ class ItemCollectorSet(ItemCollector, dict):
 class RowCollector(list):
   """Manages collectors for a set of rows"""
 
+  def reset(self, collectors):
+    self[:] = collectors
+
+
   def collect(self, items):
     """Collects the data of all columns of a row"""
     if __debug__ and len(self) != len(items):
@@ -115,6 +119,10 @@ class RowCollector(list):
 
     assert len(self) <= len(items)
     utilities.each_unpack(lambda collector, item: collector.collect(item, collector), itertools.izip(self, items))
+
+
+  def collect_all(self, rows):
+    utilities.each(self.collect, rows)
 
 
   def get_transformer(self):

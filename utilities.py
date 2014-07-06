@@ -19,6 +19,14 @@ def minmax(*args):
   return min, max
 
 
+def map_inplace(function, list, depth = 0):
+  if depth <= 0:
+    list[:] = map(function, list)
+  else:
+    for item in list:
+      map_inplace(function, item, depth - 1)
+
+
 def count_if(function, iterable):
   count = 0
   for item in iterable:
