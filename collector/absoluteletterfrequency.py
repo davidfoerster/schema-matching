@@ -7,6 +7,7 @@ class ItemLetterAbsoluteFrequencyCollector(ItemCollector):
     ItemCollector.__init__(self, previous_collector_set)
     self.absolute_letter_frequencies = collections.defaultdict(int)
 
+
   def collect(self, item, collector_set=None):
     if type(item) is str:
       for c in item:
