@@ -133,14 +133,15 @@ class RowCollector(list):
     utilities.each(self.collect, rows)
 
 
-  def get_transformer(self):
-    item_transformers = tuple(filter(lambda i: i[1], enumerate((c.get_transformer() for c in self))))
+  class __transformer(tuple):
 
-    def transform(items):
-      for i, t in item_transformers:
+    def __call__(self, items):
+      for i, t in self:
         items[i] = t(items[i])
 
-    return transform
+
+  def get_transformer(self):
+    return self.__transformer(filter(lambda i: i[1], enumerate((c.get_transformer() for c in self))))
 
 
   def transform_all(self, rows):
