@@ -124,8 +124,8 @@ class RowCollector(list):
 
   def collect(self, items):
     """Collects the data of all columns of a row"""
-    if __debug__ and len(self) != len(items):
-      print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file=sys.stderr)
+    #if __debug__ and len(self) != len(items):
+    #  print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file=sys.stderr)
 
     assert len(self) <= len(items)
     utilities.each_unpack(lambda collector, item: collector.collect(item, collector), itertools.izip(self, items))
