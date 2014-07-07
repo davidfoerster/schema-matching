@@ -43,8 +43,8 @@ class ColumnTypeItemCollector(ItemCollector):
 
   #dependencies = (ItemCountCollector,)
 
-  __type_sequence = (None, int, float, str)
-  __transformers = (None, int, tofloat, str)
+  __type_sequence = (None, long, float, str)
+  __transformers = (None, long, tofloat, str)
 
 
   @staticmethod
@@ -68,7 +68,7 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
   def collect(self, item, collector_set = None):
-    if self.__type_index <= 1: # None or int
+    if self.__type_index <= 1: # None or long
       if item == '-' or item.isdigit():
         self.__type_index = 1
         return
