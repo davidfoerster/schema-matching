@@ -1,4 +1,4 @@
-import collections
+import utilities
 from collector import ItemCollector
 from collector.lettercount import ItemLetterCountCollector
 from collector.absoluteletterfrequency import ItemLetterAbsoluteFrequencyCollector
@@ -8,7 +8,7 @@ class ItemLetterRelativeFrequencyCollector(ItemCollector):
   def __init__(self, previous_collector_set):
     ItemCollector.__init__(self, previous_collector_set)
     self.letter_count = previous_collector_set[ItemLetterCountCollector].get_result()
-    self.absolute_letter_frequencies = collections.defaultdict(int)
+    self.absolute_letter_frequencies = utilities.ProbabilityDistribution()
 
 
   def get_result(self, collector_set):

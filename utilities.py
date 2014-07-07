@@ -1,3 +1,6 @@
+import collections
+
+
 def each(function, iterable):
   for item in iterable:
     function(item)
@@ -35,11 +38,20 @@ def count_if(function, iterable):
   return count
 
 
-class ProbabilityDistribution(dict):
+def teemap(iterable, *functions):
+  map(lambda item: (f(item) for f in functions), iterable)
+
+
+class ProbabilityDistribution(collections.defaultdict):
   """"Holds a probability distribution and can compute the distance to other dists"""
 
   def __init__(self):
-    dict.__init__(self)
+    collections.defaultdict.__init__(self, int)
+
+
+  def get(self, k, d = 0):
+    return dict.get(self, k, d)
+
 
   def distance_to(self, compare_to):
     key_set = self.viewkeys() | compare_to.viewkeys()
