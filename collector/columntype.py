@@ -1,4 +1,5 @@
-import re, utilities, itertools, numbers
+import re, utilities, itertools
+from numbers import Number
 from collector import ItemCollector
 from collector.count import ItemCountCollector
 
@@ -119,4 +120,5 @@ class get_factory(object):
       if isinstance(predecessor, dict) else
         predecessor
     )
-    return ItemCollector.get_instance(self.collectors[issubclass(valuetype, numbers.Number)], predecessor)
+    return ItemCollector.get_instance(
+      self.collectors[issubclass(valuetype, Number)], predecessor)

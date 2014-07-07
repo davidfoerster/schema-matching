@@ -1,8 +1,11 @@
 #!/usr/bin/python
 from __future__ import print_function
 import csv, sys, utilities
-from collector import (ItemCollectorSet, RowCollector, MultiphaseCollector)
+import collector
+from collector import MultiphaseCollector
 from collector.count import ItemCountCollector
+from collector.sum import ItemSumCollector
+from collector.lettercount import ItemLetterCountCollector
 from collector.columntype import ColumnTypeItemCollector
 
 
@@ -17,7 +20,7 @@ def main(*argv):
     sys.stdout = open(argv[3], 'w')
 
   # TODO: Find useful collector set(s)
-  multiphasecollector = [collect(path, ItemCountCollector) for path in argv[1:3]]
+  collectors = [collect(path, collector.get_factory(ItemLetterCountCollector, ItemSumCollector)) for path in argv[1:3]]
 
   # TODO: Analyse collector results
 
