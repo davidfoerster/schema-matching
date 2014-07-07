@@ -30,10 +30,10 @@ def collect(path, *collector_types):
       csv.reader(f, delimiter=';', skipinitialspace=True))
     utilities.map_inplace(str.strip, multiphasecollector.rowset, 1)
 
-    multiphasecollector.do_phase(ColumnTypeItemCollector(len(multiphasecollector.rowset)))
+    multiphasecollector(ColumnTypeItemCollector(len(multiphasecollector.rowset)))
     print(multiphasecollector.merged_predecessors, file=sys.stderr)
 
-    multiphasecollector.do_phase(*collector_types)
+    multiphasecollector(*collector_types)
     print(multiphasecollector.merged_predecessors, end='\n\n', file=sys.stderr)
 
     return multiphasecollector

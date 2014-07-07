@@ -162,7 +162,7 @@ class MultiphaseCollector(object):
     self.merged_predecessors = itertools.repeat(None, len(self.rowset[0]))
 
 
-  def do_phase(self, *collectors):
+  def __call__(self, *collectors):
     phase = RowCollector((ItemCollectorSet(collectors, predecessor) for predecessor in self.merged_predecessors))
     phase.collect_all(self.rowset)
     phase.transform_all(self.rowset)
