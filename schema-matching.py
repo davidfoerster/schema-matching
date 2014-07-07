@@ -3,10 +3,12 @@ from __future__ import print_function
 import csv, sys, utilities
 import collector
 from collector import MultiphaseCollector
-from collector.count import ItemCountCollector
-from collector.sum import ItemSumCollector
-from collector.lettercount import ItemLetterCountCollector
 from collector.columntype import ColumnTypeItemCollector
+from collector.average import ItemAverageCollector
+from collector.letteraverage import ItemLetterAverageCollector
+from collector.variance import ItemVarianceCollector
+from collector.lettervariance import LetterVarianceCollector
+from collector.relativeletterfrequency import ItemLetterRelativeFrequencyCollector
 
 
 class UnexpectedLineException(Exception):
@@ -19,13 +21,17 @@ def main(*argv):
   if len(argv) > 3 and argv[3] != '-':
     sys.stdout = open(argv[3], 'w')
 
-  # TODO: Find useful collector set(s)
-  collectors = [collect(path, collector.get_factory(ItemLetterCountCollector, ItemSumCollector)) for path in argv[1:3]]
+  collectors = (
+    (collector.get_factory(ItemLetterAverageCollector, ItemAverageCollector),),
+    (collector.get_factory(LetterVarianceCollector, ItemVarianceCollector),
+      collector.get_factory(ItemLetterRelativeFrequencyCollector, None))
+  )
+  collectors = [collect(path, *collectors) for path in argv[1:3]]
 
   # TODO: Analyse collector results
 
 
-def collect(path, *collector_types):
+def collect(path, *phase_descriptions):
   print(path, end=':\n', file=sys.stderr)
 
   with open(path, 'r') as f:
@@ -36,9 +42,11 @@ def collect(path, *collector_types):
     multiphasecollector(ColumnTypeItemCollector(len(multiphasecollector.rowset)))
     print(multiphasecollector.merged_predecessors, file=sys.stderr)
 
-    multiphasecollector(*collector_types)
-    print(multiphasecollector.merged_predecessors, end='\n\n', file=sys.stderr)
+    for phase_description in phase_descriptions:
+      multiphasecollector(*phase_description)
+      print(multiphasecollector.merged_predecessors, file=sys.stderr)
 
+    print(file=sys.stderr)
     return multiphasecollector
 
 
