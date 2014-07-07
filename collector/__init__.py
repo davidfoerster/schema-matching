@@ -51,7 +51,7 @@ class ItemCollector(object):
 
     For simplicity the base implementation assumes that the collector results are numeric.
     """
-    assert self.__class__ is other.__class__
+    assert type(self) is type(other)
     return abs(self.get_result() - other.get_result())
 
 
@@ -97,7 +97,7 @@ class ItemCollectorSet(ItemCollector, dict):
   def __str__(self, collector_set = None):
     assert collector_set is None
     return '{{{}}}'.format(', '.join(
-      ('{}: {}'.format(collector.__class__.__name__, collector.as_str(self)) for collector in self.itervalues())))
+      ('{}: {}'.format(type(collector).__name__, collector.as_str(self)) for collector in self.itervalues())))
 
 
   def add(self, collector):
@@ -109,9 +109,9 @@ class ItemCollectorSet(ItemCollector, dict):
     collector = ItemCollector.get_instance(collector, self.predecessor)
 
     utilities.each(self.add, collector.dependencies)
-    result = self.setdefault(collector.__class__, collector)
+    result = self.setdefault(type(collector), collector)
     if result is collector:
-      self.__semiordered_keylist.append(collector.__class__)
+      self.__semiordered_keylist.append(type(collector))
       assert len(self.__semiordered_keylist) == len(self)
       assert len(self) == len(set(self.__semiordered_keylist))
     return result
