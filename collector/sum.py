@@ -1,3 +1,5 @@
+from math import isnan
+from numbers import Number
 from collector import ItemCollector
 
 
@@ -9,16 +11,9 @@ class ItemSumCollector(ItemCollector):
 
 
   def collect(self, item, collector_set = None):
-    value = item
-    try:
-        value = int(item)
-    except ValueError:
-        try:
-            value = float(item)
-        except ValueError:
-            return
-
-    self.sum += value
+    assert isinstance(item, Number)
+    if not isnan(item):
+      self.sum += item
 
   def get_result(self, collector_set = None):
     return self.sum
