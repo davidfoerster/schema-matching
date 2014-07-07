@@ -54,15 +54,7 @@ class ProbabilityDistribution(collections.defaultdict):
 
 
   def distance_to(self, compare_to):
-    key_set = self.viewkeys() | compare_to.viewkeys()
-
-    currentEMD = 0
-    lastEMD = 0
-    totaldistance = 0
-
-    for key in key_set:
-      lastEMD = currentEMD
-      currentEMD = (self.get(key, 0) + lastEMD) - compare_to.get(key, 0)
-      totaldistance += math.fabs(currentEMD)
-
-    return totaldistance
+    return sum(
+      (abs(self.get(bin) - compare_to.get(bin))
+        for bin in self.viewkeys() | compare_to.viewkeys()),
+      0)
