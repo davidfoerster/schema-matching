@@ -1,7 +1,7 @@
-import math
+from __future__ import division
+from math import isnan
 from collector import ItemCollector
 from collector.average import ItemAverageCollector
-from collector.count import ItemCountCollector
 
 
 class ItemVarianceCollector(ItemCollector):
@@ -13,8 +13,8 @@ class ItemVarianceCollector(ItemCollector):
 
 
   def collect(self, item, collector_set=None):
-    if not math.isnan(item):
-      self.sum_of_squares += (value - self.average) ** 2
+    if not isnan(item):
+      self.sum_of_squares += (item - self.average) ** 2
       self.sum_of_squares_count += 1
 
 
