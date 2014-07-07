@@ -1,4 +1,4 @@
-import re, utilities, itertools
+import re, utilities, itertools, numbers
 from collector import ItemCollector
 from collector.count import ItemCountCollector
 
@@ -103,3 +103,20 @@ class ColumnTypeItemCollector(ItemCollector):
 
   def as_str(self, collector_set = None):
     return '({}, {})'.format(self.get_result(None).__name__, self.__tol_exceeded_count)
+
+
+
+class get_factory(object):
+
+  def __init__(self, string_collector, numeric_collector):
+    object.__init__(self)
+    self.collectors = (string_collector, numeric_collector)
+
+
+  def __call__(self, predecessor):
+    valuetype = (
+        predecessor[ColumnTypeItemCollector].get_result()
+      if isinstance(predecessor, dict) else
+        predecessor
+    )
+    return ItemCollector.get_instance(self.collectors[issubclass(valuetype, numbers.Number)], predecessor)

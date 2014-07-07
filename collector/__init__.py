@@ -176,3 +176,7 @@ class MultiphaseCollector(object):
       utilities.each_unpack(ItemCollectorSet.update, itertools.izip(self.merged_predecessors, phase))
     else:
       self.merged_predecessors = phase
+
+
+
+from collector.columntype import get_factory
