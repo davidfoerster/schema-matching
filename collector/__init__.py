@@ -21,11 +21,12 @@ class ItemCollector(object):
 
   @staticmethod
   def get_instance(template, *args):
-    return (
-        copy.copy(template)
-      if isinstance(template, ItemCollector) else
-        template(*args)
-    )
+    if template is None:
+      return None
+    if isinstance(template, ItemCollector):
+      return copy.copy(template)
+    else:
+      return template(*args)
 
 
   def get_transformer(self):
@@ -106,6 +107,8 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
     Returns the collector the same type from this set, possibly the one just added.
     """
     collector = ItemCollector.get_instance(collector, self.predecessor)
+    if not collector:
+      return None
 
     utilities.each(self.add, collector.result_dependencies)
     return self.setdefault(type(collector), collector)
