@@ -1,5 +1,5 @@
 from __future__ import print_function
-import utilities, itertools, operator, copy
+import utilities, itertools, operator, copy, collections
 
 if __debug__:
   import sys
@@ -64,14 +64,13 @@ class ItemCollector(object):
 
 
 
-class ItemCollectorSet(ItemCollector, dict):
+class ItemCollectorSet(ItemCollector, collections.OrderedDict):
   """Manages a set of collectors for a single column"""
 
   def __init__(self, collectors = (), predecessor = None):
     ItemCollector.__init__(self)
-    dict.__init__(self)
+    collections.OrderedDict.__init__(self)
     self.predecessor = predecessor
-    self.__semiordered_keylist = list()
     utilities.each(self.add, collectors)
 
 
@@ -80,7 +79,7 @@ class ItemCollectorSet(ItemCollector, dict):
     ItemCollector.collect(self, item, self)
     utilities.each(
       lambda collector: collector.collect(item, self),
-      map(self.__getitem__, self.__semiordered_keylist))
+      self.itervalues())
 
 
   def get_result(self, collector_set = None):
@@ -89,7 +88,7 @@ class ItemCollectorSet(ItemCollector, dict):
 
 
   def get_transformer(self):
-    for t in filter(None, (self[c].get_transformer() for c in self.__semiordered_keylist)):
+    for t in filter(None, (c.get_transformer() for c in self.itervalues())):
       return t
     return None
 
@@ -109,12 +108,7 @@ class ItemCollectorSet(ItemCollector, dict):
     collector = ItemCollector.get_instance(collector, self.predecessor)
 
     utilities.each(self.add, collector.dependencies)
-    result = self.setdefault(type(collector), collector)
-    if result is collector:
-      self.__semiordered_keylist.append(type(collector))
-      assert len(self.__semiordered_keylist) == len(self)
-      assert len(self) == len(set(self.__semiordered_keylist))
-    return result
+    return self.setdefault(type(collector), collector)
 
 
 
