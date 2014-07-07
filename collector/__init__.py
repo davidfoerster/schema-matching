@@ -46,8 +46,12 @@ class ItemCollector(object):
     return abs(self.get_result() - other.get_result())
 
 
+  def as_str(self, collector_set):
+    return str(self.get_result(collector_set))
+
+
   def __str__(self):
-    return str(self.get_result())
+    return self.as_str(None)
 
 
 
@@ -81,9 +85,10 @@ class ItemCollectorSet(ItemCollector, dict):
     return None
 
 
-  def __str__(self):
+  def __str__(self, collector_set = None):
+    assert collector_set is None
     return '{{{}}}'.format(', '.join(
-      ('{}: {}'.format(cls.__name__, collector) for cls, collector in self.iteritems())))
+      ('{}: {}'.format(collector.__class__.__name__, collector.as_str(self)) for collector in self.itervalues())))
 
 
   def add(self, collector):

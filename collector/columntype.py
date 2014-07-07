@@ -101,5 +101,5 @@ class ColumnTypeItemCollector(ItemCollector):
     return self.__transformers[self.__type_index]
 
 
-  def __str__(self):
+  def as_str(self, collector_set = None):
     return '({}, {})'.format(self.get_result(None).__name__, self.__tol_exceeded_count)
