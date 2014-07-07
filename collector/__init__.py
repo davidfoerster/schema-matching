@@ -16,7 +16,7 @@ class ItemCollector(object):
     object.__init__(self)
 
 
-  dependencies = ()
+  result_dependencies = ()
 
 
   @staticmethod
@@ -100,14 +100,14 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
 
   def add(self, collector):
-    """Adds an item collector and all its dependencies to this set with its type a key,
+    """Adds an item collector and all its result_dependencies to this set with its type a key,
     if one of the same type isn't in the set already.
 
     Returns the collector the same type from this set, possibly the one just added.
     """
     collector = ItemCollector.get_instance(collector, self.predecessor)
 
-    utilities.each(self.add, collector.dependencies)
+    utilities.each(self.add, collector.result_dependencies)
     return self.setdefault(type(collector), collector)
 
 

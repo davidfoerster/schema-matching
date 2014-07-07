@@ -42,8 +42,6 @@ def tofloat(item):
 
 class ColumnTypeItemCollector(ItemCollector):
 
-  #dependencies = (ItemCountCollector,)
-
   __type_sequence = (None, long, float, str)
   __transformers = (None, long, tofloat, str)
 

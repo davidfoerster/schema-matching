@@ -9,7 +9,7 @@ class ItemLetterAverageCollector(ItemCollector):
       ItemCollector.__init__(self, previous_collector_set)
 
 
-    dependencies = (ItemLetterCountCollector, ItemCountCollector)
+    result_dependencies = (ItemLetterCountCollector, ItemCountCollector)
 
 
     def get_result(self, collector_set):
