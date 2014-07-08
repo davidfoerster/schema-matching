@@ -1,0 +1,8 @@
+Necessary:
+  - Testing
+  - Find reasonable weights for collcetors
+  - More testing
+
+Optional:
+ - Implement auto-binning frequency distribution for numbers
+ - Derive multi-phase process from dependency information
