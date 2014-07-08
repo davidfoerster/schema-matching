@@ -133,7 +133,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
 
   def get_transformer(self):
-    for t in filter(None, (c.get_transformer() for c in self.itervalues())):
+    for t in itertools.ifilter(None, (c.get_transformer() for c in self.itervalues())):
       return t
     return None
 
@@ -195,7 +195,8 @@ class RowCollector(list):
 
 
   def get_transformer(self):
-    return self.__transformer(filter(lambda i: i[1], enumerate((c.get_transformer() for c in self))))
+    return self.__transformer(itertools.ifilter(utilities.getitemfn(1),
+      enumerate(itertools.imap(utilities.apply_memberfn('get_transformer'), self))))
 
 
   def transform_all(self, rows):
@@ -213,7 +214,7 @@ class RowCollector(list):
 
 
   def __str__(self):
-    return '({})'.format(', '.join(map(str, self)))
+    return '({})'.format(', '.join(itertools.imap(str, self)))
 
 
 
@@ -222,7 +223,7 @@ class MultiphaseCollector(object):
 
   def __init__(self, rowset):
     self.rowset = rowset if isinstance(rowset, tuple) else tuple(rowset)
-    #assert operator.eq(*utilities.minmax(map(len, self.rowset)))
+    #assert operator.eq(*utilities.minmax(itertools.imap(len, self.rowset)))
     self.merged_predecessors = itertools.repeat(None, len(self.rowset[0]))
 
 
