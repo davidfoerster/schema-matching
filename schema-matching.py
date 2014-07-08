@@ -60,6 +60,10 @@ def main(*argv):
 
 
 def collect(path, *phase_descriptions):
+  """
+  Collects info about the columns of the data set in file "path" according
+  over multiple phases based on a description of those phases.
+  """
   print(path, end=':\n', file=sys.stderr)
 
   with open(path, 'r') as f:
