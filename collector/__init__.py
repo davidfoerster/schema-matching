@@ -129,7 +129,9 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
   def __str__(self, collector_set = None):
     assert collector_set is None
     return '{{{}}}'.format(', '.join(
-      ('{}: {}'.format(type(collector).__name__, collector.as_str(self)) for collector in self.itervalues())))
+      ('{}: {}'.format(type(collector).__name__, collector.as_str(self))
+        for collector in self.itervalues()
+        if not collector.isdependency)))
 
 
   def add(self, collector, isdependency = False):
