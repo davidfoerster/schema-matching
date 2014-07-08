@@ -89,21 +89,27 @@ def get_best_schema_mapping(distance_matrix):
   assert operator.eq(*utilities.minmax(map(len, distance_matrix)))
   infinity = float('inf')
 
-  def get_shortest_path(mapping_so_far, mapping_to_do):
-    i = len(mapping_so_far)
-    if i == len(distance_matrix):
-      return 0, mapping_so_far
+  maxI = len(distance_matrix)
+  rangeJ = xrange(len(distance_matrix[0]))
+  known_mappings = list(itertools.repeat(None, maxI))
+  ismapped = list(itertools.repeat(False, len(rangeJ)))
+
+  def sweep_row(i):
+    if i == maxI:
+      return 0, tuple(known_mappings)
 
     minlength = infinity
     minpath = None
-    for j, mapped in enumerate(mapping_to_do):
-      d = distance_matrix[i][mapped]
+    for j in itertools.ifilterfalse(ismapped.__getitem__, rangeJ):
+      d = distance_matrix[i][j]
       if d is None or minlength <= d:
         continue
 
-      length, path = get_shortest_path(
-        mapping_so_far + (mapped,), utilities.sliceout(mapping_to_do, j))
-      if length is None:
+      known_mappings[i] = j
+      ismapped[j] = True
+      length, path = sweep_row(i + 1)
+      ismapped[j] = False
+      if path is None:
         continue
 
       length += d
@@ -113,7 +119,7 @@ def get_best_schema_mapping(distance_matrix):
 
     return minlength, minpath
 
-  return get_shortest_path(tuple(), tuple(xrange(len(distance_matrix[0]))))
+  return sweep_row(0)
 
 
 
