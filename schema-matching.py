@@ -68,13 +68,16 @@ def collect(path, *phase_descriptions):
     utilities.map_inplace(str.strip, multiphasecollector.rowset, 1)
 
     multiphasecollector(ColumnTypeItemCollector(len(multiphasecollector.rowset)))
-    print(multiphasecollector.merged_predecessors, file=sys.stderr)
+    if __debug__:
+      print(multiphasecollector.merged_predecessors, file=sys.stderr)
 
     for phase_description in phase_descriptions:
       multiphasecollector(*phase_description)
-      print(multiphasecollector.merged_predecessors, file=sys.stderr)
+      if __debug__:
+        print(multiphasecollector.merged_predecessors, file=sys.stderr)
+    if __debug__:
+      print(file=sys.stderr)
 
-    print(file=sys.stderr)
     return multiphasecollector
 
 
