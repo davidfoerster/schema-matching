@@ -1,4 +1,5 @@
 from __future__ import division
+from math import sqrt
 from collector import ItemCollector
 from collector.lettercount import ItemLetterCountCollector
 from collector.letteraverage import ItemLetterAverageCollector
@@ -23,3 +24,11 @@ class LetterVarianceCollector(ItemCollector):
 
   def get_result(self, collector_set):
     return self.sum_of_squares / collector_set[ItemLetterCountCollector].get_result()
+
+
+class LetterStandardDeviationCollector(ItemCollector):
+
+  result_dependencies = (LetterVarianceCollector,)
+
+  def get_result(self, collector_set):
+    return sqrt(collector_set[LetterVarianceCollector].get_result(collector_set))

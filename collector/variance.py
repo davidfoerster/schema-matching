@@ -1,5 +1,5 @@
 from __future__ import division
-from math import isnan
+from math import (isnan, sqrt)
 from collector import ItemCollector
 from collector.itemaverage import ItemAverageCollector
 
@@ -23,3 +23,12 @@ class ItemVarianceCollector(ItemCollector):
 
   def get_result(self, collector_set = None):
     return self.sum_of_squares / self.sum_of_squares_count
+
+
+
+class ItemStandardDeviationCollector(ItemCollector):
+
+  result_dependencies = (ItemVarianceCollector,)
+
+  def get_result(self, collector_set):
+    return sqrt(collector_set[ItemVarianceCollector].get_result(collector_set))
