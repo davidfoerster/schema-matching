@@ -6,8 +6,8 @@ from collector import MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
 from collector.itemaverage import ItemAverageCollector
 from collector.letteraverage import ItemLetterAverageCollector
-from collector.variance import ItemVarianceCollector
-from collector.lettervariance import LetterVarianceCollector
+from collector.variance import ItemStandardDeviationCollector
+from collector.lettervariance import LetterStandardDeviationCollector
 from collector.relativeletterfrequency import ItemLetterRelativeFrequencyCollector
 
 
@@ -23,7 +23,7 @@ def main(*argv):
 
   collectors = (
     (collector.get_factory(ItemLetterAverageCollector, ItemAverageCollector),),
-    (collector.get_factory(LetterVarianceCollector, ItemVarianceCollector),
+    (collector.get_factory(LetterStandardDeviationCollector, ItemStandardDeviationCollector),
       collector.get_factory(ItemLetterRelativeFrequencyCollector, None))
   )
   collectors = [collect(path, *collectors) for path in argv[1:3]]
