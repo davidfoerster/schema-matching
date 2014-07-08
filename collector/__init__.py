@@ -1,8 +1,20 @@
 from __future__ import print_function
-import utilities, itertools, operator, copy, collections
+import os, utilities, itertools, copy, collections
 
 if __debug__:
+  import operator
+
+verbosity = os.getenv('VERBOSE', '')
+try:
+  verbosity = int(verbosity if verbosity else __debug__)
+except ValueError:
   import sys
+  print('Warning: Environment variable VERBOSE has unparsable, invalid content:', verbosity, file = sys.stderr)
+  verbosity = int(__debug__)
+else:
+  if verbosity >= 1:
+    import sys
+
 
 
 class ItemCollector(object):
@@ -164,8 +176,8 @@ class RowCollector(list):
 
   def collect(self, items):
     """Collects the data of all columns of a row"""
-    #if __debug__ and len(self) != len(items):
-    #  print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file=sys.stderr)
+    if verbosity >= 2 and len(self) != len(items):
+      print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file = sys.stderr)
 
     assert len(self) <= len(items)
     utilities.each_unpack(lambda collector, item: collector.collect(item, collector), itertools.izip(self, items))
