@@ -21,8 +21,8 @@ class ItemLetterRelativeFrequencyCollector(ItemCollector):
         collector_set[ItemLetterAbsoluteFrequencyCollector].get_result(collector_set).iteritems())
 
 
-  def as_str(self, collector_set = None):
-    return str(dict(self.get_result(collector_set)))
+  def as_str(self, collector_set):
+    return str(tuple(self.get_result(collector_set)))
 
 
   @staticmethod
