@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from __future__ import print_function
-import csv, sys, utilities
+import csv, sys, utilities, itertools, operator
 import collector
 from collector import MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
@@ -48,6 +48,38 @@ def collect(path, *phase_descriptions):
 
     print(file=sys.stderr)
     return multiphasecollector
+
+
+def get_best_schema_mapping(distance_matrix):
+  assert operator.eq(*utilities.minmax(map(len, distance_matrix)))
+  infinity = float('inf')
+
+  def get_shortest_path(mapping_so_far, mapping_to_do):
+    i = len(mapping_so_far)
+    if i == len(distance_matrix):
+      return 0, mapping_so_far
+
+    minlength = infinity
+    minpath = None
+    for j, mapped in enumerate(mapping_to_do):
+      d = distance_matrix[i][mapped]
+      if d is None or minlength <= d:
+        continue
+
+      length, path = get_shortest_path(
+        mapping_so_far + (mapped,), utilities.sliceout(mapping_to_do, j))
+      if length is None:
+        continue
+
+      length += d
+      if length < minlength:
+        minlength = length
+        minpath = path
+
+    return minlength, minpath
+
+  return get_shortest_path(tuple(), tuple(xrange(len(distance_matrix[0]))))
+
 
 
 if __name__ == '__main__':

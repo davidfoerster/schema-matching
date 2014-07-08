@@ -30,6 +30,12 @@ def map_inplace(function, list, depth=0):
       map_inplace(function, item, depth - 1)
 
 
+def sliceout(sequence, start, end=None):
+  if end is None:
+    end = start + 1
+  return sequence[:start] + sequence[end:]
+
+
 def count_if(function, iterable):
   count = 0
   for item in iterable:
