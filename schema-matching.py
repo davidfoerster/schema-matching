@@ -21,14 +21,42 @@ def main(*argv):
   if len(argv) > 3 and argv[3] != '-':
     sys.stdout = open(argv[3], 'w')
 
+  # collector phase description
   collectors = (
     (collector.get_factory(ItemLetterAverageCollector, ItemAverageCollector),),
     (collector.get_factory(LetterStandardDeviationCollector, ItemStandardDeviationCollector),
       collector.get_factory(ItemLetterRelativeFrequencyCollector, None))
   )
+
+  # collect from both input files
   collectors = [collect(path, *collectors) for path in argv[1:3]]
 
-  # TODO: Analyse collector results
+  # The first collector shall have the most columns.
+  reversed = len(collectors[0].merged_predecessors) < len(collectors[1].merged_predecessors)
+  if reversed:
+    collectors.reverse()
+
+  # analyse collected data
+  norms = collectors[0].merged_predecessors.results_norms(collectors[1].merged_predecessors)
+  if __debug__:
+    print(*norms, sep='\n', end='\n\n', file=sys.stderr)
+
+  # find minimal combination
+  bestmatch = get_best_schema_mapping(norms)
+  if __debug__:
+    print('norm:', bestmatch[0], file=sys.stderr)
+
+  # prepare mapping for print
+  offset = 1
+  mapping = [
+    map(str, xrange(offset, len(bestmatch[1]) + offset)),
+    map(utilities.composefn(offset.__add__, str), bestmatch[1])
+  ]
+  if reversed:
+    mapping.reverse()
+  print(*map(','.join, itertools.izip(*mapping)), sep='\n')
+
+  return 0
 
 
 def collect(path, *phase_descriptions):
@@ -83,4 +111,4 @@ def get_best_schema_mapping(distance_matrix):
 
 
 if __name__ == '__main__':
-  main(*sys.argv)
+  sys.exit(main(*sys.argv))

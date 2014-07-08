@@ -52,6 +52,15 @@ def issubset(iterable, set):
   return all(map(set.__contains__, iterable))
 
 
+def composefn(*functions):
+  def rapply(x, fn): return fn(x)
+  return lambda x: reduce(rapply, functions, x)
+
+
+def head(sequence):
+  return sequence[0]
+
+
 class ProbabilityDistribution(collections.defaultdict):
   """"Holds a probability distribution and can compute the distance to other dists"""
 
