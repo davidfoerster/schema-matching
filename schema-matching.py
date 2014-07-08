@@ -4,7 +4,7 @@ import csv, sys, utilities
 import collector
 from collector import MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
-from collector.average import ItemAverageCollector
+from collector.itemaverage import ItemAverageCollector
 from collector.letteraverage import ItemLetterAverageCollector
 from collector.variance import ItemVarianceCollector
 from collector.lettervariance import LetterVarianceCollector

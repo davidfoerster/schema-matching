@@ -1,7 +1,7 @@
 import re, utilities, itertools
 from numbers import Number
 from collector import ItemCollector
-from collector.count import ItemCountCollector
+from collector.itemcount import ItemCountCollector
 
 
 def decimal_info(item):

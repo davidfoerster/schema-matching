@@ -1,7 +1,7 @@
 from __future__ import division
 from collector import ItemCollector
-from collector.sum import ItemSumCollector
-from collector.count import ItemCountCollector
+from collector.itemsum import ItemSumCollector
+from collector.itemcount import ItemCountCollector
 
 
 class ItemAverageCollector(ItemCollector):

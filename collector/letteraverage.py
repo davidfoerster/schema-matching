@@ -1,6 +1,6 @@
 from __future__ import division
 from collector import ItemCollector
-from collector.count import ItemCountCollector
+from collector.itemcount import ItemCountCollector
 from collector.lettercount import ItemLetterCountCollector
 
 class ItemLetterAverageCollector(ItemCollector):

@@ -1,7 +1,7 @@
 from __future__ import division
 from math import isnan
 from collector import ItemCollector
-from collector.average import ItemAverageCollector
+from collector.itemaverage import ItemAverageCollector
 
 
 class ItemVarianceCollector(ItemCollector):
