@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import re, utilities, itertools
 from numbers import Number
 from collector import ItemCollector
@@ -98,6 +100,18 @@ class ColumnTypeItemCollector(ItemCollector):
 
   def get_transformer(self):
     return self.__transformers[self.__type_index]
+
+
+  @staticmethod
+  def result_norm(a, b):
+    type_sequence_index = ColumnTypeItemCollector.__type_sequence.index
+    a, b = utilities.minmax(type_sequence_index(a), type_sequence_index(b))
+    if a <= 0:
+      return None
+    if b == 3 and a < b: # 3 ≙ str
+      return float('inf')
+    else:
+      return int(a == b)
 
 
   def as_str(self, collector_set = None):

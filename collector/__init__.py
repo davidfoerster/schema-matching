@@ -48,13 +48,9 @@ class ItemCollector(object):
     return NotImplemented
 
 
-  def distance(self, other):
-    """Returns the distance between the results of two collector of the same class.
-
-    For simplicity the base implementation assumes that the collector results are numeric.
-    """
-    assert type(self) is type(other)
-    return abs(self.get_result() - other.get_result())
+  @staticmethod
+  def result_norm(a, b):
+    return abs(a - b)
 
 
   def as_str(self, collector_set):
@@ -84,9 +80,44 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
       self.itervalues())
 
 
+  class __result_type(object):
+
+    def __init__(self, collector_set):
+      object.__init__(self)
+      self.__collector_set = collector_set
+
+    def __iter__(self):
+      collector_set = self.__collector_set
+      return (c.get_result(collector_set) for c in collector_set.itervalues())
+
+    def __cmp__(self, other, weights = None):
+      assert isinstance(other, type(self))
+      a = self.__collector_set
+      b = other.__collector_set
+      if not utilities.issubset(a.iterkeys(), b):
+        return None
+
+      def distance_of_unweighted(a_coll):
+        assert a[type(a_coll)] is a_coll
+        return abs(a_coll.result_norm(a_coll.get_result(a), b[type(a_coll)].get_result(b)))
+
+      if weights is None:
+        distance_of = distance_of_unweighted
+      else:
+        def distance_of(a_coll):
+          d = distance_of_unweighted(a_coll)
+          w = weights[type(a_coll)]
+          return w(d) if callable(w) else w * d
+
+      return sum((distance_of(coll) for coll in a.itervalues() if not coll.isdependency))
+
+
   def get_result(self, collector_set = None):
     assert collector_set is None
-    return (collector.get_result(self) for collector in self.itervalues())
+    return ItemCollectorSet.__result_type(self)
+
+
+  result_norm = __result_type.__cmp__
 
 
   def get_transformer(self):
@@ -155,6 +186,16 @@ class RowCollector(list):
 
   def transform_all(self, rows):
     utilities.each(self.get_transformer(), rows)
+
+
+  def results_norms(a, b):
+    # Materialise results of inner loop because they'll be scanned multiple times.
+    resultsA = [coll.get_result() for coll in a]
+    resultsB = (coll.get_result() for coll in b)
+    return [
+      [collB.result_norm(resultA, resultB) for resultA in resultsA]
+      for collB, resultB in itertools.izip(b, resultsB)
+    ]
 
 
   def __str__(self):

@@ -42,11 +42,15 @@ def teemap(iterable, *functions):
   map(lambda item: (f(item) for f in functions), iterable)
 
 
+def issubset(iterable, set):
+  return all(map(set.__contains__, iterable))
+
+
 class ProbabilityDistribution(collections.defaultdict):
   """"Holds a probability distribution and can compute the distance to other dists"""
 
-  def __init__(self):
-    collections.defaultdict.__init__(self, int)
+  def __init__(self, *args):
+    collections.defaultdict.__init__(self, int, *args)
 
 
   def get(self, k, d = 0):

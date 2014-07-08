@@ -1,8 +1,8 @@
 from __future__ import division
-import utilities
 from collector import ItemCollector
 from collector.lettercount import ItemLetterCountCollector
 from collector.absoluteletterfrequency import ItemLetterAbsoluteFrequencyCollector
+from utilities import ProbabilityDistribution
 
 
 class ItemLetterRelativeFrequencyCollector(ItemCollector):
@@ -13,10 +13,9 @@ class ItemLetterRelativeFrequencyCollector(ItemCollector):
   def __init__(self, previous_collector_set):
     ItemCollector.__init__(self, previous_collector_set)
     self.letter_count = previous_collector_set[ItemLetterCountCollector].get_result()
-    self.absolute_letter_frequencies = utilities.ProbabilityDistribution()
 
 
-  def get_result(self, collector_set = None):
+  def get_result(self, collector_set):
     return ((char, frequency / self.letter_count)
       for char, frequency in
         collector_set[ItemLetterAbsoluteFrequencyCollector].get_result(collector_set).iteritems())
@@ -24,3 +23,8 @@ class ItemLetterRelativeFrequencyCollector(ItemCollector):
 
   def as_str(self, collector_set = None):
     return str(dict(self.get_result(collector_set)))
+
+
+  @staticmethod
+  def result_norm(a, b):
+    return ProbabilityDistribution(a).distance_to(ProbabilityDistribution(b))
