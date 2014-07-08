@@ -14,6 +14,7 @@ class ItemCollector(object):
     This may be relevant for some derived collectors.
     """
     object.__init__(self)
+    self.isdependency = False
 
 
   result_dependencies = ()
@@ -100,7 +101,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
       ('{}: {}'.format(type(collector).__name__, collector.as_str(self)) for collector in self.itervalues())))
 
 
-  def add(self, collector):
+  def add(self, collector, isdependency = False):
     """Adds an item collector and all its result_dependencies to this set with its type a key,
     if one of the same type isn't in the set already.
 
@@ -110,8 +111,14 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
     if not collector:
       return None
 
-    utilities.each(self.add, collector.result_dependencies)
-    return self.setdefault(type(collector), collector)
+    utilities.each(self.__add_dependency, collector.result_dependencies)
+    collector = self.setdefault(type(collector), collector)
+    collector.isdependency |= isdependency
+    return collector
+
+
+  def __add_dependency(self, collector):
+    return self.add(collector, True)
 
 
 
