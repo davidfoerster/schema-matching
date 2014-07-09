@@ -78,6 +78,10 @@ def collect(path, *phase_descriptions):
   """
   Collects info about the columns of the data set in file "path" according
   over multiple phases based on a description of those phases.
+
+  :param path: str
+  :param phase_descriptions: tuple[tuple[type | ItemCollector | callable]]
+  :return: MultiphaseCollector
   """
   if __debug__:
     print(path, end=':\n', file=sys.stderr)
@@ -102,6 +106,10 @@ def collect(path, *phase_descriptions):
 
 
 def get_best_schema_mapping(distance_matrix):
+  """
+  :param distance_matrix: list[list[float]]
+  :return: (float, tuple[int])
+  """
   assert operator.eq(*utilities.minmax(map(len, distance_matrix)))
   infinity = float('inf')
 
