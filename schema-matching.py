@@ -11,10 +11,6 @@ from collector.lettervariance import LetterStandardDeviationCollector
 from collector.relativeletterfrequency import ItemLetterRelativeFrequencyCollector
 
 
-class UnexpectedLineException(Exception):
-  def __init__(self, idx, content):
-    super(UnexpectedLineException, self).__init__(
-      'Unexpected content in line {}: {}'.format(idx, repr(content)))
 
 
 def main(*argv):
