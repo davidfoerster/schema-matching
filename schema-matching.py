@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from __future__ import print_function
 import csv, sys, utilities, itertools, operator
-import collector
+import collector, collector.columntype
 from collector import MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
 from collector.itemaverage import ItemAverageCollector
@@ -23,9 +23,14 @@ def main(*argv):
 
   # collector phase description
   collectors = (
-    (collector.get_factory(ItemLetterAverageCollector, ItemAverageCollector),),
-    (collector.get_factory(LetterStandardDeviationCollector, ItemStandardDeviationCollector),
-      collector.get_factory(ItemLetterRelativeFrequencyCollector, None))
+    (collector.columntype.factory(
+      ItemLetterAverageCollector, ItemAverageCollector),
+    ),
+    (collector.columntype.factory(
+      LetterStandardDeviationCollector, ItemStandardDeviationCollector),
+    collector.columntype.factory(
+      ItemLetterRelativeFrequencyCollector, None)
+    )
   )
 
   # collect from both input files

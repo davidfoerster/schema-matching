@@ -119,18 +119,16 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
 
-class get_factory(object):
+def factory(string_collector, numeric_collector):
 
-  def __init__(self, string_collector, numeric_collector):
-    object.__init__(self)
-    self.collectors = (string_collector, numeric_collector)
+  def __factory(type_or_predecessor):
+    if isinstance(type_or_predecessor, dict):
+      predecessor = type_or_predecessor
+      type = predecessor[ColumnTypeItemCollector].get_result()
+    else:
+      predecessor = None
+      type = type_or_predecessor
+    collector = numeric_collector if issubclass(type, Number) else string_collector
+    return ItemCollector.get_instance(collector, predecessor)
 
-
-  def __call__(self, predecessor):
-    valuetype = (
-        predecessor[ColumnTypeItemCollector].get_result()
-      if isinstance(predecessor, dict) else
-        predecessor
-    )
-    return ItemCollector.get_instance(
-      self.collectors[issubclass(valuetype, Number)], predecessor)
+  return __factory

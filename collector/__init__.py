@@ -238,5 +238,3 @@ class MultiphaseCollector(object):
       self.merged_predecessors = phase
 
 
-
-from collector.columntype import get_factory
