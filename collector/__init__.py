@@ -238,3 +238,10 @@ class MultiphaseCollector(object):
       self.merged_predecessors = phase
 
 
+  def results_norms(a, b):
+    """
+    :param a: self
+    :param b: MultiphaseCollector
+    :return: list[list[float]]
+    """
+    return a.merged_predecessors.results_norms(b.merged_predecessors)

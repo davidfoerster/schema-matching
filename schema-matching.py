@@ -42,7 +42,7 @@ def main(*argv):
     collectors.reverse()
 
   # analyse collected data
-  norms = collectors[0].merged_predecessors.results_norms(collectors[1].merged_predecessors)
+  norms = MultiphaseCollector.results_norms(*collectors)
   if __debug__:
     print(*norms, sep='\n', end='\n\n', file=sys.stderr)
 
