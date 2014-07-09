@@ -2,7 +2,7 @@ from __future__ import division
 from collector import ItemCollector
 from collector.lettercount import ItemLetterCountCollector
 from collector.absoluteletterfrequency import ItemLetterAbsoluteFrequencyCollector
-from utilities import ProbabilityDistribution
+from utilities.pdb import ProbabilityDistribution
 
 
 class ItemLetterRelativeFrequencyCollector(ItemCollector):

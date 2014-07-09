@@ -1,7 +1,11 @@
 #!/usr/bin/python
 from __future__ import print_function
-import csv, sys, os.path, utilities, itertools, operator, math
+import csv, sys, os.path, itertools, operator, math
 import collector, collector.columntype
+import utilities
+import utilities.iterator as uiterator
+import utilities.functional as ufunctional
+import utilities.operator as uoperator
 from collector import MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
 from collector.itemaverage import ItemAverageCollector
@@ -99,7 +103,7 @@ def collect(path, *phase_descriptions):
   with open(path, 'r') as f:
     multiphasecollector = MultiphaseCollector(
       csv.reader(f, delimiter=';', skipinitialspace=True))
-    utilities.map_inplace(str.strip, multiphasecollector.rowset, 1)
+    uiterator.map_inplace(str.strip, multiphasecollector.rowset, 1)
 
     multiphasecollector(ColumnTypeItemCollector(len(multiphasecollector.rowset)))
     if __debug__:
@@ -180,7 +184,7 @@ def validate_result(in_paths, column_mappings, reversed=False, offset=1):
       return {
         int(mapped): int(original)
         for mapped, original
-        in itertools.imap(utilities.apply_memberfn(str.split, ',', 2), f)
+        in itertools.imap(ufunctional.apply_memberfn(str.split, ',', 2), f)
       }
 
   schema_desc = map(read_descriptor, in_paths)
@@ -209,10 +213,10 @@ def validate_result(in_paths, column_mappings, reversed=False, offset=1):
     missing_count = 0
     missed_mappings = itertools.ifilterfalse(
       column_mappings.__contains__, schema_desc[0].iteritems())
-    missed_mappings = utilities.teemap(
+    missed_mappings = uiterator.teemap(
       missed_mappings, None, rschema_desc1.get)
     missed_mappings = itertools.ifilterfalse(
-        utilities.composefn(utilities.second, utilities.isnone), # rule out impossible mappings
+        ufunctional.composefn(uoperator.second, uoperator.isnone), # rule out impossible mappings
         missed_mappings)
     for missing in missed_mappings:
       print('expected {} => {} -- MISSED!'.format(*missing))
@@ -229,7 +233,7 @@ def print_result(column_mappings, reversed=False, offset=1):
   """
   column_mappings = [
     itertools.imap(str, xrange(offset, offset.__add__(len(column_mappings)))),
-    itertools.imap(utilities.composefn(offset.__add__, str), column_mappings)
+    itertools.imap(ufunctional.composefn(offset.__add__, str), column_mappings)
   ]
   if reversed:
     column_mappings.reverse()

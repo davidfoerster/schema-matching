@@ -2,6 +2,7 @@
 
 import re, utilities, itertools
 from numbers import Number
+from utilities.iterator import count_if
 from collector import ItemCollector
 from collector.itemcount import ItemCountCollector
 
@@ -26,7 +27,7 @@ def decimal_info(item):
   potential_digits = itertools.islice(item, start, end)
   decimal_separator = m.group(3) if m.start(3) >= 0 else ''
   invalid_char_count = total_len - len(decimal_separator) - \
-     utilities.count_if(str.isdigit, potential_digits)
+     count_if(str.isdigit, potential_digits)
   total_len += m.end(1) - m.start(1)
   return decimal_separator, total_len, invalid_char_count
 

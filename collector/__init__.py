@@ -1,8 +1,14 @@
+from __future__ import absolute_import
 from __future__ import print_function
-import os, utilities, itertools, copy, collections
+import os, itertools, copy, collections
+import utilities
+import utilities.iterator as uiterator
+import utilities.functional as ufunctional
+import utilities.operator as uoperator
 
 if __debug__:
   import operator
+
 
 verbosity = os.getenv('VERBOSE', '')
 try:
@@ -81,13 +87,13 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
     ItemCollector.__init__(self)
     collections.OrderedDict.__init__(self)
     self.predecessor = predecessor
-    utilities.each(self.add, collectors)
+    uiterator.each(self.add, collectors)
 
 
   def collect(self, item, collector_set = None):
     assert collector_set is self
     ItemCollector.collect(self, item, self)
-    utilities.each(
+    uiterator.each(
       lambda collector: collector.collect(item, self),
       self.itervalues())
 
@@ -156,7 +162,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
     if not collector:
       return None
 
-    utilities.each(self.__add_dependency, collector.result_dependencies)
+    uiterator.each(self.__add_dependency, collector.result_dependencies)
     collector = self.setdefault(type(collector), collector)
     collector.isdependency |= isdependency
     return collector
@@ -180,11 +186,11 @@ class RowCollector(list):
       print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file = sys.stderr)
 
     assert len(self) <= len(items)
-    utilities.each_unpack(lambda collector, item: collector.collect(item, collector), itertools.izip(self, items))
+    uiterator.each_unpack(lambda collector, item: collector.collect(item, collector), itertools.izip(self, items))
 
 
   def collect_all(self, rows):
-    utilities.each(self.collect, rows)
+    uiterator.each(self.collect, rows)
 
 
   class __transformer(tuple):
@@ -195,16 +201,16 @@ class RowCollector(list):
 
 
   def get_transformer(self):
-    return self.__transformer(itertools.ifilter(utilities.second,
-      enumerate(itertools.imap(utilities.apply_memberfn('get_transformer'), self))))
+    return self.__transformer(itertools.ifilter(uoperator.second,
+      enumerate(itertools.imap(ufunctional.apply_memberfn('get_transformer'), self))))
 
 
   def transform_all(self, rows):
-    utilities.each(self.get_transformer(), rows)
+    uiterator.each(self.get_transformer(), rows)
 
 
   def results_norms(a, b, weights=None):
-    get_result = utilities.apply_memberfn('get_result')
+    get_result = ufunctional.apply_memberfn('get_result')
     # Materialise results of inner loop because they'll be scanned multiple times.
     resultsA = map(get_result, a)
     resultsB = itertools.imap(get_result, b)
@@ -234,7 +240,7 @@ class MultiphaseCollector(object):
     phase.transform_all(self.rowset)
 
     if isinstance(self.merged_predecessors, RowCollector):
-      utilities.each_unpack(ItemCollectorSet.update, itertools.izip(self.merged_predecessors, phase))
+      uiterator.each_unpack(ItemCollectorSet.update, itertools.izip(self.merged_predecessors, phase))
     else:
       self.merged_predecessors = phase
 
