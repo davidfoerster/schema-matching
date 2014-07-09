@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from __future__ import print_function
-import csv, sys, utilities, itertools, operator
+import csv, sys, os.path, utilities, itertools, operator
 import collector, collector.columntype
 from collector import MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
@@ -145,6 +145,70 @@ def get_best_schema_mapping(distance_matrix):
 
   return sweep_row(0)
 
+
+def validate_result(in_paths, column_mappings, reversed=False, offset=1):
+  """
+  :param in_paths: list[str]
+  :param column_mappings: list[int]
+  :param reversed: bool
+  :param offset: int
+  :return: (int, int, int)
+  """
+
+  # build column mapping dictionary
+  column_mappings = {k + offset: v + offset for k, v in enumerate(column_mappings)}
+  if reversed:
+    mapping = utilities.rdict(column_mappings)
+
+  # read expected column mappings
+  def read_descriptor(path):
+    """
+    :param path: str
+    :return: dict[int, int]
+    """
+    with open(os.path.splitext(path)[0] + '_desc.txt') as f:
+      return {
+        int(mapped): int(original)
+        for mapped, original
+        in itertools.imap(utilities.apply_memberfn(str.split, ',', 2), f)
+      }
+
+  schema_desc = map(read_descriptor, in_paths)
+  rschema_desc1 = utilities.rdict(schema_desc[1])
+  invalid_count = 0
+  impossible_count = 0
+
+  # find mismatches
+  for column_mapping in column_mappings.iteritems():
+    found, expected = \
+      itertools.starmap(dict.__getitem__,
+        itertools.izip(schema_desc, column_mapping))
+    assert found is schema_desc[0][column_mapping[0]]
+    assert expected is schema_desc[1][column_mapping[1]]
+    if found != expected:
+      invalid_count += 0
+      if found not in rschema_desc1:
+        impossible_count += 1
+        expected = None
+    print('found {2} => {3}, expected {2} => {0} -- {1}'.format(
+      expected, 'ok' if found == expected else 'MISMATCH!', *column_mapping))
+
+  # find missing matches
+  missing_count = len(schema_desc[0]) - len(column_mappings)
+  if missing_count > 0:
+    missing_count = 0
+    missed_mappings = itertools.ifilterfalse(
+      column_mappings.__contains__, schema_desc[0].iteritems())
+    missed_mappings = utilities.teemap(
+      missed_mappings, None, rschema_desc1.get)
+    missed_mappings = itertools.ifilterfalse(
+        utilities.composefn(utilities.second, utilities.isnone), # rule out impossible mappings
+        missed_mappings)
+    for missing in missed_mappings:
+      print('expected {} => {} -- MISSED!'.format(*missing))
+      missing_count += 1
+
+  return invalid_count, impossible_count, missing_count
 
 
 if __name__ == '__main__':
