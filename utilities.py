@@ -1,4 +1,4 @@
-import collections, itertools
+import __builtin__, collections, itertools
 
 
 def each(function, iterable):
@@ -96,6 +96,16 @@ def second(sequence):
 
 def isnone(x):
   return x is None
+
+
+def rdict(dict):
+  if isinstance(dict, __builtin__.dict):
+    dict = dict.iteritems()
+  if __debug__:
+    dict = frozenset(dict)
+  rdict = {v: k for k, v in dict}
+  assert len(rdict) == len(dict) # future keys should be unique
+  return rdict
 
 
 def min_index(*args, **kwargs):
