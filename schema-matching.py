@@ -11,6 +11,17 @@ from collector.lettervariance import LetterStandardDeviationCollector
 from collector.relativeletterfrequency import ItemLetterRelativeFrequencyCollector
 
 
+# TODO: tweak
+collector_phase_description = (
+  (collector.columntype.factory(
+    ItemLetterAverageCollector, ItemAverageCollector),
+  ),
+  (collector.columntype.factory(
+    LetterStandardDeviationCollector, ItemStandardDeviationCollector),
+  collector.columntype.factory(
+    ItemLetterRelativeFrequencyCollector, None)
+  )
+)
 
 
 def main(*argv):
@@ -26,20 +37,8 @@ def main(*argv):
     elif argv[2] != '-':
       sys.stdout = open(argv[2], 'w')
 
-  # collector phase description
-  collectors = (
-    (collector.columntype.factory(
-      ItemLetterAverageCollector, ItemAverageCollector),
-    ),
-    (collector.columntype.factory(
-      LetterStandardDeviationCollector, ItemStandardDeviationCollector),
-    collector.columntype.factory(
-      ItemLetterRelativeFrequencyCollector, None)
-    )
-  )
-
   # collect from both input files
-  collectors = [collect(path, *collectors) for path in in_paths]
+  collectors = [collect(path, *collector_phase_description) for path in in_paths]
 
   # The first collector shall have the most columns.
   reversed = len(collectors[0].merged_predecessors) < len(collectors[1].merged_predecessors)
