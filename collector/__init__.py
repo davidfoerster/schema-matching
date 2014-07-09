@@ -195,7 +195,7 @@ class RowCollector(list):
 
 
   def get_transformer(self):
-    return self.__transformer(itertools.ifilter(utilities.getitemfn(1),
+    return self.__transformer(itertools.ifilter(utilities.second,
       enumerate(itertools.imap(utilities.apply_memberfn('get_transformer'), self))))
 
 

@@ -86,8 +86,22 @@ def getitemfn(idx):
   return lambda seq: seq[idx]
 
 
-def head(sequence):
+def first(sequence):
   return sequence[0]
+
+
+def second(sequence):
+  return sequence[1]
+
+
+def isnone(x):
+  return x is None
+
+
+def min_index(*args, **kwargs):
+  key = kwargs.get('key')
+  kwargs['key'] = args.__getitem__ if key is None else lambda idx: key(args[idx])
+  return min(*xrange(len(args)), **kwargs)
 
 
 class ProbabilityDistribution(collections.defaultdict):
