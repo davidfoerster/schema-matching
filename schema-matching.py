@@ -45,6 +45,14 @@ def main(*argv):
     else:
       sys.stdout = utilities.openspecial(argv[2], 'w')
 
+  # determine collector weights to use
+  if len(argv) > 3:
+    with utilities.openspecial(argv[3], 'rb') as f:
+      import pickle
+      weights = pickle.load(f)
+  else:
+    weights = collector_weights
+
 
   # collect from both input files
   collectors = [collect(path, *collector_phase_description) for path in in_paths]
@@ -56,7 +64,7 @@ def main(*argv):
     in_paths.reverse()
 
   # analyse collected data
-  norms = MultiphaseCollector.results_norms(*collectors, weights=collector_weights)
+  norms = MultiphaseCollector.results_norms(*collectors, weights=weights)
   if __debug__:
     print(*norms, sep='\n', end='\n\n', file=sys.stderr)
 
