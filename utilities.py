@@ -1,4 +1,4 @@
-import collections
+import collections, itertools
 
 
 def each(function, iterable):
@@ -20,6 +20,19 @@ def minmax(*args):
     if x > min:
       min = x
   return min, max
+
+
+def __slice_to_tuple(slice):
+  return (slice.start, slice.stop, slice.step)
+
+
+def islice(iterable, *args):
+  if not args:
+    args = (None,)
+  elif isinstance(args[0], slice):
+    assert len(args) == 1
+    args = __slice_to_tuple(args[0])
+  return itertools.islice(iterable, *args)
 
 
 def map_inplace(function, list, depth=0):
