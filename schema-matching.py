@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from __future__ import print_function
-import csv, sys, os.path, utilities, itertools, operator
+import csv, sys, os.path, utilities, itertools, operator, math
 import collector, collector.columntype
 from collector import MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
@@ -22,6 +22,12 @@ collector_phase_description = (
     ItemLetterRelativeFrequencyCollector, None)
   )
 )
+
+# TODO: tweak
+collector_weights = {
+  ItemAverageCollector: 1.5,
+  ItemLetterAverageCollector: math.sqrt
+}
 
 
 def main(*argv):
@@ -47,7 +53,7 @@ def main(*argv):
     in_paths.reverse()
 
   # analyse collected data
-  norms = MultiphaseCollector.results_norms(*collectors)
+  norms = MultiphaseCollector.results_norms(*collectors, weights=collector_weights)
   if __debug__:
     print(*norms, sep='\n', end='\n\n', file=sys.stderr)
 
