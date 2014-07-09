@@ -118,8 +118,8 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
       else:
         def distance_of(a_coll):
           d = distance_of_unweighted(a_coll)
-          w = weights[type(a_coll)]
-          return w(d) if callable(w) else w * d
+          w = weights.get(type(a_coll))
+          return d if w is None else w(d) if callable(w) else w * d
 
       return sum((distance_of(coll) for coll in a.itervalues() if not coll.isdependency))
 
