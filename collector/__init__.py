@@ -204,9 +204,10 @@ class RowCollector(list):
 
 
   def results_norms(a, b):
+    get_result = utilities.apply_memberfn('get_result')
     # Materialise results of inner loop because they'll be scanned multiple times.
-    resultsA = [coll.get_result() for coll in a]
-    resultsB = (coll.get_result() for coll in b)
+    resultsA = map(get_result, a)
+    resultsB = itertools.imap(get_result, b)
     return [
       [collB.result_norm(resultA, resultB) for resultA in resultsA]
       for collB, resultB in itertools.izip(b, resultsB)
