@@ -37,11 +37,14 @@ def main(*argv):
   """
   in_paths = [argv[0], argv[1]]
   validate = False
+
+  # determine mode and/or output file
   if len(argv) > 2:
     if argv[2] == '--validate':
       validate = True
-    elif argv[2] != '-':
-      sys.stdout = open(argv[2], 'w')
+    else:
+      sys.stdout = utilities.openspecial(argv[2], 'w')
+
 
   # collect from both input files
   collectors = [collect(path, *collector_phase_description) for path in in_paths]
