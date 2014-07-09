@@ -35,12 +35,17 @@ def islice(iterable, *args):
   return itertools.islice(iterable, *args)
 
 
-def map_inplace(function, list, depth=0):
+def map_inplace(function, list, depth=0, slice=None):
   if depth <= 0:
-    list[:] = map(function, list)
+    if slice is None:
+      list[:] = itertools.imap(function, list)
+    else:
+      list[slice] = itertools.imap(function,
+        itertools.islice(list, __slice_to_tuple(slice)))
   else:
     for item in list:
-      map_inplace(function, item, depth - 1)
+      map_inplace(function, item, depth - 1, slice)
+  return list
 
 
 def sliceout(sequence, start, end=None):
