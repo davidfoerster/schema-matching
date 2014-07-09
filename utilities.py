@@ -63,11 +63,11 @@ def count_if(function, iterable):
 
 
 def teemap(iterable, *functions):
-  map(lambda item: (f(item) for f in functions), iterable)
+  return itertools.imap(lambda item: [item if f is None else f(item) for f in functions], iterable)
 
 
 def issubset(iterable, set):
-  return all(map(set.__contains__, iterable))
+  return all(itertools.imap(set.__contains__, iterable))
 
 
 def apply_memberfn(memberfn, *args):
