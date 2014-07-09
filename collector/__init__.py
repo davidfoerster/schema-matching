@@ -203,13 +203,13 @@ class RowCollector(list):
     utilities.each(self.get_transformer(), rows)
 
 
-  def results_norms(a, b):
+  def results_norms(a, b, weights=None):
     get_result = utilities.apply_memberfn('get_result')
     # Materialise results of inner loop because they'll be scanned multiple times.
     resultsA = map(get_result, a)
     resultsB = itertools.imap(get_result, b)
     return [
-      [collB.result_norm(resultA, resultB) for resultA in resultsA]
+      [collB.result_norm(resultA, resultB, weights) for resultA in resultsA]
       for collB, resultB in itertools.izip(b, resultsB)
     ]
 
@@ -239,10 +239,10 @@ class MultiphaseCollector(object):
       self.merged_predecessors = phase
 
 
-  def results_norms(a, b):
+  def results_norms(a, b, weights=None):
     """
     :param a: self
     :param b: MultiphaseCollector
     :return: list[list[float]]
     """
-    return a.merged_predecessors.results_norms(b.merged_predecessors)
+    return a.merged_predecessors.results_norms(b.merged_predecessors, weights)
