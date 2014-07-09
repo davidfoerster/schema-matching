@@ -61,17 +61,15 @@ def main(*argv):
   if __debug__:
     print('norm:', best_match[0], file=sys.stderr)
 
-  # prepare mapping for print
-  offset = 1
-  mapping = [
-    map(str, xrange(offset, len(bestmatch[1]) + offset)),
-    map(utilities.composefn(offset.__add__, str), bestmatch[1])
-  ]
-  if reversed:
-    mapping.reverse()
-  print(*map(','.join, itertools.izip(*mapping)), sep='\n')
+  # print or validate best match
+  if validate:
+    validate = validate_result(in_paths, best_match[1], reversed)
+    print('\n{} invalid, {} impossible, and {} missing matches'.format(*validate))
+    return int(validate[0] or validate[2])
 
-  return 0
+  else:
+    print_result(best_match[1], reversed)
+    return 0
 
 
 def collect(path, *phase_descriptions):
@@ -209,6 +207,21 @@ def validate_result(in_paths, column_mappings, reversed=False, offset=1):
       missing_count += 1
 
   return invalid_count, impossible_count, missing_count
+
+
+def print_result(column_mappings, reversed=False, offset=1):
+  """
+  :param column_mappings: list[int]
+  :param reversed: bool
+  :param offset: int
+  """
+  column_mappings = [
+    itertools.imap(str, xrange(offset, offset.__add__(len(column_mappings)))),
+    itertools.imap(utilities.composefn(offset.__add__, str), column_mappings)
+  ]
+  if reversed:
+    column_mappings.reverse()
+  print(*itertools.starmap(','.join, itertools.izip(*column_mappings)), sep='\n')
 
 
 if __name__ == '__main__':
