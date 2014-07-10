@@ -114,10 +114,9 @@ def collect(path, *phase_descriptions):
       reader)
     multiphasecollector = MultiphaseCollector(reader)
 
-    multiphasecollector(ColumnTypeItemCollector(len(multiphasecollector.rowset)))
-    if __debug__:
-      print(multiphasecollector.merged_predecessors, file=sys.stderr)
-
+    phase_descriptions = (
+      ((ColumnTypeItemCollector(len(multiphasecollector.rowset)),),) +
+      phase_descriptions)
     for phase_description in phase_descriptions:
       multiphasecollector(*phase_description)
       if __debug__:
