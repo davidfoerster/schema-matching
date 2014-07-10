@@ -73,15 +73,17 @@ class ColumnTypeItemCollector(ItemCollector):
     return x
 
 
-  def __init__(self, set_length = None, tolerance = (2, 0.25, 0.05)):
+  def __init__(self, set_length = None, max_invalid_absolute=2, max_invalid_relative=0.25, total_max_invalid=0.05):
     ItemCollector.__init__(self)
     self.__type_index = None
-    self.__tol_exceeded_count = 0
+    self.__tolerance_exceeded_count = 0
 
-    self.__tol_max_invalid_abs, self.__tol_max_invalid_rel, self.__tol_exceeded_max_rel = tolerance
+    self.max_invalid_absolute = max_invalid_absolute
+    self.max_invalid_relative = max_invalid_relative
+    self.total_max_invalid = total_max_invalid
     set_length = self.__get_set_length(set_length)
-    self.__total_exceeded_max_abs = \
-      None if set_length is None else int(set_length * self.__tol_exceeded_max_rel)
+    self.__total_max_invalid_absolute = \
+      None if set_length is None else int(set_length * self.total_max_invalid)
 
 
   def collect(self, item, collector_set = None):
@@ -96,19 +98,19 @@ class ColumnTypeItemCollector(ItemCollector):
       if info:
         if not info[2]:
           return
-        if info[2] <= self.__tol_max_invalid_abs and info[2] <= info[1] * self.__tol_max_invalid_rel:
-          self.__tol_exceeded_count += info[2]
-          if not self.__total_exceeded_max_abs < self.__tol_exceeded_count:
+        if info[2] <= self.max_invalid_absolute and info[2] <= info[1] * self.max_invalid_relative:
+          self.__tolerance_exceeded_count += 1
+          if not self.__total_max_invalid_absolute < self.__tolerance_exceeded_count:
             return
       self.__type_index += 1
 
 
   def get_result(self, collector_set = None):
-    if self.__type_index == 1 and self.__total_exceeded_max_abs is None:
+    if self.__type_index == 1 and self.__total_max_invalid_absolute is None:
       set_length = self.__get_set_length(collector_set)
-      self.__total_exceeded_max_abs = \
-        0 if set_length is None else int(set_length * self.__tol_exceeded_max_rel)
-      if self.__total_exceeded_max_abs < self.__tol_exceeded_count:
+      self.__total_max_invalid_absolute = \
+        0 if set_length is None else int(set_length * self.total_max_invalid)
+      if self.__total_max_invalid_absolute < self.__tolerance_exceeded_count:
         self.__type_index += 1
 
     return self.__type_sequence[self.__type_index]
@@ -127,7 +129,7 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
   def as_str(self, collector_set = None, format_spec=None):
-    return '({}:{})'.format(self.get_result(None).__name__, self.__tol_exceeded_count)
+    return '({}:{})'.format(self.get_result(None).__name__, self.__tolerance_exceeded_count)
 
 
 
