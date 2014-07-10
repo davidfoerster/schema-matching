@@ -16,6 +16,7 @@ from collector.lettervariance import LetterStandardDeviationCollector
 from collector.relativeletterfrequency import ItemLetterRelativeFrequencyCollector
 
 
+number_format = '10.4e'
 
 # TODO: tweak
 collector_phase_description = (
@@ -72,20 +73,24 @@ def main(*argv):
   # analyse collected data
   norms = MultiphaseCollector.results_norms(*collectors, weights=weights)
   if __debug__:
-    print(*norms, sep='\n', end='\n\n', file=sys.stderr)
+    print(*reversed(in_paths), sep=' / ', end='\n| ', file=sys.stderr)
+    formatter = ufunctional.apply_memberfn(format, number_format)
+    print(
+      *['  '.join(itertools.imap(formatter, row)) for row in norms],
+      sep=' |\n| ', end=' |\n\n', file=sys.stderr)
 
   # find minimal combination
   best_match = get_best_schema_mapping(norms)
-  if __debug__:
-    print('norm:', best_match[0], file=sys.stderr)
 
   # print or validate best match
   if must_validate:
     validation_result = validate_result(in_paths, best_match[1], isreversed)
-    print('\n{} invalid, {} impossible, and {} missing matches'.format(*validate_result))
+    print('\n{2} invalid, {3} impossible, and {4} missing matches, norm = {0:{1}}'.format(
+      best_match[0], number_format, *validation_result))
     return int(validation_result[0] or validation_result[2])
 
   else:
+    print('norm:', format(best_match[0], number_format), file=sys.stderr)
     print_result(best_match[1], isreversed)
     return 0
 
