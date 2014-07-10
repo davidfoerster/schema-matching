@@ -34,6 +34,7 @@ for in1 in "$@"; do
 	for in2 in "$@"; do
 		if [ "$in1" \< "$in2" ]; then
 			schema-matching "$in1" "$in2" || rv=1
+			echo
 		fi
 	done
 done

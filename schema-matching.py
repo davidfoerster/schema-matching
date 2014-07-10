@@ -1,41 +1,16 @@
 #!/usr/bin/python
 from __future__ import print_function
-import csv, sys, os.path, itertools, operator, math
+import csv, sys, os.path, itertools, operator
 import utilities, utilities.file
 from utilities import infinity
 from utilities.string import DecodableUnicode
 import utilities.iterator as uiterator
 import utilities.functional as ufunctional
-import collector, collector.columntype
 from collector import MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
-from collector.itemaverage import ItemAverageCollector
-from collector.letteraverage import ItemLetterAverageCollector
-from collector.variance import ItemStandardDeviationCollector
-from collector.lettervariance import LetterStandardDeviationCollector
-from collector.relativeletterfrequency import ItemLetterRelativeFrequencyCollector
 
 
 number_format = '10.4e'
-
-# TODO: tweak
-collector_phase_description = (
-  (collector.columntype.factory(
-    ItemLetterAverageCollector, ItemAverageCollector),
-  ),
-  (collector.columntype.factory(
-    LetterStandardDeviationCollector, ItemStandardDeviationCollector),
-  collector.columntype.factory(
-    ItemLetterRelativeFrequencyCollector, None)
-  )
-)
-
-# TODO: tweak
-collector_weights = {
-  ItemAverageCollector: 1.5,
-  ItemLetterAverageCollector: math.sqrt
-}
-
 
 def main(*argv):
   """
@@ -52,17 +27,27 @@ def main(*argv):
     else:
       sys.stdout = utilities.file.openspecial(argv[2], 'w')
 
-  # determine collector weights to use
+  # determine collector descriptions to use
+  collector_description = {
+    'phase_description': [],
+    'collector_weights': None
+  }
   if len(argv) > 3:
-    with utilities.file.openspecial(argv[3], 'rb') as f:
-      import pickle
-      weights = pickle.load(f)
+    collector_description_file = argv[3]
   else:
-    weights = collector_weights
-
+    collector_description_file = \
+      os.path.join(os.path.dirname(os.path.realpath(__file__)),
+        'collector-description-default.py')
+  execfile(collector_description_file,
+    {
+      'collector': __import__('collector')
+    },
+    collector_description)
 
   # collect from both input files
-  collectors = [collect(path, *collector_phase_description) for path in in_paths]
+  collectors = [
+    collect(path, *collector_description['phase_description'])
+    for path in in_paths]
 
   # The first collector shall have the least columns.
   isreversed = len(collectors[0].merged_predecessors) > len(collectors[1].merged_predecessors)
@@ -71,7 +56,8 @@ def main(*argv):
     in_paths.reverse()
 
   # analyse collected data
-  norms = MultiphaseCollector.results_norms(*collectors, weights=weights)
+  norms = MultiphaseCollector.results_norms(*collectors,
+    weights=collector_description['collector_weights'])
   if __debug__:
     print(*reversed(in_paths), sep=' / ', end='\n| ', file=sys.stderr)
     formatter = ufunctional.apply_memberfn(format, number_format)
