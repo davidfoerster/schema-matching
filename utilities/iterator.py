@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-import itertools
+import __builtin__, itertools
 
 
 if __debug__:
@@ -17,10 +17,10 @@ def each(function, *iterables):
     for args in iterables[0]:
       function(args)
   else:
-    iterables = map(iter, iterables)
+    iterables = __builtin__.map(iter, iterables)
     while True:
       try:
-        args = map(next, iterables)
+        args = __builtin__.map(next, iterables)
       except StopIteration:
         break
       else:
@@ -65,10 +65,10 @@ def countif(function, *iterables):
       if function(args):
         count += 1
   else:
-    iterables = map(iter, iterables)
+    iterables = __builtin__.map(iter, iterables)
     while True:
       try:
-        args = map(next, iterables)
+        args = __builtin__.map(next, iterables)
       except StopIteration:
         break
       else:

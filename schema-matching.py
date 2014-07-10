@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -OO
 from __future__ import print_function
 import csv, sys, os.path, itertools, operator
 import utilities, utilities.file
