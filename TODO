@@ -1,6 +1,5 @@
 Necessary:
-  - Divide sum of colecctor norms by collector count
-  - Implement coefficient-based norms (e. g. coefficient of variation)
+  - Divide sum of collector norms by collector count
   - Find reasonable weights for collectors
   - More testing
 
