@@ -12,14 +12,24 @@ else:
   from itertools import ifilterfalse as filterfalse
 
 
-def each(function, iterable):
-  for item in iterable:
-    function(item)
+def each(function, *iterables):
+  if len(iterables) <= 1:
+    for args in iterables[0]:
+      function(args)
+  else:
+    iterables = map(iter, iterables)
+    while True:
+      try:
+        args = map(next, iterables)
+      except StopIteration:
+        break
+      else:
+        function(*args)
 
 
-def each_unpack(function, iterable):
-  for item in iterable:
-    function(*item)
+def stareach(function, iterable):
+  for args in iterable:
+    function(*args)
 
 
 def __slice_to_tuple(slice):
@@ -48,11 +58,22 @@ def map_inplace(function, list, depth=0, slice=None):
   return list
 
 
-def count_if(function, iterable):
+def countif(function, *iterables):
   count = 0
-  for item in iterable:
-    if function(item):
-      count += 1
+  if len(iterables) <= 1:
+    for args in iterables[0]:
+      if function(args):
+        count += 1
+  else:
+    iterables = map(iter, iterables)
+    while True:
+      try:
+        args = map(next, iterables)
+      except StopIteration:
+        break
+      else:
+        if function(*args):
+          count += 1
   return count
 
 

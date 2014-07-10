@@ -22,6 +22,10 @@ def sliceout(sequence, start, end=None):
   return sequence[:start] + sequence[end:]
 
 
+def starmap(function, iterable):
+  return [function(*item) for item in iterable]
+
+
 def issubset(iterable, set):
   return all(itertools.imap(set.__contains__, iterable))
 
