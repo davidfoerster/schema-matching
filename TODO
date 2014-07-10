@@ -1,6 +1,7 @@
 Necessary:
-  - Testing
-  - Find reasonable weights for collcetors
+  - Divide sum of colecctor norms by collector count
+  - Implement coefficient-based norms (e. g. coefficient of variation)
+  - Find reasonable weights for collectors
   - More testing
 
 Optional:

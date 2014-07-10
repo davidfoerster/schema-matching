@@ -198,7 +198,7 @@ def validate_result(in_paths, found_mappings, reversed=False, offset=1):
 
   schema_desc = map(read_descriptor, in_paths)
   rschema_desc = map(utilities.rdict, schema_desc)
-  
+
   # build column mapping dictionary
   found_mappings = {k + offset: v + offset for k, v in enumerate(found_mappings) if v is not None}
   invalid_count = 0
