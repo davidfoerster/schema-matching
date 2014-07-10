@@ -6,7 +6,6 @@ import utilities
 from utilities import (infinity, DecodableUnicode)
 import utilities.iterator as uiterator
 import utilities.functional as ufunctional
-import utilities.operator as uoperator
 from collector import MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
 from collector.itemaverage import ItemAverageCollector
@@ -175,19 +174,14 @@ def get_best_schema_mapping(distance_matrix):
     return best_match[0], tuple(itertools.repeat(None, maxI))
 
 
-def validate_result(in_paths, column_mappings, reversed=False, offset=1):
+def validate_result(in_paths, found_mappings, reversed=False, offset=1):
   """
   :param in_paths: list[str]
-  :param column_mappings: list[int]
+  :param found_mappings: list[int]
   :param reversed: bool
   :param offset: int
   :return: (int, int, int)
   """
-
-  # build column mapping dictionary
-  column_mappings = {k + offset: v + offset for k, v in enumerate(column_mappings)}
-  if reversed:
-    mapping = utilities.rdict(column_mappings)
 
   # read expected column mappings
   def read_descriptor(path):
@@ -203,38 +197,32 @@ def validate_result(in_paths, column_mappings, reversed=False, offset=1):
       }
 
   schema_desc = map(read_descriptor, in_paths)
-  rschema_desc1 = utilities.rdict(schema_desc[1])
+  rschema_desc = map(utilities.rdict, schema_desc)
+  
+  # build column mapping dictionary
+  found_mappings = {k + offset: v + offset for k, v in enumerate(found_mappings) if v is not None}
   invalid_count = 0
   impossible_count = 0
 
   # find mismatches
-  for column_mapping in column_mappings.iteritems():
-    found, expected = \
-      itertools.starmap(dict.__getitem__,
-        itertools.izip(schema_desc, column_mapping))
-    assert found is schema_desc[0][column_mapping[0]]
-    assert expected is schema_desc[1][column_mapping[1]]
-    if found != expected:
-      invalid_count += 0
-      if found not in rschema_desc1:
-        impossible_count += 1
-        expected = None
+  for found_mapping in found_mappings.iteritems():
+    original_mapping = map(dict.__getitem__, schema_desc, found_mapping)
+    expected = rschema_desc[1].get(original_mapping[0])
+    if expected is None:
+      impossible_count += 1
+    else:
+      invalid_count += operator.ne(*original_mapping)
+
     print('found {2} => {3}, expected {2} => {0} -- {1}'.format(
-      expected, 'ok' if found == expected else 'MISMATCH!', *column_mapping))
+      expected, 'ok' if found_mapping[1] == expected else 'MISMATCH!', *found_mapping))
 
   # find missing matches
-  missing_count = len(schema_desc[0]) - len(column_mappings)
-  if missing_count > 0:
-    missing_count = 0
-    missed_mappings = itertools.ifilterfalse(
-      column_mappings.__contains__, schema_desc[0].iteritems())
-    missed_mappings = uiterator.teemap(
-      missed_mappings, None, rschema_desc1.get)
-    missed_mappings = itertools.ifilterfalse(
-        ufunctional.composefn(uoperator.second, uoperator.isnone), # rule out impossible mappings
-        missed_mappings)
-    for missing in missed_mappings:
-      print('expected {} => {} -- MISSED!'.format(*missing))
+  missing_count = 0
+  for k in rschema_desc[0].viewkeys() | rschema_desc[1].viewkeys():
+    v = rschema_desc[1].get(k)
+    k = rschema_desc[0].get(k)
+    if k is not None and v is not None and k not in found_mappings:
+      print('expected {} => {} -- MISSED!'.format(k, v))
       missing_count += 1
 
   return invalid_count, impossible_count, missing_count
