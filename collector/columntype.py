@@ -48,8 +48,19 @@ def tofloat(item):
 
 class ColumnTypeItemCollector(ItemCollector):
 
-  __type_sequence = (None, long, float, str)
-  __transformers = (None, long, tofloat, str)
+  __type_sequence = (long, float, unicode)
+  __type_rdict = utilities.rdict(enumerate(__type_sequence))
+  __distance_matrix = [
+    [
+        float(a is not b)
+      if isinstance(a, Number) is isinstance(b, Number) else
+        infinity
+      for a in __type_sequence
+    ]
+    for b in __type_sequence
+  ]
+
+  __transformers = (long, tofloat, utilities.DecodableUnicode)
 
 
   @staticmethod
@@ -63,7 +74,7 @@ class ColumnTypeItemCollector(ItemCollector):
 
   def __init__(self, set_length = None, tolerance = (2, 0.25, 0.05)):
     ItemCollector.__init__(self)
-    self.__type_index = 0
+    self.__type_index = None
     self.__tol_exceeded_count = 0
 
     self.__tol_max_invalid_abs, self.__tol_max_invalid_rel, self.__tol_exceeded_max_rel = tolerance
@@ -73,13 +84,13 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
   def collect(self, item, collector_set = None):
-    if self.__type_index <= 1: # None or long
+    if self.__type_index <= 0: # none or long
       if item == '-' or item.isdigit():
-        self.__type_index = 1
+        self.__type_index = 0
         return
-      self.__type_index = 2
+      self.__type_index = 1
 
-    if self.__type_index == 2: # float
+    if self.__type_index == 1: # float
       info = decimal_info(item)
       if info:
         if not info[2]:
@@ -92,7 +103,7 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
   def get_result(self, collector_set = None):
-    if self.__type_index == 2 and self.__total_exceeded_max_abs is None:
+    if self.__type_index == 1 and self.__total_exceeded_max_abs is None:
       set_length = self.__get_set_length(collector_set)
       self.__total_exceeded_max_abs = \
         0 if set_length is None else int(set_length * self.__tol_exceeded_max_rel)
@@ -108,14 +119,10 @@ class ColumnTypeItemCollector(ItemCollector):
 
   @staticmethod
   def result_norm(a, b):
-    type_sequence_index = ColumnTypeItemCollector.__type_sequence.index
-    a, b = utilities.minmax(type_sequence_index(a), type_sequence_index(b))
-    if a <= 0:
-      return None
-    if b == 3 and a < b: # 3 ≙ str
-      return float('inf')
-    else:
-      return int(a == b)
+    return (
+      ColumnTypeItemCollector.__distance_matrix
+        [ColumnTypeItemCollector.__type_rdict[a]]
+        [ColumnTypeItemCollector.__type_rdict[b]])
 
 
   def as_str(self, collector_set = None, format_spec=None):
