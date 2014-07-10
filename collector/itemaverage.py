@@ -13,4 +13,6 @@ class ItemAverageCollector(ItemCollector):
 
 
   def get_result(self, collector_set):
-    return collector_set[ItemSumCollector].get_result() / collector_set[ItemCountCollector].get_result()
+    sumcoll = collector_set[ItemSumCollector]
+    return (sumcoll.get_result() /
+      (collector_set[ItemCountCollector].get_result() - sumcoll.type_error_count))

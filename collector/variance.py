@@ -16,9 +16,12 @@ class ItemVarianceCollector(ItemCollector):
 
 
   def collect(self, item, collector_set=None):
-    if not isnan(item):
-      self.sum_of_squares += (item - self.average) ** 2
-      self.sum_of_squares_count += 1
+    try:
+      if not isnan(item):
+        self.sum_of_squares += (item - self.average) ** 2
+        self.sum_of_squares_count += 1
+    except TypeError:
+      pass
 
 
   def get_result(self, collector_set = None):
@@ -32,3 +35,13 @@ class ItemStandardDeviationCollector(ItemCollector):
 
   def get_result(self, collector_set):
     return sqrt(collector_set[ItemVarianceCollector].get_result(collector_set))
+
+
+
+class ItemVariationCoefficientCollector(ItemCollector):
+
+  result_dependencies = (ItemVarianceCollector,)
+
+  def get_result(self, collector_set = None):
+    varcoll = collector_set[ItemVarianceCollector]
+    return sqrt(varcoll.get_result()) / varcoll.average
