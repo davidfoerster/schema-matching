@@ -9,7 +9,7 @@ class ItemLetterCountCollector(ItemCollector):
 
 
   def collect(self, item, collector_set = None):
-    assert isinstance(item, str)
+    assert isinstance(item, basestring)
     self.letter_count += len(item)
 
 

@@ -9,9 +9,9 @@ class ItemLetterAbsoluteFrequencyCollector(ItemCollector):
 
 
   def collect(self, item, collector_set=None):
-    if type(item) is str:
-      for c in item:
-        self.absolute_letter_frequencies[c] += 1
+    assert isinstance(item, basestring)
+    for c in item:
+      self.absolute_letter_frequencies[c] += 1
 
 
   def get_result(self, collector_set=None):
