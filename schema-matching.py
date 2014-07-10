@@ -1,8 +1,9 @@
 #!/usr/bin/python
 from __future__ import print_function
-import csv, sys, os.path, itertools, operator, math
+import csv, sys, os.path, itertools, operator, math, locale
 import collector, collector.columntype
 import utilities
+from utilities import (infinity, DecodableUnicode)
 import utilities.iterator as uiterator
 import utilities.functional as ufunctional
 import utilities.operator as uoperator
@@ -101,10 +102,12 @@ def collect(path, *phase_descriptions):
   if __debug__:
     print(path, end=':\n', file=sys.stderr)
 
-  with open(path, 'r') as f:
-    multiphasecollector = MultiphaseCollector(
-      csv.reader(f, delimiter=';', skipinitialspace=True))
-    uiterator.map_inplace(str.strip, multiphasecollector.rowset, 1)
+  with open(path, 'rb') as f:
+    reader = csv.reader(f, delimiter=';', skipinitialspace=True)
+    reader = itertools.imap(
+      lambda list: uiterator.map_inplace(lambda item: DecodableUnicode(item.strip()), list),
+      reader)
+    multiphasecollector = MultiphaseCollector(reader)
 
     multiphasecollector(ColumnTypeItemCollector(len(multiphasecollector.rowset)))
     if __debug__:
@@ -242,4 +245,5 @@ def print_result(column_mappings, reversed=False, offset=1):
 
 
 if __name__ == '__main__':
+  assert locale.getpreferredencoding().upper() == 'UTF-8'
   sys.exit(main(*sys.argv[1:]))
