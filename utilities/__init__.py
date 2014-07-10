@@ -1,5 +1,8 @@
 from __future__ import absolute_import
-import itertools, sys
+import itertools, sys, locale, unicodedata
+
+
+infinity = float('inf')
 
 
 def minmax(*args):
@@ -47,3 +50,31 @@ def openspecial(path, mode='r', *args):
   else:
     f = __openspecial_names.get(path)
     return open(path, mode, *args) if f is None else f
+
+
+def isprint(c):
+  return unicodedata.category(c)[0] not in 'CZ'
+
+
+def char_repr(c):
+  if isprint(c):
+    assert len(format(c, ''))
+    return c
+  else:
+    code = ord(c)
+    return \
+      ('\\u{:04x}' if isinstance(c, unicode) and code >= 0x80 else '\\x{:02x}') \
+        .format(code)
+
+
+class DecodableUnicode(unicode):
+
+  default_encoding = locale.getpreferredencoding()
+
+
+  def __new__(cls, s, encoding=default_encoding, *args):
+    return s if isinstance(s, unicode) else unicode.__new__(cls, s, encoding, *args)
+
+
+  def decode(self, *args):
+    return self
