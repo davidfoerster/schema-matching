@@ -32,3 +32,12 @@ class LetterStandardDeviationCollector(ItemCollector):
 
   def get_result(self, collector_set):
     return sqrt(collector_set[LetterVarianceCollector].get_result(collector_set))
+
+
+class LetterVariationCoefficient(ItemCollector):
+
+  result_dependencies = (LetterVarianceCollector,)
+
+  def get_result(self, collector_set):
+    varcoll = collector_set[LetterVarianceCollector]
+    return sqrt(varcoll.get_result(collector_set)) / varcoll.letter_average

@@ -1,6 +1,6 @@
 from collector.itemaverage import ItemAverageCollector
 from collector.letteraverage import ItemLetterAverageCollector
-from collector.variance import ItemStandardDeviationCollector
+from collector.variance import ItemVariationCoefficientCollector
 from collector.lettervariance import LetterStandardDeviationCollector
 from collector.relativeletterfrequency import ItemLetterRelativeFrequencyCollector
 
@@ -10,7 +10,7 @@ phase_description = (
     ItemLetterAverageCollector, ItemAverageCollector),
   ),
   (collector.columntype.factory(
-    LetterStandardDeviationCollector, ItemStandardDeviationCollector),
+    LetterStandardDeviationCollector, ItemVariationCoefficientCollector),
   collector.columntype.factory(
     ItemLetterRelativeFrequencyCollector, None)
   )
