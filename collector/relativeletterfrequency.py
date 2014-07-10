@@ -30,4 +30,4 @@ class ItemLetterRelativeFrequencyCollector(ItemCollector):
 
   @staticmethod
   def result_norm(a, b):
-    return ProbabilityDistribution(a).distance_to(ProbabilityDistribution(b))
+    return ProbabilityDistribution(a).distance_to(ProbabilityDistribution(b)) / 2
