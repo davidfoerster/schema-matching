@@ -113,7 +113,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
       a = self.__collector_set
       b = other.__collector_set
       if not utilities.issubset(a.iterkeys(), b):
-        return None
+        return 1e9 # TODO: Find an algorithm that allows for a "maximum" distance, e. g. by normalising everything
 
       def distance_of_unweighted(a_coll):
         assert a[type(a_coll)] is a_coll

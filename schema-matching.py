@@ -64,8 +64,8 @@ def main(*argv):
   # collect from both input files
   collectors = [collect(path, *collector_phase_description) for path in in_paths]
 
-  # The first collector shall have the most columns.
-  isreversed = len(collectors[0].merged_predecessors) < len(collectors[1].merged_predecessors)
+  # The first collector shall have the least columns.
+  isreversed = len(collectors[0].merged_predecessors) > len(collectors[1].merged_predecessors)
   if isreversed:
     collectors.reverse()
     in_paths.reverse()
@@ -132,40 +132,47 @@ def get_best_schema_mapping(distance_matrix):
   :param distance_matrix: list[list[float]]
   :return: (float, tuple[int])
   """
+  # TODO: clean this function up and optimise it
   assert operator.eq(*utilities.minmax(map(len, distance_matrix)))
-  infinity = float('inf')
+  successor = (1).__add__
+  predecessor = (-1).__add__
 
-  maxI = len(distance_matrix)
-  rangeJ = xrange(len(distance_matrix[0]))
-  known_mappings = list(itertools.repeat(None, maxI))
-  ismapped = list(itertools.repeat(False, len(rangeJ)))
+  maxI = len(distance_matrix) # row count
+  maxJ = len(distance_matrix[0]) # column count
+  assert maxI >= maxJ
+  rangeI = xrange(maxI)
+  rangeJ = xrange(maxJ)
+  known_mappings = list(itertools.repeat(None, maxJ))
+  #ismapped = list(itertools.repeat(False, maxJ))
+  def unmapped(): return itertools.ifilter(lambda j: known_mappings[j] is None, rangeJ)
 
-  def sweep_row(i):
+  def sweep_row(i, skippable_count):
+    if skippable_count < 0:
+      return infinity, None
     if i == maxI:
       return 0, tuple(known_mappings)
 
-    minlength = infinity
-    minpath = None
-    for j in itertools.ifilterfalse(ismapped.__getitem__, rangeJ):
+    # try to skip column j
+    minlength, minpath = sweep_row(i + 1, skippable_count - 1)
+
+    for j in unmapped():
       d = distance_matrix[i][j]
-      if d is None or minlength <= d:
-        continue
-
-      known_mappings[i] = j
-      ismapped[j] = True
-      length, path = sweep_row(i + 1)
-      ismapped[j] = False
-      if path is None:
-        continue
-
-      length += d
-      if length < minlength:
-        minlength = length
-        minpath = path
-
+      if d is not infinity:
+        known_mappings[j] = i
+        length, path = sweep_row(i + 1, skippable_count)
+        known_mappings[j] = None
+        length += d
+        if length < minlength:
+          assert path is not None
+          minlength = length
+          minpath = path
     return minlength, minpath
 
-  return sweep_row(0)
+  best_match = sweep_row(0, maxI - maxJ)
+  if best_match[1] is not None:
+    return best_match
+  else:
+    return best_match[0], tuple(itertools.repeat(None, maxI))
 
 
 def validate_result(in_paths, column_mappings, reversed=False, offset=1):
