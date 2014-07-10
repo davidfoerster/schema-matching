@@ -71,8 +71,8 @@ class ItemCollector(object):
     return abs(a - b)
 
 
-  def as_str(self, collector_set):
-    return str(self.get_result(collector_set))
+  def as_str(self, collector_set, format_spec=''):
+    return format(self.get_result(collector_set), format_spec)
 
 
   def __str__(self):
@@ -144,10 +144,10 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
     return None
 
 
-  def as_str(self, collector_set=None):
+  def as_str(self, collector_set=None, format_spec=''):
     assert collector_set is None
-    return '{{{}}}'.format(', '.join(
-      ('{}: {}'.format(type(collector).__name__, collector.as_str(self))
+    return u'{{{}}}'.format(u', '.join(
+      (u'{}: {}'.format(type(collector).__name__, collector.as_str(self, format_spec))
         for collector in self.itervalues()
         if not collector.isdependency)))
 
@@ -221,8 +221,12 @@ class RowCollector(list):
     ]
 
 
-  def __str__(self):
-    return '({})'.format(', '.join(itertools.imap(str, self)))
+  def as_str(self, format_spec=''):
+    return u'({})'.format(u', '.join(
+      itertools.imap(ufunctional.apply_memberfn('as_str', None, format_spec), self)))
+
+
+  __str__ = as_str
 
 
 

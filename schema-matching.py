@@ -116,7 +116,7 @@ def collect(path, *phase_descriptions):
     for phase_description in phase_descriptions:
       multiphasecollector(*phase_description)
       if __debug__:
-        print(multiphasecollector.merged_predecessors, file=sys.stderr)
+        print(multiphasecollector.merged_predecessors.as_str(number_format), file=sys.stderr)
     if __debug__:
       print(file=sys.stderr)
 
