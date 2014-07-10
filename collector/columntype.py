@@ -1,6 +1,7 @@
 # coding=utf-8
 
-import re, utilities, itertools, numbers
+from __future__ import absolute_import
+import re, utilities, utilities.string, itertools, numbers
 from numbers import Number
 from utilities import infinity
 from utilities.iterator import countif
@@ -60,7 +61,7 @@ class ColumnTypeItemCollector(ItemCollector):
     for b in __type_sequence
   ]
 
-  __transformers = (long, tofloat, utilities.DecodableUnicode)
+  __transformers = (long, tofloat, utilities.string.DecodableUnicode)
 
 
   @staticmethod

@@ -1,5 +1,5 @@
 from __future__ import division
-import utilities
+import utilities.string
 from collector import ItemCollector
 from collector.lettercount import ItemLetterCountCollector
 from collector.absoluteletterfrequency import ItemLetterAbsoluteFrequencyCollector
@@ -24,7 +24,7 @@ class ItemLetterRelativeFrequencyCollector(ItemCollector):
 
   def as_str(self, collector_set, number_fmt=''):
     return u'({})'.format(u', '.join((
-      u'{}: {:{}}'.format(utilities.char_repr(char), frequency, number_fmt)
+      u'{}: {:{}}'.format(utilities.string.char_repr(char), frequency, number_fmt)
       for char, frequency in self.get_result(collector_set))))
 
 

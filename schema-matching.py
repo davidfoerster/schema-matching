@@ -1,11 +1,12 @@
 #!/usr/bin/python
 from __future__ import print_function
-import csv, sys, os.path, itertools, operator, math, locale
-import collector, collector.columntype
-import utilities
-from utilities import (infinity, DecodableUnicode)
+import csv, sys, os.path, itertools, operator, math
+import utilities, utilities.file
+from utilities import infinity
+from utilities.string import DecodableUnicode
 import utilities.iterator as uiterator
 import utilities.functional as ufunctional
+import collector, collector.columntype
 from collector import MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
 from collector.itemaverage import ItemAverageCollector
@@ -49,11 +50,11 @@ def main(*argv):
     if argv[2] == '--validate':
       must_validate = True
     else:
-      sys.stdout = utilities.openspecial(argv[2], 'w')
+      sys.stdout = utilities.file.openspecial(argv[2], 'w')
 
   # determine collector weights to use
   if len(argv) > 3:
-    with utilities.openspecial(argv[3], 'rb') as f:
+    with utilities.file.openspecial(argv[3], 'rb') as f:
       import pickle
       weights = pickle.load(f)
   else:
@@ -244,5 +245,5 @@ def print_result(column_mappings, reversed=False, offset=1):
 
 
 if __name__ == '__main__':
-  assert locale.getpreferredencoding().upper() == 'UTF-8'
+  assert DecodableUnicode.default_encoding.upper() == 'UTF-8'
   sys.exit(main(*sys.argv[1:]))
