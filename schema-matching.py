@@ -240,7 +240,7 @@ def print_result(column_mappings, reversed=False, offset=1):
   ]
   if reversed:
     column_mappings.reverse()
-  print(*itertools.starmap(','.join, itertools.izip(*column_mappings)), sep='\n')
+  print(*itertools.imap(','.join, itertools.izip(*column_mappings)), sep='\n')
 
 
 if __name__ == '__main__':
