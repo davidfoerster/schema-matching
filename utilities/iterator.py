@@ -2,6 +2,16 @@ from __future__ import absolute_import
 import itertools
 
 
+if __debug__:
+  from __builtin__ import (map, filter)
+  def filterfalse(function, iterable): return list(itertools.ifilterfalse(function, iterable))
+
+else:
+  from itertools import imap as map
+  from itertools import ifilter as filter
+  from itertools import ifilterfalse as filterfalse
+
+
 def each(function, iterable):
   for item in iterable:
     function(item)
@@ -47,4 +57,4 @@ def count_if(function, iterable):
 
 
 def teemap(iterable, *functions):
-  return itertools.imap(lambda item: [item if f is None else f(item) for f in functions], iterable)
+  return map(lambda item: [item if f is None else f(item) for f in functions], iterable)
