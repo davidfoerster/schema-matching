@@ -15,6 +15,7 @@ from collector.lettervariance import LetterStandardDeviationCollector
 from collector.relativeletterfrequency import ItemLetterRelativeFrequencyCollector
 
 
+
 # TODO: tweak
 collector_phase_description = (
   (collector.columntype.factory(
@@ -40,12 +41,12 @@ def main(*argv):
   :return: int
   """
   in_paths = [argv[0], argv[1]]
-  validate = False
+  must_validate = False
 
   # determine mode and/or output file
   if len(argv) > 2:
     if argv[2] == '--validate':
-      validate = True
+      must_validate = True
     else:
       sys.stdout = utilities.openspecial(argv[2], 'w')
 
@@ -62,8 +63,8 @@ def main(*argv):
   collectors = [collect(path, *collector_phase_description) for path in in_paths]
 
   # The first collector shall have the most columns.
-  reversed = len(collectors[0].merged_predecessors) < len(collectors[1].merged_predecessors)
-  if reversed:
+  isreversed = len(collectors[0].merged_predecessors) < len(collectors[1].merged_predecessors)
+  if isreversed:
     collectors.reverse()
     in_paths.reverse()
 
@@ -78,13 +79,13 @@ def main(*argv):
     print('norm:', best_match[0], file=sys.stderr)
 
   # print or validate best match
-  if validate:
-    validate = validate_result(in_paths, best_match[1], reversed)
-    print('\n{} invalid, {} impossible, and {} missing matches'.format(*validate))
-    return int(validate[0] or validate[2])
+  if must_validate:
+    validation_result = validate_result(in_paths, best_match[1], isreversed)
+    print('\n{} invalid, {} impossible, and {} missing matches'.format(*validate_result))
+    return int(validation_result[0] or validation_result[2])
 
   else:
-    print_result(best_match[1], reversed)
+    print_result(best_match[1], isreversed)
     return 0
 
 

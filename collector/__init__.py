@@ -230,7 +230,7 @@ class MultiphaseCollector(object):
   """Manages a sequence of collection phases"""
 
   def __init__(self, rowset):
-    self.rowset = rowset if isinstance(rowset, tuple) else tuple(rowset)
+    self.rowset = rowset if isinstance(rowset, (tuple, list)) else tuple(rowset)
     #assert operator.eq(*utilities.minmax(itertools.imap(len, self.rowset)))
     self.merged_predecessors = itertools.repeat(None, len(self.rowset[0]))
 

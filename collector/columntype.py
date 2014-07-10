@@ -1,14 +1,17 @@
 # coding=utf-8
 
-import re, utilities, itertools
+import re, utilities, itertools, numbers
 from numbers import Number
-from utilities.iterator import count_if
+from utilities import infinity
+from utilities.iterator import countif
 from collector import ItemCollector
 from collector.itemcount import ItemCountCollector
 
 
+__decimal_regex = r"\s*([-+]?)(|\d[^,.]*?|[^,.]*\d|.*?([,.]).*?)\s*$"
+
 def decimal_info(item):
-  m = re.match(r"\s*([-+]?)(|\d[^,.]*?|[^,.]*\d|.*?([,.]).*?)\s*$", item)
+  m = re.match(__decimal_regex, item)
   if not m:
     return None
 
@@ -54,7 +57,7 @@ class ColumnTypeItemCollector(ItemCollector):
     if isinstance(x, dict):
       icc = x.get(ItemCountCollector)
       x = icc.get_result(x) if icc else None
-    assert x is None or isinstance(x, int)
+    assert x is None or isinstance(x, numbers.Integral)
     return x
 
 
@@ -115,8 +118,8 @@ class ColumnTypeItemCollector(ItemCollector):
       return int(a == b)
 
 
-  def as_str(self, collector_set = None):
-    return '({}, {})'.format(self.get_result(None).__name__, self.__tol_exceeded_count)
+  def as_str(self, collector_set = None, format_spec=None):
+    return '({}:{})'.format(self.get_result(None).__name__, self.__tol_exceeded_count)
 
 
 
