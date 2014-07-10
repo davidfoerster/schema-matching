@@ -15,3 +15,10 @@ def openspecial(path, mode='r', *args):
   else:
     f = __openspecial_names.get(path)
     return open(path, mode, *args) if f is None else f
+
+
+def fix_file_encoding(file):
+  if not file.encoding:
+    wrapper_factory = codecs.getwriter if is_write_mode(file.mode) else codecs.getreader
+    file = wrapper_factory(DecodableUnicode.default_encoding)(file)
+  return file

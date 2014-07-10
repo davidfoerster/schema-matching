@@ -246,4 +246,5 @@ def print_result(column_mappings, reversed=False, offset=1):
 
 if __name__ == '__main__':
   assert DecodableUnicode.default_encoding.upper() == 'UTF-8'
+  sys.stderr = utilities.file.fix_file_encoding(sys.stderr)
   sys.exit(main(*sys.argv[1:]))
