@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 import re, utilities, utilities.string, itertools, numbers
 from numbers import Number
 from utilities import infinity
@@ -37,13 +37,18 @@ def decimal_info(item):
 
 
 def tofloat(item):
-  assert decimal_info(item)
-  if ',' in item:
-    item = item.replace(',', '.', 1)
+  item = item.replace(',', '.', 1)
   try:
     return float(item)
   except ValueError:
-    return float('NaN')
+    return None
+
+
+def tolong(item):
+  try:
+    return long(item)
+  except ValueError:
+    return None
 
 
 
@@ -61,7 +66,7 @@ class ColumnTypeItemCollector(ItemCollector):
     for b in __type_sequence
   ]
 
-  __transformers = (long, tofloat, utilities.string.DecodableUnicode)
+  __transformers = (tolong, tofloat, utilities.string.DecodableUnicode)
 
 
   @staticmethod
