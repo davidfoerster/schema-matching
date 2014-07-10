@@ -3,6 +3,7 @@ import itertools
 
 
 infinity = float('inf')
+NaN = float('NaN')
 
 
 def minmax(*args):

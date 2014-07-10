@@ -1,6 +1,6 @@
 #!/usr/bin/python -OO
 from __future__ import print_function
-import csv, sys, os.path, itertools, operator
+import csv, sys, os.path, itertools, operator, collections
 import utilities, utilities.file
 from utilities import infinity
 from utilities.string import DecodableUnicode
@@ -17,100 +17,145 @@ def main(*argv):
   :param argv: tuple[str]
   :return: int
   """
-  in_paths = [argv[0], argv[1]]
-  must_validate = False
 
-  # determine mode and/or output file
-  if len(argv) > 2:
-    if argv[2] == '--validate':
-      must_validate = True
-    else:
-      sys.stdout = utilities.file.openspecial(argv[2], 'w')
+  # parse arguments
+  argv = list(argv)
+
+  # action to perform
+  action = None
+  if argv[0].startswith('--'):
+    action = argv[0][2:]
+    del argv[0]
+
+  # input files
+  in_paths = argv[:2]
+  del argv[:len(in_paths)]
+
+  # output file
+  if argv:
+    sys.stdout = utilities.file.openspecial(argv[0], 'w')
+    del argv[0]
 
   # determine collector descriptions to use
+  if argv:
+    collector_description = argv[0]
+    del argv[0]
+  else:
+    collector_description = None
+  collector_description = get_collector_description(collector_description)
+
+  # read and analyse data
+  collectors, isreversed, best_match = collect_analyse_match(in_paths, collector_description)
+
+  # print or validate best match
+  if action is None:
+    print('norm:', format(best_match[0], number_format), file=sys.stderr)
+    print_result(best_match[1], isreversed)
+    return 0
+
+  elif action == 'validate':
+    validation_result = validate_result(in_paths, best_match[1])
+    print('\n{2} invalid, {3} impossible, and {4} missing matches, norm = {0:{1}}'.format(
+      best_match[0], number_format, *validation_result))
+    return int(validation_result[0] or validation_result[2])
+
+  else:
+    print('Unknown action:', action, file=sys.stderr)
+    return 2
+
+
+
+__collector_description_exec_environment =  {
+  'collector': __import__('collector')
+}
+
+def get_collector_description(srcpath=None):
+  """
+  :param srcpath: str
+  :return: dict
+  """
   collector_description = {
     'phase_description': [],
     'collector_weights': None
   }
-  if len(argv) > 3:
-    collector_description_file = argv[3]
-  else:
-    collector_description_file = \
-      os.path.join(os.path.dirname(os.path.realpath(__file__)),
-        'collector-description-default.py')
-  execfile(collector_description_file,
-    {
-      'collector': __import__('collector')
-    },
+  if srcpath is None:
+    srcpath = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+      'collector-description-default.py')
+  execfile(srcpath, __collector_description_exec_environment,
     collector_description)
+  return collector_description
 
-  # collect from both input files
-  collectors = [
-    collect(path, *collector_description['phase_description'])
-    for path in in_paths]
+
+def collect_analyse_match(collectors, collector_description):
+  """
+  :param collectors: list[basestring | MultiphaseCollector]
+  :param collector_description: dict
+  :return: list[MultiphaseCollector], bool, tuple[int]
+  """
+  assert isinstance(collectors, collections.Sequence) and len(collectors) == 2
+  collect_functor = \
+    ufunctional.apply_memberfn(collect,
+      *collector_description['phase_description'])
+
+  if isinstance(collectors[0], MultiphaseCollector):
+    assert isinstance(collectors[1], MultiphaseCollector)
+    uiterator.each(collect_functor, collectors)
+  else:
+    collectors = map(collect_functor, collectors)
 
   # The first collector shall have the least columns.
   isreversed = len(collectors[0].merged_predecessors) > len(collectors[1].merged_predecessors)
   if isreversed:
     collectors.reverse()
-    in_paths.reverse()
 
   # analyse collected data
   norms = MultiphaseCollector.results_norms(*collectors,
     weights=collector_description['collector_weights'])
   if __debug__:
-    print(*reversed(in_paths), sep=' / ', end='\n| ', file=sys.stderr)
+    print(collectors[1].name, collectors[0].name, sep=' / ', end='\n| ', file=sys.stderr)
     formatter = ufunctional.apply_memberfn(format, number_format)
     print(
       *['  '.join(itertools.imap(formatter, row)) for row in norms],
       sep=' |\n| ', end=' |\n\n', file=sys.stderr)
 
   # find minimal combination
-  best_match = get_best_schema_mapping(norms)
-
-  # print or validate best match
-  if must_validate:
-    validation_result = validate_result(in_paths, best_match[1], isreversed)
-    print('\n{2} invalid, {3} impossible, and {4} missing matches, norm = {0:{1}}'.format(
-      best_match[0], number_format, *validation_result))
-    return int(validation_result[0] or validation_result[2])
-
-  else:
-    print('norm:', format(best_match[0], number_format), file=sys.stderr)
-    print_result(best_match[1], isreversed)
-    return 0
+  return collectors, isreversed, get_best_schema_mapping(norms)
 
 
-def collect(path, *phase_descriptions):
+def collect(src, *phase_descriptions):
   """
   Collects info about the columns of the data set in file "path" according
   over multiple phases based on a description of those phases.
 
-  :param path: str
+  :param path: str, MultiphaseCollector
   :param phase_descriptions: tuple[tuple[type | ItemCollector | callable]]
   :return: MultiphaseCollector
   """
-  if __debug__:
-    print(path, end=':\n', file=sys.stderr)
+  if isinstance(src, MultiphaseCollector):
+    multiphasecollector = src
 
-  with open(path, 'rb') as f:
-    reader = csv.reader(f, delimiter=';', skipinitialspace=True)
-    reader = itertools.imap(
-      lambda list: uiterator.map_inplace(lambda item: DecodableUnicode(item.strip()), list),
-      reader)
-    multiphasecollector = MultiphaseCollector(reader)
-
-    phase_descriptions = (
-      ((ColumnTypeItemCollector(len(multiphasecollector.rowset)),),) +
-      phase_descriptions)
-    for phase_description in phase_descriptions:
-      multiphasecollector(*phase_description)
-      if __debug__:
-        print(multiphasecollector.merged_predecessors.as_str(number_format), file=sys.stderr)
+  else:
     if __debug__:
-      print(file=sys.stderr)
+      print(src, end=':\n', file=sys.stderr)
 
-    return multiphasecollector
+    with open(src, 'rb') as f:
+      reader = csv.reader(f, delimiter=';', skipinitialspace=True)
+      reader = itertools.imap(
+        lambda list: uiterator.map_inplace(lambda item: DecodableUnicode(item.strip()), list),
+        reader)
+      multiphasecollector = MultiphaseCollector(reader, os.path.basename(src))
+
+  phase_descriptions = (
+    ((ColumnTypeItemCollector(len(multiphasecollector.rowset)),),) +
+    phase_descriptions)
+  for phase_description in phase_descriptions:
+    multiphasecollector(*phase_description)
+    if __debug__:
+      print(multiphasecollector.merged_predecessors.as_str(number_format), file=sys.stderr)
+  if __debug__:
+    print(file=sys.stderr)
+
+  return multiphasecollector
 
 
 def get_best_schema_mapping(distance_matrix):
@@ -161,11 +206,10 @@ def get_best_schema_mapping(distance_matrix):
     return best_match[0], tuple(itertools.repeat(None, maxI))
 
 
-def validate_result(in_paths, found_mappings, reversed=False, offset=1):
+def validate_result(in_paths, found_mappings, offset=1):
   """
   :param in_paths: list[str]
   :param found_mappings: list[int]
-  :param reversed: bool
   :param offset: int
   :return: (int, int, int)
   """
