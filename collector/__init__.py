@@ -186,7 +186,8 @@ class RowCollector(list):
       print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file = sys.stderr)
 
     assert len(self) <= len(items)
-    uiterator.each_unpack(lambda collector, item: collector.collect(item, collector), itertools.izip(self, items))
+    def collect(collector, item): collector.collect(item, collector)
+    uiterator.each(collect, self, items)
 
 
   def collect_all(self, rows):
@@ -240,7 +241,7 @@ class MultiphaseCollector(object):
     phase.transform_all(self.rowset)
 
     if isinstance(self.merged_predecessors, RowCollector):
-      uiterator.each_unpack(ItemCollectorSet.update, itertools.izip(self.merged_predecessors, phase))
+      uiterator.each(ItemCollectorSet.update, self.merged_predecessors, phase)
     else:
       self.merged_predecessors = phase
 
