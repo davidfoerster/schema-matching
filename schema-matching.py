@@ -21,30 +21,24 @@ def main(*argv):
   """
 
   # parse arguments
-  argv = list(argv)
+  argv = collections.deque(argv)
 
   # action to perform
   action = None
   if argv[0].startswith('--'):
-    action = argv[0][2:]
-    del argv[0]
+    action = argv.popleft()[2:]
 
   # input files
-  in_paths = argv[:2]
-  del argv[:len(in_paths)]
+  in_paths = [argv.popleft()]
+  in_paths.append(argv.popleft())
 
   # output file
   if argv:
-    sys.stdout = utilities.file.openspecial(argv[0], 'w')
-    del argv[0]
+    sys.stdout = utilities.file.openspecial(argv.popleft(), 'w')
 
   # determine collector descriptions to use
-  if argv:
-    collector_description = argv[0]
-    del argv[0]
-  else:
-    collector_description = None
-  collector_description = get_collector_description(collector_description)
+  collector_description = \
+    get_collector_description(argv.popleft() if argv else None)
 
   # read and analyse data
   collectors, isreversed, best_match = collect_analyse_match(in_paths, collector_description)
