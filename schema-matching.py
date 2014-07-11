@@ -217,7 +217,7 @@ def validate_result(in_paths, found_mappings, offset=1):
       return {
         int(mapped): int(original)
         for mapped, original
-        in itertools.imap(ufunctional.apply_memberfn(str.split, ',', 2), f)
+        in itertools.imap(ufunctional.apply_memberfn(str.split, ',', 1), f)
       }
 
   schema_desc = map(read_descriptor, in_paths)
