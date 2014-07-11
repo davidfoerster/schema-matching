@@ -1,5 +1,6 @@
-from __future__ import absolute_import, print_function
-import os, itertools, copy, collections
+from __future__ import absolute_import, print_function, division
+import os, itertools, copy, collections, math
+from .weight import WeightDict
 import utilities
 import utilities.iterator as uiterator
 import utilities.functional as ufunctional
@@ -107,26 +108,37 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
       collector_set = self.__collector_set
       return (c.get_result(collector_set) for c in collector_set.itervalues())
 
-    def __cmp__(self, other, weights = None):
+    def __cmp__(self, other, weights = WeightDict()):
       assert isinstance(other, type(self))
       a = self.__collector_set
       b = other.__collector_set
       if not utilities.issubset(a.iterkeys(), b):
-        return 1e9 # TODO: Find an algorithm that allows for a "maximum" distance, e. g. by normalising everything
+        return weights[ItemCollectorSet].for_infinity
 
       def distance_of_unweighted(a_coll):
-        assert a[type(a_coll)] is a_coll
-        return abs(a_coll.result_norm(a_coll.get_result(a), b[type(a_coll)].get_result(b)))
+        assert a[type(a_coll)] is a_coll and type(b[type(a_coll)]) is type(a_coll)
+        return a_coll.result_norm(
+          a_coll.get_result(a), b[type(a_coll)].get_result(b))
 
+      weight_sum = utilities.NonLocal(0)
       if weights is None:
-        distance_of = distance_of_unweighted
+        def distance_of(a_coll):
+          weight_sum.value += 1
+          return distance_of_unweighted(a_coll)
       else:
         def distance_of(a_coll):
-          d = distance_of_unweighted(a_coll)
-          w = weights.get(type(a_coll))
-          return d if w is None else w(d) if callable(w) else w * d
+          weight = weights[type(a_coll)]
+          weight_sum.value += weight.for_infinity
+          return weight(distance_of_unweighted(a_coll))
 
-      return sum((distance_of(coll) for coll in a.itervalues() if not coll.isdependency))
+      value_sum = weights.sum((
+        distance_of(coll) for coll in a.itervalues() if not coll.isdependency))
+      if value_sum:
+        assert weight_sum.value > 0
+        assert math.fabs(value_sum / weight_sum.value) <= 1.0 # TODO: remove; this is not an actual requirement, just something I wanted to test for specifically
+        return value_sum / weight_sum.value
+      else:
+        return utilities.NaN
 
 
   def get_result(self, collector_set = None):

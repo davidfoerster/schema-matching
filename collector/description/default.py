@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-import collector.itemaverage, collector.letteraverage
+from ..weight import WeightDict, normalize_exp
 from ..columntype import factory as columntype_factory
 from ..itemaverage import ItemAverageCollector
 from ..letteraverage import ItemLetterAverageCollector
@@ -22,7 +22,4 @@ phase_description = (
   )
 )
 
-collector_weights = {
-  ItemAverageCollector:  collector.itemaverage.normalize,
-  ItemLetterAverageCollector: collector.letteraverage.normalize,
-}
+collector_weights = WeightDict(normalize_exp)

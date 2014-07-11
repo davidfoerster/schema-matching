@@ -2,7 +2,6 @@ from __future__ import division, absolute_import
 from . import ItemCollector
 from .itemcount import ItemCountCollector
 from .lettercount import ItemLetterCountCollector
-from .itemaverage import normalize
 
 
 class ItemLetterAverageCollector(ItemCollector):

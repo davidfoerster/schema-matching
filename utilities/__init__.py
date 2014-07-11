@@ -52,3 +52,9 @@ def get_unique_name(template, set):
     name = template.format(random.getrandbits(31))
     if name not in set:
       return name
+
+
+class NonLocal:
+
+  def __init__(self, value=None):
+    self.value = value
