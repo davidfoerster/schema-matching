@@ -1,4 +1,4 @@
-from collector import ItemCollector
+from . import ItemCollector
 
 
 class ItemCountCollector(ItemCollector):

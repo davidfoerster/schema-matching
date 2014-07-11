@@ -1,8 +1,8 @@
-from __future__ import division
+from __future__ import division, absolute_import
 from math import sqrt
-from collector import ItemCollector
-from collector.lettercount import ItemLetterCountCollector
-from collector.letteraverage import ItemLetterAverageCollector
+from . import ItemCollector
+from .lettercount import ItemLetterCountCollector
+from .letteraverage import ItemLetterAverageCollector
 
 
 class LetterVarianceCollector(ItemCollector):

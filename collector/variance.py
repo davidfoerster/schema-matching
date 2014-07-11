@@ -1,7 +1,7 @@
-from __future__ import division
-from math import (isnan, sqrt)
-from collector import ItemCollector
-from collector.itemaverage import ItemAverageCollector
+from __future__ import division, absolute_import
+from math import isnan, sqrt
+from . import ItemCollector
+from .itemaverage import ItemAverageCollector
 
 
 class ItemVarianceCollector(ItemCollector):

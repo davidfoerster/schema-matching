@@ -1,5 +1,5 @@
 from math import isnan
-from collector import ItemCollector
+from . import ItemCollector
 
 
 class ItemSumCollector(ItemCollector):

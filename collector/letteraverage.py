@@ -1,7 +1,8 @@
-from __future__ import division
-from collector import ItemCollector
-from collector.itemcount import ItemCountCollector
-from collector.lettercount import ItemLetterCountCollector
+from __future__ import division, absolute_import
+from . import ItemCollector
+from .itemcount import ItemCountCollector
+from .lettercount import ItemLetterCountCollector
+
 
 class ItemLetterAverageCollector(ItemCollector):
 

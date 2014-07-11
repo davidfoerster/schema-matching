@@ -1,9 +1,9 @@
-from __future__ import division
+from __future__ import absolute_import, division
 import utilities.string
-from collector import ItemCollector
-from collector.lettercount import ItemLetterCountCollector
-from collector.absoluteletterfrequency import ItemLetterAbsoluteFrequencyCollector
 from utilities.pdb import ProbabilityDistribution
+from . import ItemCollector
+from .lettercount import ItemLetterCountCollector
+from .absoluteletterfrequency import ItemLetterAbsoluteFrequencyCollector
 
 
 class ItemLetterRelativeFrequencyCollector(ItemCollector):

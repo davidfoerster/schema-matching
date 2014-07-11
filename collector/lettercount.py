@@ -1,4 +1,5 @@
-from collector import ItemCollector
+from __future__ import absolute_import
+from . import ItemCollector
 
 
 class ItemLetterCountCollector(ItemCollector):

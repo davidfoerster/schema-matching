@@ -1,5 +1,5 @@
 #!/usr/bin/python -OO
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import csv, sys, os.path, itertools, operator, collections
 import utilities, utilities.file
 from utilities import infinity

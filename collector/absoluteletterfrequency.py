@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 import collections
-from collector import ItemCollector
+from . import ItemCollector
 
 
 class ItemLetterAbsoluteFrequencyCollector(ItemCollector):

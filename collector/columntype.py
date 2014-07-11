@@ -5,8 +5,8 @@ import re, utilities, utilities.string, itertools, numbers
 from numbers import Number
 from utilities import infinity
 from utilities.iterator import countif
-from collector import ItemCollector
-from collector.itemcount import ItemCountCollector
+from . import ItemCollector
+from .itemcount import ItemCountCollector
 
 
 __decimal_regex = r"\s*([-+]?)(|\d[^,.]*?|[^,.]*\d|.*?([,.]).*?)\s*$"
