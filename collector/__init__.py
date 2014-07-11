@@ -12,7 +12,7 @@ if __debug__:
 
 verbosity = os.getenv('VERBOSE', '')
 try:
-  verbosity = int(verbosity if verbosity else __debug__)
+  verbosity = int(verbosity or __debug__)
 except ValueError:
   import sys
   print('Warning: Environment variable VERBOSE has unparsable, invalid content:', verbosity, file = sys.stderr)
@@ -246,7 +246,7 @@ class MultiphaseCollector(object):
 
   def __init__(self, rowset, name=None):
     self.name = name
-    self.rowset = rowset if isinstance(rowset, (tuple, list)) else tuple(rowset)
+    self.rowset = rowset if isinstance(rowset, collections.Sequence) else tuple(rowset)
     #assert operator.eq(*utilities.minmax(itertools.imap(len, self.rowset)))
     self.reset()
 
@@ -256,7 +256,9 @@ class MultiphaseCollector(object):
 
 
   def __call__(self, *collectors):
-    phase = RowCollector((ItemCollectorSet(collectors, predecessor) for predecessor in self.merged_predecessors))
+    phase = RowCollector(
+      (ItemCollectorSet(collectors, predecessor)
+        for predecessor in self.merged_predecessors))
     phase.collect_all(self.rowset)
     phase.transform_all(self.rowset)
 

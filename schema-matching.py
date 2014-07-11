@@ -29,8 +29,7 @@ def main(*argv):
     action = argv.popleft()[2:]
 
   # input files
-  in_paths = [argv.popleft()]
-  in_paths.append(argv.popleft())
+  in_paths = [argv.popleft(), argv.popleft()]
 
   # output file
   if argv:
@@ -46,21 +45,21 @@ def main(*argv):
 
   # print or validate best match
   if action is None:
-    print('norm:', format(best_match[0], number_format), file=sys.stderr)
-    print_result(best_match[1], isreversed)
-    return 0
+    print('norm:', format(best_match_norm, number_format), file=sys.stderr)
+    print_result(best_match, isreversed)
 
   elif action == 'validate':
-    validation_result = validate_result(in_paths, best_match[1])
+    invalid_count, impossible_count, missing_count = \
+      validate_result(in_paths, best_match, best_match_norm)
     print('\n{2} invalid, {3} impossible, and {4} missing matches, norm = {0:{1}}'.format(
-      best_match[0], number_format, *validation_result))
-    return int(validation_result[0] or validation_result[2])
+      best_match_norm, number_format, *validation_result))
+    return int(bool(invalid_count | missing_count))
 
   else:
     print('Unknown action:', action, file=sys.stderr)
     return 2
 
-
+  return 0
 
 
 def get_collector_description(srcpath=None):
@@ -201,7 +200,7 @@ def get_best_schema_mapping(distance_matrix):
     return best_match[0], tuple(itertools.repeat(None, maxI))
 
 
-def validate_result(in_paths, found_mappings, offset=1):
+def validate_result(in_paths, found_mappings, norm, offset=1):
   """
   :param in_paths: list[str]
   :param found_mappings: list[int]
