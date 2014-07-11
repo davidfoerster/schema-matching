@@ -41,7 +41,8 @@ def main(*argv):
     get_collector_description(argv.popleft() if argv else None)
 
   # read and analyse data
-  collectors, isreversed, best_match = collect_analyse_match(in_paths, collector_description)
+  collectors, isreversed, best_match = \
+    collect_analyse_match(in_paths, collector_description)
 
   # print or validate best match
   if action is None:
@@ -134,7 +135,8 @@ def collect(src, *phase_descriptions):
     with open(src, 'rb') as f:
       reader = csv.reader(f, delimiter=';', skipinitialspace=True)
       reader = itertools.imap(
-        lambda list: uiterator.map_inplace(lambda item: DecodableUnicode(item.strip()), list),
+        functools.partial(uiterator.map_inplace,
+          lambda item: DecodableUnicode(item.strip())),
         reader)
       multiphasecollector = MultiphaseCollector(reader, os.path.basename(src))
 
