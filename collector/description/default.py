@@ -23,5 +23,6 @@ phase_description = (
 )
 
 collector_weights = {
-
+  ItemAverageCollector:  collector.itemaverage.normalize,
+  ItemLetterAverageCollector: collector.letteraverage.normalize,
 }
