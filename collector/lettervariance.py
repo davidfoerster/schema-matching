@@ -1,5 +1,6 @@
 from __future__ import division, absolute_import
 from math import sqrt
+from utilities.operator import square
 from . import ItemCollector
 from .lettercount import ItemLetterCountCollector
 from .letteraverage import ItemLetterAverageCollector
@@ -19,7 +20,7 @@ class LetterVarianceCollector(ItemCollector):
 
 
   def collect(self, item, collector_set = None):
-    self.sum_of_squares += (len(item) - self.letter_average) ** 2
+    self.sum_of_squares += square(len(item) - self.letter_average)
 
 
   def get_result(self, collector_set):

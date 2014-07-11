@@ -12,3 +12,11 @@ def second(sequence):
 
 def isnone(x):
   return x is None
+
+
+def identity(x):
+  return x
+
+
+def square(x):
+  return x * x

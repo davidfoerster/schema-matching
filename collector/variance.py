@@ -1,5 +1,6 @@
 from __future__ import division, absolute_import
 from math import isnan, sqrt
+from utilities.operator import square
 from . import ItemCollector
 from .itemaverage import ItemAverageCollector
 
@@ -18,7 +19,7 @@ class ItemVarianceCollector(ItemCollector):
   def collect(self, item, collector_set=None):
     try:
       if not isnan(item):
-        self.sum_of_squares += (item - self.average) ** 2
+        self.sum_of_squares += square(item - self.average)
         self.sum_of_squares_count += 1
     except TypeError:
       pass
