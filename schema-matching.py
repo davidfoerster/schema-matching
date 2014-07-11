@@ -1,6 +1,8 @@
 #!/usr/bin/python -OO
 from __future__ import print_function, absolute_import
-import csv, sys, os.path, itertools, operator, collections
+import sys, os.path
+import itertools, functools, operator, collections
+import csv, imp
 import utilities, utilities.file
 from utilities import infinity
 from utilities.string import DecodableUnicode
@@ -65,25 +67,22 @@ def main(*argv):
 
 
 
-__collector_description_exec_environment =  {
-  'collector': __import__('collector')
-}
 
 def get_collector_description(srcpath=None):
   """
   :param srcpath: str
   :return: dict
   """
-  collector_description = {
-    'phase_description': [],
-    'collector_weights': None
-  }
-  if srcpath is None:
-    srcpath = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-      'collector-description-default.py')
-  execfile(srcpath, __collector_description_exec_environment,
-    collector_description)
-  return collector_description
+  if srcpath:
+    import collector.description as parent_package
+    collector_description = imp.load_source(
+      utilities.get_unique_name('collector.description._anonymous_{:08x}',
+        sys.modules),
+      srcpath)
+  else:
+    import collector.description.default as collector_description
+  return {k: getattr(collector_description, k, None)
+    for k in ('phase_description', 'collector_weights')}
 
 
 def collect_analyse_match(collectors, collector_description):

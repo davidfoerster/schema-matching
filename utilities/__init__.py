@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-import itertools
+import itertools, functools, random
 
 
 infinity = float('inf')
@@ -45,3 +45,10 @@ def min_index(*args, **kwargs):
   key = kwargs.get('key')
   kwargs['key'] = args.__getitem__ if key is None else lambda idx: key(args[idx])
   return min(*xrange(len(args)), **kwargs)
+
+
+def get_unique_name(template, set):
+  while True:
+    name = template.format(random.getrandbits(31))
+    if name not in set:
+      return name
