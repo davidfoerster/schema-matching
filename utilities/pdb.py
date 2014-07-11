@@ -1,5 +1,6 @@
 from __future__  import absolute_import
 from collections import defaultdict
+from math import fsum, fabs
 
 
 class ProbabilityDistribution(defaultdict):
@@ -14,7 +15,5 @@ class ProbabilityDistribution(defaultdict):
 
 
   def distance_to(self, compare_to):
-    return sum(
-      (abs(self.get(bin) - compare_to.get(bin))
-        for bin in self.viewkeys() | compare_to.viewkeys()),
-      0)
+    return fsum((fabs(p - compare_to[bin]) for bin, p in self.iteritems())) + \
+      fsum(p for bin, p in compare_to.iteritems() if bin not in self)
