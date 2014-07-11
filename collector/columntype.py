@@ -9,7 +9,7 @@ from . import ItemCollector
 from .itemcount import ItemCountCollector
 
 
-__decimal_regex = r"\s*([-+]?)(|\d[^,.]*?|[^,.]*\d|.*?([,.]).*?)\s*$"
+__decimal_regex = re.compile(r"\s*([-+]?)(|\d[^,.]*?|[^,.]*\d|.*?([,.]).*?)\s*$")
 
 def decimal_info(item):
   m = re.match(__decimal_regex, item)
