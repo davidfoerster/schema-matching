@@ -138,7 +138,7 @@ def collect(src, *phase_descriptions):
   :return: MultiphaseCollector
   """
   if isinstance(src, MultiphaseCollector):
-    multiphasecollector = src
+    multiphasecollector = src.reset()
 
   else:
     if __debug__:
@@ -151,10 +151,10 @@ def collect(src, *phase_descriptions):
           lambda item: DecodableUnicode(item.strip())),
         reader)
       multiphasecollector = MultiphaseCollector(reader, os.path.basename(src))
+    phase_descriptions = (
+      ((ColumnTypeItemCollector(len(multiphasecollector.rowset)),),) +
+      phase_descriptions)
 
-  phase_descriptions = (
-    ((ColumnTypeItemCollector(len(multiphasecollector.rowset)),),) +
-    phase_descriptions)
   for phase_description in phase_descriptions:
     multiphasecollector(*phase_description)
     if __debug__:

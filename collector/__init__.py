@@ -240,6 +240,8 @@ class RowCollector(list):
   __str__ = as_str
 
 
+import collector.columntype
+
 
 class MultiphaseCollector(object):
   """Manages a sequence of collection phases"""
@@ -248,11 +250,18 @@ class MultiphaseCollector(object):
     self.name = name
     self.rowset = rowset if isinstance(rowset, collections.Sequence) else tuple(rowset)
     #assert operator.eq(*utilities.minmax(itertools.imap(len, self.rowset)))
-    self.reset()
+    self.reset(None)
 
 
-  def reset(self):
-    self.merged_predecessors = itertools.repeat(None, len(self.rowset[0]))
+  def reset(self, keep=(columntype.ColumnTypeItemCollector,)):
+    if keep and isinstance(self.merged_predecessors, RowCollector):
+      should_keep = ufunctional.composefn(type, keep.__contains__)
+      self.merged_predecessors = RowCollector(
+        (ItemCollectorSet(itertools.ifilter(should_keep, predecessor.itervalues())))
+          for predecessor in self.merged_predecessors)
+    else:
+      self.merged_predecessors = itertools.repeat(None, len(self.rowset[0]))
+    return self
 
 
   def __call__(self, *collectors):
