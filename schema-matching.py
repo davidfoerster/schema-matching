@@ -2,7 +2,9 @@
 from __future__ import print_function, absolute_import
 import sys, os, os.path
 import itertools, functools, operator, collections
-import csv, imp
+import csv
+import imp, importlib
+
 import utilities, utilities.file, utilities.operator
 from utilities import infinity
 from utilities.string import DecodableUnicode
@@ -80,9 +82,9 @@ def get_collector_description(srcpath=None):
   :return: dict
   """
   if not srcpath or srcpath == ':':
-    import collector.description.default as collector_description
+    from collector.description import default as collector_description
   elif srcpath.startswith(':'):
-    collector_description = __import__(srcpath[1:])
+    collector_description = importlib.import_module(srcpath[1:])
   else:
     import collector.description as parent_package # needs to be imported before its child modules
     with open(srcpath) as f:
@@ -286,7 +288,7 @@ def compare_descriptions(in_paths, collectors, to_compare, desc=None):
   if desc:
     desc, best_match_norm, best_match = desc
     if not to_compare:
-      import collector.description.default as default_description
+      from collector.description import default as default_description
       if os.path.samefile(desc['__file__'], default_description.__file__):
         print('Error: I won\'t compare the default description to itself.')
         return 2
