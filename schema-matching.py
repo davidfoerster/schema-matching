@@ -54,8 +54,6 @@ def main(*argv):
   elif action == 'validate':
     invalid_count, impossible_count, missing_count = \
       validate_result(in_paths, best_match, best_match_norm)
-    print('\n{2} invalid, {3} impossible, and {4} missing matches, norm = {0:{1}}'.format(
-      best_match_norm, number_format, *validation_result))
     return int(bool(invalid_count | missing_count))
 
   else:
@@ -252,6 +250,9 @@ def validate_result(in_paths, found_mappings, norm, offset=1):
     if k is not None and v is not None and k not in found_mappings:
       print('expected {} => {} -- MISSED!'.format(k, v))
       missing_count += 1
+
+  print('\n{} invalid, {} impossible, and {} missing matches, norm = {:{}}'.format(
+    invalid_count, impossible_count, missing_count, norm, number_format))
 
   return invalid_count, impossible_count, missing_count
 
