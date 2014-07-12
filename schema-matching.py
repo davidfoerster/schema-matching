@@ -1,6 +1,6 @@
 #!/usr/bin/python -OO
 from __future__ import print_function, absolute_import
-import sys, os.path
+import sys, os, os.path
 import itertools, functools, operator, collections
 import csv, imp
 import utilities, utilities.file
@@ -72,19 +72,22 @@ def main(*argv):
 
 def get_collector_description(srcpath=None):
   """
-  :param srcpath: str
+  :param srcpath: basestring
   :return: dict
   """
-  if srcpath:
-    import collector.description as parent_package
-    collector_description = imp.load_source(
-      utilities.get_unique_name('collector.description._anonymous_{:08x}',
-        sys.modules),
-      srcpath)
-  else:
+  if not srcpath:
     import collector.description.default as collector_description
+  else:
+    import collector.description as parent_package # needs to be imported before its child modules
+    with open(srcpath) as f:
+      f_stat = os.fstat(f.fileno())
+      module_name = \
+        '{}._anonymous_{}_{}'.format(
+          parent_package.__name__, f_stat.st_dev, f_stat.st_ino)
+      collector_description = imp.load_source(module_name, srcpath, f)
+
   return {k: getattr(collector_description, k, None)
-    for k in ('phase_description', 'collector_weights')}
+    for k in ('phase_description', 'collector_weights', '__name__', '__file__')}
 
 
 def collect_analyse_match(collectors, collector_description):

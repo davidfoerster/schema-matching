@@ -47,13 +47,6 @@ def min_index(*args, **kwargs):
   return min(*xrange(len(args)), **kwargs)
 
 
-def get_unique_name(template, set):
-  while True:
-    name = template.format(random.getrandbits(31))
-    if name not in set:
-      return name
-
-
 class NonLocal:
 
   def __init__(self, value=None):
