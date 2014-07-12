@@ -165,19 +165,18 @@ def get_best_schema_mapping(distance_matrix):
   :param distance_matrix: list[list[float]]
   :return: (float, tuple[int])
   """
-  # TODO: clean this function up and optimise it
   assert operator.eq(*utilities.minmax(map(len, distance_matrix)))
   successor = (1).__add__
-  predecessor = (-1).__add__
+  predecessor = (1).__rsub__
 
   maxI = len(distance_matrix) # row count
   maxJ = len(distance_matrix[0]) # column count
   assert maxI >= maxJ
-  rangeI = xrange(maxI)
   rangeJ = xrange(maxJ)
   known_mappings = list(itertools.repeat(None, maxJ))
-  #ismapped = list(itertools.repeat(False, maxJ))
-  def unmapped(): return itertools.ifilter(lambda j: known_mappings[j] is None, rangeJ)
+
+  def iter_unmapped():
+    return itertools.ifilter(lambda j: known_mappings[j] is None, rangeJ)
 
   def sweep_row(i, skippable_count):
     if skippable_count < 0:
@@ -186,13 +185,13 @@ def get_best_schema_mapping(distance_matrix):
       return 0, tuple(known_mappings)
 
     # try to skip column j
-    minlength, minpath = sweep_row(i + 1, skippable_count - 1)
+    minlength, minpath = sweep_row(successor(i), predecessor(skippable_count))
 
-    for j in unmapped():
+    for j in iter_unmapped():
       d = distance_matrix[i][j]
-      if d is not infinity:
+      if d is not None:
         known_mappings[j] = i
-        length, path = sweep_row(i + 1, skippable_count)
+        length, path = sweep_row(successor(i), skippable_count)
         known_mappings[j] = None
         length += d
         if length < minlength:
