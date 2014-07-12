@@ -18,9 +18,14 @@ case "$1" in
 esac
 
 declare -a DESCRIPTIONS
-case "$1" in
-	*.py) DESCRIPTIONS=("`readlink -f -- "$1"`"); shift;;
-esac
+while :; do
+	case "$1" in
+		:*) DESCRIPTIONS+=("$1");;
+		*.py) DESCRIPTIONS+=("`readlink -e -- "$1"`");;
+		*) break;;
+	esac
+	shift
+done
 
 if [ $# -eq 0 ]; then
   [ "$PWD" -ef "$SRCPATH" ] || cd "$SRCPATH"
