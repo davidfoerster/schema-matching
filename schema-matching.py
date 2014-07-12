@@ -10,7 +10,7 @@ from utilities import infinity
 from utilities.string import DecodableUnicode
 import utilities.iterator as uiterator
 import utilities.functional as ufunctional
-from collector import MultiphaseCollector
+from collector import verbosity, MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
 
 
@@ -57,7 +57,8 @@ def main(*argv):
 
   # print or validate best match
   if action is None:
-    print('norm:', format(best_match_norm, number_format), file=sys.stderr)
+    if verbosity >= 1:
+      print('norm:', format(best_match_norm, number_format), file=sys.stderr)
     print_result(best_match, isreversed)
 
   elif action == 'validate':
@@ -125,7 +126,7 @@ def collect_analyse_match(collectors, collector_description):
   # analyse collected data
   norms = MultiphaseCollector.results_norms(*collectors,
     weights=collector_description['collector_weights'])
-  if __debug__:
+  if verbosity >= 1:
     print(collectors[1].name, collectors[0].name, sep=' / ', end='\n| ', file=sys.stderr)
     formatter = ufunctional.apply_memberfn(format, number_format)
     print(
@@ -149,7 +150,7 @@ def collect(src, *phase_descriptions):
     multiphasecollector = src.reset()
 
   else:
-    if __debug__:
+    if verbosity >= 2:
       print(src, end=':\n', file=sys.stderr)
 
     with open(src, 'rb') as f:
@@ -165,9 +166,9 @@ def collect(src, *phase_descriptions):
 
   for phase_description in phase_descriptions:
     multiphasecollector(*phase_description)
-    if __debug__:
+    if verbosity >= 2:
       print(multiphasecollector.merged_predecessors.as_str(number_format), file=sys.stderr)
-  if __debug__:
+  if verbosity >= 2:
     print(file=sys.stderr)
 
   return multiphasecollector
@@ -290,7 +291,7 @@ def compare_descriptions(in_paths, collectors, to_compare, desc=None):
     if not to_compare:
       from collector.description import default as default_description
       if os.path.samefile(desc['__file__'], default_description.__file__):
-        print('Error: I won\'t compare the default description to itself.')
+        print('Error: I won\'t compare the default description to itself.', file=sys.stderr)
         return 2
 
     invalid_count, _, missing_count = \
