@@ -3,7 +3,7 @@ from __future__ import print_function, absolute_import
 import sys, os, os.path
 import itertools, functools, operator, collections
 import csv, imp
-import utilities, utilities.file
+import utilities, utilities.file, utilities.operator
 from utilities import infinity
 from utilities.string import DecodableUnicode
 import utilities.iterator as uiterator
@@ -62,6 +62,10 @@ def main(*argv):
     invalid_count, impossible_count, missing_count = \
       validate_result(in_paths, best_match, best_match_norm)
     return int(bool(invalid_count | missing_count))
+
+  elif action == 'compare-descriptions':
+    return compare_descriptions(in_paths, collectors, argv,
+      (collector_description, best_match_norm, best_match))
 
   else:
     print('Unknown action:', action, file=sys.stderr)
@@ -270,6 +274,48 @@ def validate_result(in_paths, found_mappings, norm, offset=1):
   return invalid_count, impossible_count, missing_count
 
 
+def compare_descriptions(in_paths, collectors, to_compare, desc=None):
+  """
+  :param collectors: list[basestring | MultiphaseCollector]
+  :param to_compare: tuple[basestring]
+  :param desc: dict, float, tuple(int)
+  :return:
+  """
+  descriptions = []
+
+  if desc:
+    desc, best_match_norm, best_match = desc
+    if not to_compare:
+      import collector.description.default as default_description
+      if os.path.samefile(desc['__file__'], default_description.__file__):
+        print('Error: I won\'t compare the default description to itself.')
+        return 2
+
+    invalid_count, _, missing_count = \
+      validate_result(in_paths, best_match, best_match_norm)
+    print_description_comment(desc)
+    descriptions.append((desc, invalid_count + missing_count, best_match_norm))
+
+  for desc in itertools.imap(get_collector_description, to_compare or (None,)):
+    collectors, _, best_match = collect_analyse_match(collectors, desc)
+    best_match_norm, best_match = best_match
+    invalid_count, _, missing_count = \
+      validate_result(in_paths, best_match, best_match_norm)
+    print_description_comment(desc)
+    descriptions.append((desc, invalid_count + missing_count, best_match_norm))
+
+  i = 1
+  last_error_count = None
+  descriptions.sort(key=utilities.operator.getitemfn(slice(1, 3)))
+  for desc in descriptions:
+    print(u'{}. {}, errors={}, norm={:{}}'.format(
+      i, desc[0]['__file__'], desc[1], desc[2], number_format))
+    i += last_error_count != desc[1]
+    last_error_count = desc[1]
+
+  return 0
+
+
 def print_result(column_mappings, reversed=False, offset=1):
   """
   :param column_mappings: list[int]
@@ -283,6 +329,12 @@ def print_result(column_mappings, reversed=False, offset=1):
   if reversed:
     column_mappings.reverse()
   print(*itertools.imap(','.join, itertools.izip(*column_mappings)), sep='\n')
+
+
+def print_description_comment(desc):
+  print(u'... with collector descriptions and weights from {} ({}).'.format(
+    desc['__file__'], desc['__name__']),
+    end='\n\n')
 
 
 if __name__ == '__main__':
