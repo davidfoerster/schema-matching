@@ -3,7 +3,7 @@ set -e
 SRCPATH="${0%/*}"
 [ "$SRCPATH" != "$0" ] || SRCPATH=.
 SCRIPT="$SRCPATH/schema-matching.py"
-[ -n "$PYTHON" ] || PYTHON="`read -r cmd < "$SCRIPT" && [ "${cmd:0:2}" = '#!' ] && cmd="${cmd:2}" && echo "${cmd%% *}" || command -v python`"
+#[ -n "$PYTHON" ] || PYTHON="`read -r cmd < "$SCRIPT" && [ "${cmd:0:2}" = '#!' ] && cmd="${cmd:2}" && echo "${cmd%% *}" || command -v python`"
 
 ACTION=schema_matching
 case "$1" in
