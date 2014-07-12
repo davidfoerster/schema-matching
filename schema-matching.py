@@ -42,6 +42,9 @@ def main(*argv):
   # read and analyse data
   collectors, isreversed, best_match = \
     collect_analyse_match(in_paths, collector_description)
+  best_match_norm, best_match = best_match
+  if isreversed:
+    in_paths.reverse()
 
   # print or validate best match
   if action is None:
