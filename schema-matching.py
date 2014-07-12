@@ -95,22 +95,20 @@ def get_collector_description(srcpath=None):
           parent_package.__name__, f_stat.st_dev, f_stat.st_ino)
       collector_description = imp.load_source(module_name, srcpath, f)
 
-  d = {k: getattr(collector_description, k, None)
-    for k in ('phase_description', 'collector_weights', '__name__')}
-  d['__file__'] = getattr(collector_description, '__file__', '<unknown file>')
-  return d
+  utilities.setattr_default(collector_description, '__file__', '<unknown file>')
+  return collector_description
 
 
 def collect_analyse_match(collectors, collector_description):
   """
   :param collectors: list[basestring | MultiphaseCollector]
-  :param collector_description: dict
+  :param collector_description: object
   :return: list[MultiphaseCollector], bool, tuple[int]
   """
   assert isinstance(collectors, collections.Sequence) and len(collectors) == 2
   collect_functor = \
     ufunctional.apply_memberfn(collect,
-      *collector_description['phase_description'])
+      *collector_description.phase_description)
 
   if isinstance(collectors[0], MultiphaseCollector):
     assert isinstance(collectors[1], MultiphaseCollector)
@@ -125,7 +123,7 @@ def collect_analyse_match(collectors, collector_description):
 
   # analyse collected data
   norms = MultiphaseCollector.results_norms(*collectors,
-    weights=collector_description['collector_weights'])
+    weights=collector_description.collector_weights)
   if verbosity >= 1:
     print(collectors[1].name, collectors[0].name, sep=' / ', end='\n| ', file=sys.stderr)
     formatter = ufunctional.apply_memberfn(format, number_format)
@@ -290,7 +288,7 @@ def compare_descriptions(in_paths, collectors, to_compare, desc=None):
     desc, best_match_norm, best_match = desc
     if not to_compare:
       from collector.description import default as default_description
-      if os.path.samefile(desc['__file__'], default_description.__file__):
+      if os.path.samefile(desc.__file__, default_description.__file__):
         print('Error: I won\'t compare the default description to itself.', file=sys.stderr)
         return 2
 
@@ -312,7 +310,7 @@ def compare_descriptions(in_paths, collectors, to_compare, desc=None):
   descriptions.sort(key=utilities.operator.getitemfn(slice(1, 3)))
   for desc in descriptions:
     print(u'{}. {}, errors={}, norm={:{}}'.format(
-      i, desc[0]['__file__'], desc[1], desc[2], number_format))
+      i, desc[0].__file__, desc[1], desc[2], number_format))
     i += last_error_count != desc[1]
     last_error_count = desc[1]
 
@@ -336,7 +334,7 @@ def print_result(column_mappings, reversed=False, offset=1):
 
 def print_description_comment(desc):
   print(u'... with collector descriptions and weights from {} ({}).'.format(
-    desc['__file__'], desc['__name__']),
+    desc.__file__, desc.__name__),
     end='\n\n')
 
 

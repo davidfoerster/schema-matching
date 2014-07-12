@@ -51,3 +51,11 @@ class NonLocal:
 
   def __init__(self, value=None):
     self.value = value
+
+
+def setattr_default(obj, attr, value):
+  if hasattr(obj, attr):
+    return getattr(obj, attr)
+  else:
+    setattr(obj, attr, value)
+    return value
