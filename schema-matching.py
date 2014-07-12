@@ -1,6 +1,6 @@
 #!/usr/bin/python -OO
 from __future__ import print_function, absolute_import
-import sys, os, os.path
+import sys, os, os.path, signal
 import itertools, functools, operator, collections
 import csv
 import imp, importlib
@@ -13,23 +13,36 @@ import utilities.functional as ufunctional
 from collector import verbosity, MultiphaseCollector
 from collector.columntype import ColumnTypeItemCollector
 
+if __debug__:
+  import timeit
 
 number_format = '10.4e'
 __interrupted = False
 
-def main(*argv):
+
+def main(*argv, **kwargs):
   """
   :param argv: tuple[str]
   :return: int
   """
+  time_limit = infinity
 
   # parse arguments
   argv = collections.deque(argv)
 
   # action to perform
-  action = None
   if argv[0].startswith('--'):
     action = argv.popleft()[2:]
+  else:
+    # default action; set up alarm handler
+    action = None
+    global __interrupted
+    __interrupted = False
+    time_limit = kwargs.get('time_limit')
+    if time_limit:
+      signal.signal(signal.SIGALRM, __timeout_handler)
+      if signal.alarm(time_limit):
+        raise RuntimeError('Who set the alarm before us?!!')
 
   # input files
   in_paths = [argv.popleft(), argv.popleft()]
@@ -61,6 +74,9 @@ def main(*argv):
     if verbosity >= 1:
       print('norm:', format(best_match_norm, number_format), file=sys.stderr)
     print_result(best_match, isreversed)
+    if (__interrupted):
+      print('The time limit of', time_limit, 'seconds was reached. The results may be incomplete or inaccurate.',
+        file=sys.stderr)
 
   elif action == 'validate':
     invalid_count, impossible_count, missing_count = \
@@ -338,6 +354,12 @@ def print_description_comment(desc):
   print(u'... with collector descriptions and weights from {} ({}).'.format(
     desc.__file__, desc.__name__),
     end='\n\n')
+
+
+def __timeout_handler(signum, frame):
+  if signum == signal.SIGALRM:
+    global __interrupted
+    __interrupted = timeit.default_timer() if __debug__ else True
 
 
 if __name__ == '__main__':
