@@ -212,11 +212,7 @@ def get_best_schema_mapping(distance_matrix):
           minpath = path
     return minlength, minpath
 
-  best_match = sweep_row(0, maxI - maxJ)
-  if best_match[1] is not None:
-    return best_match
-  else:
-    return best_match[0], tuple(itertools.repeat(None, maxI))
+  return sweep_row(0, maxI - maxJ)
 
 
 def validate_result(in_paths, found_mappings, norm, offset=1):
@@ -323,6 +319,9 @@ def print_result(column_mappings, reversed=False, offset=1):
   :param reversed: bool
   :param offset: int
   """
+  if not column_mappings:
+    return
+
   column_mappings = [
     itertools.imap(str, xrange(offset, offset.__add__(len(column_mappings)))),
     itertools.imap(ufunctional.composefn(offset.__add__, str), column_mappings)
