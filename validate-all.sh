@@ -43,7 +43,7 @@ schema_matching() {
 	for in1 in "$@"; do
 		for in2 in "$@"; do
 			if [ "$in1" \< "$in2" ]; then
-				echocmd $PYTHON "$SCRIPT" --validate "$in1" "$in2" "${DESCRIPTIONS[@]}" || rv=1
+				echocmd $PYTHON "$SCRIPT" --validate "$in1" "$in2" - "${DESCRIPTIONS[@]}" || rv=1
 				echo
 			fi
 		done
