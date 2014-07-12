@@ -75,8 +75,10 @@ def get_collector_description(srcpath=None):
   :param srcpath: basestring
   :return: dict
   """
-  if not srcpath:
+  if not srcpath or srcpath == ':':
     import collector.description.default as collector_description
+  elif srcpath.startswith(':'):
+    collector_description = __import__(srcpath[1:])
   else:
     import collector.description as parent_package # needs to be imported before its child modules
     with open(srcpath) as f:
