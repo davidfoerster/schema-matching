@@ -33,6 +33,13 @@ def main(*argv):
 
   # output file
   if argv:
+    forbidden_suffix = '.py'
+    if (len(argv[0]) > len(forbidden_suffix) and
+        argv[0][-len(forbidden_suffix):] == '.py'
+    ):
+      print('Error: To prevent usage errors, we don\'t allow writing to *{} files.' \
+        .format(forbidden_suffix), file=sys.stderr)
+      return 2
     sys.stdout = utilities.file.openspecial(argv.popleft(), 'w')
 
   # determine collector descriptions to use
