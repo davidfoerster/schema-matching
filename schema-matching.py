@@ -15,6 +15,7 @@ from collector.columntype import ColumnTypeItemCollector
 
 
 number_format = '10.4e'
+__interrupted = False
 
 def main(*argv):
   """
@@ -191,7 +192,7 @@ def get_best_schema_mapping(distance_matrix):
     return itertools.ifilter(lambda j: known_mappings[j] is None, rangeJ)
 
   def sweep_row(i, skippable_count):
-    if skippable_count < 0:
+    if __interrupted or skippable_count < 0:
       return infinity, None
     if i == maxI:
       return 0, tuple(known_mappings)
@@ -200,6 +201,8 @@ def get_best_schema_mapping(distance_matrix):
     minlength, minpath = sweep_row(successor(i), predecessor(skippable_count))
 
     for j in iter_unmapped():
+      if __interrupted:
+        break
       d = distance_matrix[i][j]
       if d is not None:
         known_mappings[j] = i
