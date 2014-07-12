@@ -88,8 +88,10 @@ def get_collector_description(srcpath=None):
           parent_package.__name__, f_stat.st_dev, f_stat.st_ino)
       collector_description = imp.load_source(module_name, srcpath, f)
 
-  return {k: getattr(collector_description, k, None)
-    for k in ('phase_description', 'collector_weights', '__name__', '__file__')}
+  d = {k: getattr(collector_description, k, None)
+    for k in ('phase_description', 'collector_weights', '__name__')}
+  d['__file__'] = getattr(collector_description, '__file__', '<unknown file>')
+  return d
 
 
 def collect_analyse_match(collectors, collector_description):
