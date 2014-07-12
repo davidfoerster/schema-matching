@@ -16,6 +16,8 @@ from collector.columntype import ColumnTypeItemCollector
 if __debug__:
   import timeit
 
+
+default_timelimit = 60
 number_format = '10.4e'
 __interrupted = False
 
@@ -365,4 +367,9 @@ def __timeout_handler(signum, frame):
 if __name__ == '__main__':
   assert DecodableUnicode.default_encoding.upper() == 'UTF-8'
   sys.stderr = utilities.file.fix_file_encoding(sys.stderr)
-  sys.exit(main(*sys.argv[1:]))
+  rv = main(*sys.argv[1:], time_limit=default_timelimit)
+  if __debug__ and __interrupted:
+    print('INFO:', timeit.default_timer() - __interrupted,
+      'seconds between interruption and program termination.',
+      file=sys.stderr)
+  sys.exit(rv)
