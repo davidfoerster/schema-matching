@@ -5,7 +5,8 @@ ASSIGNMENT = 05
 GROUP = gr1
 PACKFILE = uebung$(ASSIGNMENT)-$(GROUP).tar.xz
 
-MODULES = schema-matching.py $(wildcard collector/*.py) $(wildcard utilities/*.py)
+rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+MODULES = $(call rwildcard, , *.py)
 
 .PHONY: optimized clean pack
 
