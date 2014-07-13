@@ -1,6 +1,5 @@
 from __future__ import absolute_import, division
 import utilities.string
-from utilities.pdb import ProbabilityDistribution
 from . import ItemCollector
 from .lettercount import ItemLetterCountCollector
 from .absoluteletterfrequency import ItemLetterAbsoluteFrequencyCollector
@@ -8,18 +7,20 @@ from .absoluteletterfrequency import ItemLetterAbsoluteFrequencyCollector
 
 class ItemLetterRelativeFrequencyCollector(ItemCollector):
 
-  result_dependencies = (ItemLetterAbsoluteFrequencyCollector,)
+  result_dependencies = (ItemLetterCountCollector, ItemLetterAbsoluteFrequencyCollector)
 
 
   def __init__(self, previous_collector_set):
     ItemCollector.__init__(self, previous_collector_set)
-    self.letter_count = previous_collector_set[ItemLetterCountCollector].get_result()
+    self.__cached_result = None
 
 
   def get_result(self, collector_set):
-    return ((char, frequency / self.letter_count)
-      for char, frequency in
-        collector_set[ItemLetterAbsoluteFrequencyCollector].get_result(collector_set).iteritems())
+    if self.__cached_result is None:
+      self.__cached_result = \
+        collector_set[ItemLetterAbsoluteFrequencyCollector].get_result(collector_set) \
+          .normalise(collector_set[ItemLetterCountCollector].get_result(collector_set))
+    return self.__cached_result
 
 
   def as_str(self, collector_set, number_fmt=''):
@@ -30,4 +31,4 @@ class ItemLetterRelativeFrequencyCollector(ItemCollector):
 
   @staticmethod
   def result_norm(a, b):
-    return ProbabilityDistribution(a).distance_to(ProbabilityDistribution(b))
+    return a.distance_to(b)

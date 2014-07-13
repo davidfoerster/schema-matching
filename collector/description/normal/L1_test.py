@@ -5,6 +5,7 @@ from ...itemaverage import ItemAverageCollector
 from ...letteraverage import ItemLetterAverageCollector
 from ...variance import ItemVariationCoefficientCollector
 from ...lettervariance import LetterVariationCoefficient
+from ...itemprobability import ItemProbabilityCollector
 from ...letterprobability import LetterProbabliityCollector
 
 
@@ -18,7 +19,7 @@ phase_description = (
     columntype_factory(
       LetterVariationCoefficient, ItemVariationCoefficientCollector),
     columntype_factory(
-      LetterProbabliityCollector, None)
+      LetterProbabliityCollector, ItemProbabilityCollector)
   )
 )
 
