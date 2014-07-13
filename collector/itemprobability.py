@@ -1,13 +1,13 @@
 from __future__ import absolute_import, division
 import utilities.string
 from . import ItemCollector
-from .lettercount import ItemLetterCountCollector
-from .absoluteletterfrequency import ItemLetterAbsoluteFrequencyCollector
+from .itemcount import ItemCountCollector
+from .itemfrequency import ItemFrequencyCollector
 
 
-class ItemLetterRelativeFrequencyCollector(ItemCollector):
+class ItemProbabilityCollector(ItemCollector):
 
-  result_dependencies = (ItemLetterCountCollector, ItemLetterAbsoluteFrequencyCollector)
+  result_dependencies = (ItemCountCollector, ItemFrequencyCollector)
 
 
   def __init__(self, previous_collector_set):
@@ -18,8 +18,8 @@ class ItemLetterRelativeFrequencyCollector(ItemCollector):
   def get_result(self, collector_set):
     if self.__cached_result is None:
       self.__cached_result = \
-        collector_set[ItemLetterAbsoluteFrequencyCollector].get_result(collector_set) \
-          .normalise(collector_set[ItemLetterCountCollector].get_result(collector_set))
+        collector_set[ItemFrequencyCollector].get_result(collector_set) \
+          .normalise(collector_set[ItemCountCollector].get_result(collector_set))
     return self.__cached_result
 
 

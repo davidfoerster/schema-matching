@@ -5,7 +5,7 @@ from .lettercount import ItemLetterCountCollector
 from .letterfrequency import LetterFrequencyCollector
 
 
-class LetterProbabliityCollector(ItemCollector):
+class LetterProbablilityCollector(ItemCollector):
 
   result_dependencies = (ItemLetterCountCollector, LetterFrequencyCollector)
 
