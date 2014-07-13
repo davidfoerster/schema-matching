@@ -13,18 +13,13 @@ else:
 
 
 def each(function, *iterables):
-  if len(iterables) <= 1:
+  if not iterables:
+    return
+  elif len(iterables) == 1:
     for args in iterables[0]:
       function(args)
   else:
-    iterables = __builtin__.map(iter, iterables)
-    while True:
-      try:
-        args = __builtin__.map(next, iterables)
-      except StopIteration:
-        break
-      else:
-        function(*args)
+    stareach(function, itertools.izip(*iterables))
 
 
 def stareach(function, iterable):
@@ -39,8 +34,7 @@ def __slice_to_tuple(slice):
 def islice(iterable, *args):
   if not args:
     args = (None,)
-  elif isinstance(args[0], slice):
-    assert len(args) == 1
+  elif len(args) == 1 and isinstance(args[0], slice):
     args = __slice_to_tuple(args[0])
   return itertools.islice(iterable, *args)
 
@@ -51,7 +45,7 @@ def map_inplace(function, list, depth=0, slice=None):
       list[:] = itertools.imap(function, list)
     else:
       list[slice] = itertools.imap(function,
-        itertools.islice(list, __slice_to_tuple(slice)))
+        itertools.islice(list, *__slice_to_tuple(slice)))
   else:
     for item in list:
       map_inplace(function, item, depth - 1, slice)
@@ -59,22 +53,7 @@ def map_inplace(function, list, depth=0, slice=None):
 
 
 def countif(function, *iterables):
-  count = 0
-  if len(iterables) <= 1:
-    for args in iterables[0]:
-      if function(args):
-        count += 1
-  else:
-    iterables = __builtin__.map(iter, iterables)
-    while True:
-      try:
-        args = __builtin__.map(next, iterables)
-      except StopIteration:
-        break
-      else:
-        if function(*args):
-          count += 1
-  return count
+  return sum(itertools.imap(bool, itertools.starmap(function, *iterables)))
 
 
 def teemap(iterable, *functions):
