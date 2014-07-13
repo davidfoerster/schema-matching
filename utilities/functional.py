@@ -1,3 +1,7 @@
+import functools
+import operator
+
+
 def apply_memberfn(memberfn, *args):
   if callable(memberfn):
     return lambda instance: memberfn(instance, *args)
@@ -5,6 +9,14 @@ def apply_memberfn(memberfn, *args):
     return lambda instance: getattr(instance, memberfn)(*args)
 
 
+def rapply(arg, function):
+  return function(arg)
+
+
 def composefn(*functions):
-  def rapply(x, fn): return fn(x)
-  return lambda x: reduce(rapply, functions, x)
+  if not functions:
+    return operator.identity
+  if len(functions) == 1:
+    return functions[0]
+  else:
+    return functools.partial(reduce, rapply, functions)
