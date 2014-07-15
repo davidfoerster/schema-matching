@@ -83,6 +83,11 @@ class ItemCollector(object):
     return abs(a - b)
 
 
+  @classmethod
+  def get_type(cls, collector_set):
+    return cls
+
+
   def as_str(self, collector_set, format_spec=''):
     return format(self.get_result(collector_set), format_spec)
 
