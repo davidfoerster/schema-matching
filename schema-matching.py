@@ -125,16 +125,16 @@ def get_collector_description(srcpath=None):
   return collector_description
 
 
-def collect_analyse_match(collectors, collector_description):
+def collect_analyse_match(collectors, collector_descriptions):
   """
   :param collectors: list[basestring | MultiphaseCollector]
-  :param collector_description: object
+  :param collector_descriptions: object
   :return: list[MultiphaseCollector], bool, tuple[int]
   """
   assert isinstance(collectors, collections.Sequence) and len(collectors) == 2
   collect_functor = \
     ufunctional.apply_memberfn(collect,
-      *collector_description.phase_description)
+      *collector_descriptions.descriptions)
 
   if isinstance(collectors[0], MultiphaseCollector):
     assert isinstance(collectors[1], MultiphaseCollector)
@@ -149,7 +149,7 @@ def collect_analyse_match(collectors, collector_description):
 
   # analyse collected data
   norms = MultiphaseCollector.results_norms(*collectors,
-    weights=collector_description.collector_weights)
+    weights=collector_descriptions.weights)
   if verbosity >= 1:
     print(collectors[1].name, collectors[0].name, sep=' / ', end='\n| ', file=sys.stderr)
     formatter = ufunctional.apply_memberfn(format, number_format)
@@ -161,13 +161,13 @@ def collect_analyse_match(collectors, collector_description):
   return collectors, isreversed, get_best_schema_mapping(norms)
 
 
-def collect(src, *phase_descriptions):
+def collect(src, *collector_descriptions):
   """
   Collects info about the columns of the data set in file "path" according
   over multiple phases based on a description of those phases.
 
   :param path: str, MultiphaseCollector
-  :param phase_descriptions: tuple[tuple[type | ItemCollector | callable]]
+  :param collector_descriptions: tuple[type | ItemCollector | callable]
   :return: MultiphaseCollector
   """
   if isinstance(src, MultiphaseCollector):
@@ -184,18 +184,17 @@ def collect(src, *phase_descriptions):
           lambda item: DecodableUnicode(item.strip())),
         reader)
       multiphasecollector = MultiphaseCollector(reader, os.path.basename(src))
-    phase_descriptions = (
-      ((ColumnTypeItemCollector(len(multiphasecollector.rowset)),),) +
-      phase_descriptions)
 
-  for phase_description in phase_descriptions:
-    multiphasecollector(*phase_description)
-    if verbosity >= 2:
-      print(multiphasecollector.merged_predecessors.as_str(number_format), file=sys.stderr)
+  multiphasecollector.do_phases(collector_descriptions,
+    print_phase_results if verbosity >= 2 else None)
   if verbosity >= 2:
     print(file=sys.stderr)
 
   return multiphasecollector
+
+
+def print_phase_results(multiphasecollector):
+  print(multiphasecollector.merged_predecessors.as_str(number_format), file=sys.stderr)
 
 
 def get_best_schema_mapping(distance_matrix):

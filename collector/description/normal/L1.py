@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from ...weight import WeightDict, normalize_exp
-from ...columntype import factory as columntype_factory
+from ... import columntype
 from ...itemaverage import ItemAverageCollector
 from ...letteraverage import ItemLetterAverageCollector
 from ...variance import ItemVariationCoefficientCollector
@@ -9,19 +9,17 @@ from ...letterprobability import LetterProbablilityCollector
 
 
 
-phase_description = (
-  (
-    columntype_factory(
-      ItemLetterAverageCollector, ItemAverageCollector),
-  ),
-  (
-    columntype_factory(
-      LetterVariationCoefficient, ItemVariationCoefficientCollector),
-    columntype_factory(
-      LetterProbablilityCollector, None)
-  )
+descriptions = (
+  columntype.ColumnTypeItemCollector,
+
+  columntype.factory(
+    ItemLetterAverageCollector, ItemAverageCollector),
+  columntype.factory(
+    LetterVariationCoefficient, ItemVariationCoefficientCollector),
+  columntype.factory(
+    LetterProbablilityCollector, None)
 )
 
 
 # Normalised distances and L1-normalised (Manhattan norm) collector sets
-collector_weights = WeightDict(normalize_exp, tags={'normalized'})
+weights = WeightDict(normalize_exp, tags={'normalized'})

@@ -4,4 +4,3 @@ Necessary:
 Optional:
  - Find better weights or weight functions for collectors
  - Implement auto-binning frequency distribution for numbers
- - Derive multi-phase process from dependency information
