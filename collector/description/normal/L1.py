@@ -24,4 +24,4 @@ phase_description = (
 
 
 # Normalised distances and L1-normalised (Manhattan norm) collector sets
-collector_weights = WeightDict(normalize_exp)
+collector_weights = WeightDict(normalize_exp, tags={'normalized'})

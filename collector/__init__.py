@@ -147,7 +147,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
         distance_of(coll) for coll in a.itervalues() if not coll.isdependency))
       if value_sum:
         assert weight_sum.value > 0
-        assert math.fabs(value_sum / weight_sum.value) <= 1.0 # TODO: remove; this is not an actual requirement, just something I wanted to test for specifically
+        assert not 'normalized' in weights.tags or math.fabs(value_sum / weight_sum.value) <= 1.0
         return value_sum / weight_sum.value
       else:
         return utilities.NaN
