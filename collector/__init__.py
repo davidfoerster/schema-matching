@@ -113,10 +113,10 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
   def collect(self, item, collector_set = None):
     assert collector_set is self
-    ItemCollector.collect(self, item, self)
-    uiterator.each(
-      lambda collector: collector.collect(item, self),
-      self.itervalues())
+    collect = ItemCollector.collect
+    collect(self, item, self)
+    uiterator.each(ufunctional.apply_memberfn(collect.__name__, item, self),
+      itertools.ifilterfalse(ItemCollector.has_collected, self.itervalues()))
 
 
   class __result_type(object):
@@ -185,9 +185,15 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
 
   def get_transformer(self):
-    for t in itertools.ifilter(None, (c.get_transformer() for c in self.itervalues())):
-      return t
-    return None
+    transformer = ufunctional.composefn(*itertools.ifilter(None,
+      itertools.imap(ufunctional.apply_memberfn(ItemCollector.get_transformer.__name__),
+        itertools.ifilterfalse(ItemCollector.has_transformed, self.itervalues()))))
+    if not transformer.args[1]:
+      return None
+    if len(transformer.args[1]) == 1:
+      return transformer.args[1][0]
+    else:
+      return transformer
 
 
   def as_str(self, collector_set=None, format_spec=''):
@@ -261,8 +267,19 @@ class RowCollector(list):
 
 
   def get_transformer(self):
-    return self.__transformer(itertools.ifilter(uoperator.second,
-      enumerate(itertools.imap(ufunctional.apply_memberfn('get_transformer'), self))))
+    column_transformers = tuple(itertools.ifilter(uoperator.second,
+      enumerate(itertools.imap(
+        ufunctional.apply_memberfn(ItemCollector.get_transformer.__name__),
+        self))))
+
+    if column_transformers:
+      def row_transformer(items):
+        for column_idx, column_transformer in column_transformers:
+          items[column_idx] = column_transformer(items[column_idx])
+    else:
+      row_transformer = None
+
+    return row_transformer
 
 
   def transform_all(self, rows):
