@@ -103,7 +103,11 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
   def __init__(self, collectors = (), predecessor = None):
     ItemCollector.__init__(self)
     collections.OrderedDict.__init__(self)
+
     self.predecessor = predecessor
+    if predecessor:
+      assert all(itertools.imap(ItemCollector.has_collected, predecessor.itervalues()))
+      self.update(predecessor)
     uiterator.each(self.add, collectors)
 
 
@@ -322,10 +326,7 @@ class MultiphaseCollector(object):
     phase.collect_all(self.rowset)
     phase.transform_all(self.rowset)
 
-    if isinstance(self.merged_predecessors, RowCollector):
-      uiterator.each(ItemCollectorSet.update, self.merged_predecessors, phase)
-    else:
-      self.merged_predecessors = phase
+    self.merged_predecessors = phase
 
 
   def results_norms(a, b, weights=None):
