@@ -45,7 +45,7 @@ def map_inplace(function, list, depth=0, slice=None):
       list[:] = itertools.imap(function, list)
     else:
       list[slice] = itertools.imap(function,
-        itertools.islice(list, *__slice_to_tuple(slice)))
+        itertools.islice(list, slice.start, slice.stop, slice.step))
   else:
     for item in list:
       map_inplace(function, item, depth - 1, slice)

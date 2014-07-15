@@ -204,8 +204,12 @@ class RowCollector(list):
       print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file = sys.stderr)
 
     assert len(self) <= len(items)
-    def collect(collector, item): collector.collect(item, collector)
-    uiterator.each(collect, self, items)
+    uiterator.each(self.__collect_column, self, items)
+
+
+  @staticmethod
+  def __collect_column(collector, item):
+    collector.collect(item, collector)
 
 
   def collect_all(self, rows):
@@ -242,7 +246,7 @@ class RowCollector(list):
   def as_str(self, format_spec=''):
     return utilities.string.join('(', u', '.join(
         itertools.imap(ufunctional.apply_memberfn(
-          self.as_str.__name__, None, format_spec), self)),
+          'as_str', None, format_spec), self)),
       ')')
 
 
