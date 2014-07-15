@@ -151,16 +151,61 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
 
-def factory(string_collector, numeric_collector):
+class factory(object):
 
-  def __factory(type_or_predecessor):
+  __pre_dependencies = (ColumnTypeItemCollector,)
+
+
+  def __init__(self, string_collector, numeric_collector):
+    object.__init__(self)
+    self.string_collector = string_collector
+    self.numeric_collector = numeric_collector
+    self.pre_dependencies = frozenset(itertools.chain(self.__pre_dependencies,
+      *_imap_attr('pre_dependencies', (), string_collector,
+        numeric_collector)))
+    self.result_dependencies = frozenset(itertools.chain(
+      *_imap_attr('result_dependencies', (), string_collector,
+        numeric_collector)))
+
+
+  def __call__(self, type_or_predecessor):
     if isinstance(type_or_predecessor, dict):
       predecessor = type_or_predecessor
       type = predecessor[ColumnTypeItemCollector].get_result()
     else:
       predecessor = None
       type = type_or_predecessor
-    collector = numeric_collector if issubclass(type, Number) else string_collector
-    return ItemCollector.get_instance(collector, predecessor)
+    return ItemCollector.get_instance(self.__for_type(type), predecessor)
 
-  return __factory
+
+  def get_type(self, collector_set):
+    if collector_set:
+      ctc = collector_set.get(ColumnTypeItemCollector)
+      if ctc is not None:
+        return self.__for_type(ctc.get_result())
+    return self
+
+
+  def __for_type(self, type):
+    return self.numeric_collector if issubclass(type, Number) else self.string_collector
+
+
+  def __eq__(self, other):
+    return (isinstance(other, factory) and
+      self.string_collector == other.string_collector and
+      self.numeric_collector == other.numeric_collector)
+
+
+  def __ne__(self, other):
+    return not self.__eq__(other)
+
+
+  def __hash__(self):
+    return 0x4a9fd98f ^ hash(self.string_collector) ^ hash(self.numeric_collector)
+
+
+
+def _imap_attr(attr, default, *objects):
+  return itertools.imap(
+    utilities.functional.apply_memberfn(getattr, attr, default),
+    objects)
