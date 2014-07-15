@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, division
-import os, itertools, copy, collections, math
+import os, itertools, functools, copy, collections, math
 from .weight import WeightDict
 import utilities, utilities.string
 import utilities.iterator as uiterator
@@ -395,13 +395,137 @@ class MultiphaseCollector(object):
         ics = ItemCollectorSet()
         ics.add(ItemCountCollector(len(self.rowset)), True)
         yield ics
-    phase = RowCollector(
-      (ItemCollectorSet(collectors, predecessor)
-        for predecessor in self.merged_predecessors))
+
+
+  def do_phases(self, collector_descriptions, callback=None):
+    phase_count = 0
+    while True:
+      phase_descriptions = self.get_phase_descriptions(collector_descriptions)
+      if __debug__:
+        phase_descriptions = tuple(phase_descriptions)
+
+      for phase_description in phase_descriptions:
+        if self.__contains_factory(phase_description):
+          assert phase_description is not phase_descriptions[0]
+          break
+        self.__do_phase_magic(self.__gen_itemcollector_sets(phase_description))
+        phase_count += 1
+        if callback is not None:
+          callback(self)
+      else:
+        break
+
+    if __debug__:
+      for coll_set in self.merged_predecessors:
+        independent = frozenset((template.get_type(coll_set) for template in collector_descriptions))
+        for ctype, coll in coll_set.iteritems():
+          assert coll.isdependency is (ctype not in independent)
+
+    return phase_count
+
+
+  def __gen_itemcollector_sets(self, phase_desc):
+    for desc, pred in itertools.izip(phase_desc, self.merged_predecessors):
+      if desc is None:
+        yield pred
+      else:
+        independent = (desc.get('independent') or pred.get('independent')).data
+        ics = ItemCollectorSet((), pred)
+        for template in desc.itervalues(): # TODO: Rewrite functionally
+          ics.add(template, template not in independent)
+        yield ics
+
+
+  @staticmethod
+  def __contains_factory(phase_desc):
+    return not all((
+      isinstance(ctype, ItemCollector) or
+        (type(ctype) is type and issubclass(ctype, ItemCollector))
+      for ctype in itertools.chain(*itertools.ifilter(None, phase_desc))))
+
+
+  def get_phase_descriptions(self, collector_descriptions):
+    # column-first ordering
+    phase_descriptions = uiterator.map(
+      functools.partial(self.__get_dependency_chain, collector_descriptions),
+      self.merged_predecessors)
+    # transpose to phase-first ordering
+    phase_descriptions = itertools.izip_longest(*phase_descriptions)
+    return phase_descriptions
+
+
+  def __get_dependency_chain(self, collector_descriptions, predecessors=None):
+    """
+    Returns a list of phase-wise collector descriptions for a single column.
+
+    :param collector_descriptions: iterable
+    :param predecessors: ItemCollectorSet
+    :return: list[dict]
+    """
+    phase = {template.get_type(predecessors): template
+      for template in collector_descriptions}
+    phase.pop(None, None)
+    independent = TagCollector('independent', set(phase.iterkeys()))
+    for ctype in predecessors.iterkeys():
+      phase.pop(ctype, None)
+
+    phases = []
+    collector_min_phases = dict()
+    phase_pre_dependencies = None
+    phase_result_dependencies = set()
+    current_phase_idx = 1 # Phases will have negative indices starting from zero since we're building them from the back; TODO: probably unnecessary
+
+    def add_dependencies(template, phase_idx):
+      if template.pre_dependencies:
+        for dep in template.pre_dependencies: # TODO: Rewrite functionally
+          if not dep in predecessors:
+            phase_pre_dependencies.setdefault(dep, dep)
+            assert phase_idx - 1 <= collector_min_phases.get(dep, 0)
+            collector_min_phases[dep] = phase_idx - 1
+      else:
+        for dep in template.result_dependencies: # TODO: Rewrite functionally
+          if dep not in phase and dep not in phase_result_dependencies and dep not in phase_pre_dependencies:
+            add_dependencies(dep, phase_idx)
+            phase_result_dependencies.add(dep)
+
+    # resolve dependencies and push them to an earlier phase
+    while phase:
+      current_phase_idx -= 1
+      phases.append(phase)
+      phase_pre_dependencies = dict()
+      phase_result_dependencies.clear()
+
+      for ctype in phase.iterkeys(): # TODO: Rewrite functionally
+        add_dependencies(ctype, current_phase_idx)
+         # TODO: Does this ever happen?
+        assert current_phase_idx >= collector_min_phases.get(ctype, 0)
+        if current_phase_idx < collector_min_phases.get(ctype, 0):
+          collector_min_phases[ctype] = current_phase_idx
+
+      phase = phase_pre_dependencies
+
+    # remove later duplicates
+    for ctype, min_phase_idx in collector_min_phases.iteritems(): # TODO: Rewrite functionally
+      for phase in itertools.islice(phases, 0, -min_phase_idx):
+        phase.pop(ctype, None)
+
+    phases[-1][independent] = independent
+    return uiterator.filter(None, reversed(phases))
+
+
+  def do_phase(self, phase_description):
+    self.__do_phase_magic((ItemCollectorSet(phase_description, pred)
+      for pred in self.merged_predecessors))
+
+
+  def __do_phase_magic(self, itemcollector_sets):
+    phase = RowCollector(itemcollector_sets)
     phase.collect_all(self.rowset)
     phase.transform_all(self.rowset)
-
     self.merged_predecessors = phase
+
+
+  __call__ = do_phase
 
 
   def results_norms(a, b, weights=None):
