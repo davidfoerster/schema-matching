@@ -35,6 +35,8 @@ class ItemCollector(object):
     self.isdependency = False
 
 
+  pre_dependencies = ()
+
   result_dependencies = ()
 
 
