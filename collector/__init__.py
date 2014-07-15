@@ -33,6 +33,8 @@ class ItemCollector(object):
     """
     object.__init__(self)
     self.isdependency = False
+    self.__has_collected = False
+    self.__has_transformed = False
 
 
   pre_dependencies = ()
@@ -66,6 +68,14 @@ class ItemCollector(object):
   def get_result(self, collector_set):
     """Returns the result of this collector after all items have been collected."""
     return NotImplemented
+
+
+  def has_collected(self): return self.__has_collected
+  def set_collected(self): self.__has_collected = True
+
+
+  def has_transformed(self): return self.__has_transformed
+  def set_transformed(self): self.__has_transformed = True
 
 
   @staticmethod
@@ -143,6 +153,20 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
         return utilities.NaN
 
 
+  def set_collected(self):
+    setter = ItemCollector.set_collected
+    uiterator.each(ufunctional.apply_memberfn(setter.__name__),
+      self.itervalues())
+    setter(self)
+
+
+  def set_transformed(self):
+    setter = ItemCollector.set_transformed
+    uiterator.each(ufunctional.apply_memberfn(setter.__name__),
+      self.itervalues())
+    setter(self)
+
+
   def get_result(self, collector_set = None):
     assert collector_set is None
     return ItemCollectorSet.__result_type(self)
@@ -216,6 +240,8 @@ class RowCollector(list):
 
   def collect_all(self, rows):
     uiterator.each(self.collect, rows)
+    uiterator.each(ufunctional.apply_memberfn(
+      ItemCollector.set_collected.__name__), self)
 
 
   class __transformer(tuple):
@@ -231,7 +257,11 @@ class RowCollector(list):
 
 
   def transform_all(self, rows):
-    uiterator.each(self.get_transformer(), rows)
+    transformer = self.get_transformer()
+    if transformer is not None:
+      uiterator.each(transformer, rows)
+      uiterator.each(ufunctional.apply_memberfn(
+        ItemCollector.set_transformed.__name__), self)
 
 
   def results_norms(a, b, weights=None):
