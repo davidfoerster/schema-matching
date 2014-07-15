@@ -318,7 +318,10 @@ class RowCollector(list):
 
   __format__ = as_str
 
-import collector.columntype
+
+
+from .itemcount import ItemCountCollector
+from .columntype import ColumnTypeItemCollector
 
 
 class MultiphaseCollector(object):
@@ -331,18 +334,33 @@ class MultiphaseCollector(object):
     self.reset(None)
 
 
-  def reset(self, keep=(columntype.ColumnTypeItemCollector,)):
-    if keep and isinstance(self.merged_predecessors, RowCollector):
-      should_keep = ufunctional.composefn(type, keep.__contains__)
-      self.merged_predecessors = RowCollector(
-        (ItemCollectorSet(itertools.ifilter(should_keep, predecessor.itervalues())))
-          for predecessor in self.merged_predecessors)
-    else:
-      self.merged_predecessors = itertools.repeat(None, len(self.rowset[0]))
+  def reset(self, keep=(ItemCountCollector, ColumnTypeItemCollector)):
+    self.merged_predecessors = RowCollector(self.__emit_itemcollector_set(keep))
     return self
 
 
-  def __call__(self, *collectors):
+  def __emit_itemcollector_set(self, keep):
+    if keep and isinstance(self.merged_predecessors, RowCollector):
+      keep = ufunctional.composefn(type, keep.__contains__)
+      for predecessor in self.merged_predecessors:
+        ics = ItemCollectorSet()
+
+        def add_copy_and_dependencies(collector, isdependency):
+          for dep in collector.result_dependencies:
+            add_copy_and_dependencies(predecessor[type(dep)], True)
+          if isdependency is None:
+            isdependency = collector.isdependency
+          collector = ics.setdefault(type(collector), copy.copy(collector))
+          collector.isdependency &= isdependency
+
+        for collector in itertools.ifilter(keep, predecessor.itervalues()):
+          add_copy_and_dependencies(collector, None)
+        yield ics
+    else:
+      for _ in xrange(len(self.rowset[0])):
+        ics = ItemCollectorSet()
+        ics.add(ItemCountCollector(len(self.rowset)), True)
+        yield ics
     phase = RowCollector(
       (ItemCollectorSet(collectors, predecessor)
         for predecessor in self.merged_predecessors))
