@@ -211,19 +211,25 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
   def __str__(self): return self.as_str()
 
 
-  def add(self, collector, isdependency = False):
+  def add(self, template, isdependency=False):
     """Adds an item collector and all its result_dependencies to this set with its type a key,
     if one of the same type isn't in the set already.
 
     Returns the collector the same type from this set, possibly the one just added.
     """
-    collector = ItemCollector.get_instance(collector, self.predecessor)
-    if not collector:
-      return None
+    collector_type = template.get_type(self.predecessor)
+    collector = self.get(collector_type)
 
-    uiterator.each(self.__add_dependency, collector.result_dependencies)
-    collector = self.setdefault(type(collector), collector)
-    collector.isdependency |= isdependency
+    if collector is None:
+      collector = ItemCollector.get_instance(template, self.predecessor)
+      if not isinstance(collector, ItemCollector):
+        assert collector is None
+        return None
+      collector.isdependency = isdependency
+      uiterator.each(self.__add_dependency, collector.result_dependencies)
+      collector = self.setdefault(collector_type, collector)
+
+    collector.isdependency &= isdependency
     return collector
 
 
