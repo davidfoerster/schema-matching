@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, division
 import os, itertools, copy, collections, math
 from .weight import WeightDict
-import utilities
+import utilities, utilities.string
 import utilities.iterator as uiterator
 import utilities.functional as ufunctional
 import utilities.operator as uoperator
@@ -157,10 +157,17 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
   def as_str(self, collector_set=None, format_spec=''):
     assert collector_set is None
-    return u'{{{}}}'.format(u', '.join(
-      (u'{}: {}'.format(type(collector).__name__, collector.as_str(self, format_spec))
-        for collector in self.itervalues()
-        if not collector.isdependency)))
+    return utilities.string.join('{', u', '.join(
+        (u'{}: {}'.format(type(collector).__name__, collector.as_str(self, format_spec))
+          for collector in self.itervalues()
+          if not collector.isdependency)),
+      '}')
+
+
+  def __format__(self, format_spec=''): return self.as_str(None, format_spec)
+
+
+  def __str__(self): return self.as_str()
 
 
   def add(self, collector, isdependency = False):
@@ -233,12 +240,15 @@ class RowCollector(list):
 
 
   def as_str(self, format_spec=''):
-    return u'({})'.format(u', '.join(
-      itertools.imap(ufunctional.apply_memberfn('as_str', None, format_spec), self)))
+    return utilities.string.join('(', u', '.join(
+        itertools.imap(ufunctional.apply_memberfn(
+          self.as_str.__name__, None, format_spec), self)),
+      ')')
 
 
-  __str__ = as_str
+  def __str__(self): return self.as_str()
 
+  __format__ = as_str
 
 import collector.columntype
 

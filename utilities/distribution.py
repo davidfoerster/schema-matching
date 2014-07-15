@@ -2,6 +2,7 @@ from __future__  import absolute_import, division
 import numbers
 from collections import defaultdict
 from math import fsum, fabs
+from utilities.string import join, format_char
 
 
 class DistributionTable(object):
@@ -55,3 +56,15 @@ class SparseDistributionTable(DistributionTable, defaultdict):
     assert coerced is not None
     return SparseDistributionTable(type(coerced[0]),
       ((k, v / divisor) for k, v in self.iteritems()))
+
+
+  def __format__(self, number_format_spec=''):
+    return join('(',
+      u', '.join((
+        u'{}: {:{}}'.format(format_char(event), frequency, number_format_spec)
+        for event, frequency in self.iteritems())),
+      ')')
+
+
+  def __str__(self):
+    return self.__format__()

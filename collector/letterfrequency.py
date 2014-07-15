@@ -18,3 +18,7 @@ class LetterFrequencyCollector(ItemCollector):
 
   def get_result(self, collector_set=None):
     return self.absolute_letter_frequencies
+
+
+  def as_str(self, collector_set=None, number_fmt=''):
+    return format(self.get_result(collector_set), number_fmt)

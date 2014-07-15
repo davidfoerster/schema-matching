@@ -24,9 +24,7 @@ class LetterProbablilityCollector(ItemCollector):
 
 
   def as_str(self, collector_set, number_fmt=''):
-    return u'({})'.format(u', '.join((
-      u'{}: {:{}}'.format(utilities.string.char_repr(char), frequency, number_fmt)
-      for char, frequency in self.get_result(collector_set).iteritems())))
+    return format(self.get_result(collector_set), number_fmt)
 
 
   @staticmethod

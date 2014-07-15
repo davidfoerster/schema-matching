@@ -134,7 +134,13 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
   def as_str(self, collector_set = None, format_spec=None):
-    return '({}:{})'.format(self.get_result(None).__name__, self.__tolerance_exceeded_count)
+    return utilities.string.join('(', self.get_result(None).__name__, ':',
+      str(self.__tolerance_exceeded_count), ')')
+
+
+  def __format__(self, format_spec=None): return self.as_str()
+
+  def __str__(self): return self.as_str()
 
 
 

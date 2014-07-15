@@ -25,7 +25,7 @@ class ItemProbabilityCollector(ItemCollector):
 
   def as_str(self, collector_set, number_fmt=''):
     return u'({})'.format(u', '.join((
-      u'{}: {:{}}'.format(utilities.string.char_repr(char), frequency, number_fmt)
+      u'{}: {:{}}'.format(utilities.string.format_char(char), frequency, number_fmt)
       for char, frequency in self.get_result(collector_set))))
 
 
