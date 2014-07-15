@@ -1,8 +1,9 @@
 # coding=utf-8
 
 from __future__ import absolute_import, division
-import re, utilities, utilities.string, itertools, numbers
+import re, itertools
 from numbers import Number
+import utilities, utilities.string, utilities.functional
 from utilities import infinity
 from utilities.iterator import countif
 from . import ItemCollector
@@ -77,12 +78,12 @@ class ColumnTypeItemCollector(ItemCollector):
   def __get_set_length(x):
     if isinstance(x, dict):
       icc = x.get(ItemCountCollector)
-      x = icc.get_result(x) if icc else None
-    assert x is None or isinstance(x, numbers.Integral)
-    return x
+      if icc:
+        return icc.get_result(x)
+    return None
 
 
-  def __init__(self, set_length = None, max_invalid_absolute=2, max_invalid_relative=0.25, total_max_invalid=0.05):
+  def __init__(self, collector_set=None, max_invalid_absolute=2, max_invalid_relative=0.25, total_max_invalid=0.05):
     ItemCollector.__init__(self)
     self.__type_index = None
     self.__tolerance_exceeded_count = 0
@@ -90,12 +91,13 @@ class ColumnTypeItemCollector(ItemCollector):
     self.max_invalid_absolute = max_invalid_absolute
     self.max_invalid_relative = max_invalid_relative
     self.total_max_invalid = total_max_invalid
-    set_length = self.__get_set_length(set_length)
+    set_length = self.__get_set_length(collector_set)
     self.__total_max_invalid_absolute = \
       None if set_length is None else int(set_length * self.total_max_invalid)
 
 
   def collect(self, item, collector_set = None):
+    assert not self.has_collected()
     if self.__type_index <= 0: # none or long
       if item == '-' or item.isdigit():
         self.__type_index = 0
@@ -115,6 +117,7 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
   def get_result(self, collector_set = None):
+    assert self.has_collected()
     if self.__type_index == 1 and self.__total_max_invalid_absolute is None:
       set_length = self.__get_set_length(collector_set)
       self.__total_max_invalid_absolute = \
@@ -159,6 +162,5 @@ def factory(string_collector, numeric_collector):
       type = type_or_predecessor
     collector = numeric_collector if issubclass(type, Number) else string_collector
     return ItemCollector.get_instance(collector, predecessor)
-
 
   return __factory
