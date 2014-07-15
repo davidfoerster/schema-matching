@@ -113,8 +113,15 @@ def get_collector_description(srcpath=None):
         '{}._anonymous_{}_{}'.format(
           parent_package.__name__, f_stat.st_dev, f_stat.st_ino)
       collector_description = imp.load_source(module_name, srcpath, f)
+    assert isinstance(getattr(collector_description, '__file__', None), basestring)
 
   utilities.setattr_default(collector_description, '__file__', '<unknown file>')
+  if not hasattr(collector_description, 'descriptions'):
+    raise NameError(
+      'The collector description module doesn\'t contain any collector description.',
+      collector_description, collector_description.__file__,
+      'missing attribute \'description\'')
+
   return collector_description
 
 
