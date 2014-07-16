@@ -11,7 +11,6 @@ from utilities.string import DecodableUnicode
 import utilities.iterator as uiterator
 import utilities.functional as ufunctional
 from collector import verbosity, MultiphaseCollector
-from collector.columntype import ColumnTypeItemCollector
 
 if __debug__:
   import timeit
@@ -118,9 +117,9 @@ def get_collector_description(srcpath=None):
   utilities.setattr_default(collector_description, '__file__', '<unknown file>')
   if not hasattr(collector_description, 'descriptions'):
     raise NameError(
-      'The collector description module doesn\'t contain any collector description.',
+      "The collector description module doesn't contain any collector description.",
       collector_description, collector_description.__file__,
-      'missing attribute \'description\'')
+      "missing attribute 'description'")
 
   return collector_description
 
@@ -313,7 +312,7 @@ def compare_descriptions(in_paths, collectors, to_compare, desc=None):
     if not to_compare:
       from collector.description import default as default_description
       if os.path.samefile(desc.__file__, default_description.__file__):
-        print('Error: I won\'t compare the default description to itself.', file=sys.stderr)
+        print("Error: I won't compare the default description to itself.", file=sys.stderr)
         return 2
 
     invalid_count, _, missing_count = \
