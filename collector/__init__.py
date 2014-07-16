@@ -70,10 +70,11 @@ class ItemCollector(object):
     return NotImplemented
 
 
+  @property
   def has_collected(self): return self.__has_collected
   def set_collected(self): self.__has_collected = True
 
-
+  @property
   def has_transformed(self): return self.__has_transformed
   def set_transformed(self): self.__has_transformed = True
 
@@ -140,7 +141,9 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
     self.predecessor = predecessor
     if predecessor:
-      assert all(itertools.imap(ItemCollector.has_collected, predecessor.itervalues()))
+      assert all(itertools.imap(
+        ufunctional.apply_memberfn(getattr, 'has_collected'),
+        predecessor.itervalues()))
       self.update(predecessor)
     uiterator.each(self.add, collectors)
 
@@ -149,8 +152,9 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
     assert collector_set is self
     collect = ItemCollector.collect
     collect(self, item, self)
-    uiterator.each(ufunctional.apply_memberfn(collect.__name__, item, self),
-      itertools.ifilterfalse(ItemCollector.has_collected, self.itervalues()))
+    uiterator.each(ufunctional.apply_memberfn('collect', item, self),
+      itertools.ifilterfalse(ufunctional.apply_memberfn(getattr, 'has_collected'),
+        self.itervalues()))
 
 
   class __result_type(object):
@@ -220,14 +224,10 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
   def get_transformer(self):
     transformer = ufunctional.composefn(*itertools.ifilter(None,
-      itertools.imap(ufunctional.apply_memberfn(ItemCollector.get_transformer.__name__),
-        itertools.ifilterfalse(ItemCollector.has_transformed, self.itervalues()))))
-    if not transformer.args[1]:
-      return None
-    if len(transformer.args[1]) == 1:
-      return transformer.args[1][0]
-    else:
-      return transformer
+      itertools.imap(ufunctional.apply_memberfn('get_transformer'),
+        itertools.ifilterfalse(ufunctional.apply_memberfn(getattr, 'has_transformed'),
+          self.itervalues()))))
+    return None if transformer is uoperator.identity else transformer
 
 
   def as_str(self, collector_set=None, format_spec=''):

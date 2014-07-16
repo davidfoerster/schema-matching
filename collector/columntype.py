@@ -97,7 +97,7 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
   def collect(self, item, collector_set = None):
-    assert not self.has_collected()
+    assert not self.has_collected
     if self.__type_index <= 0: # none or long
       if item == '-' or item.isdigit():
         self.__type_index = 0
@@ -117,7 +117,7 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
   def get_result(self, collector_set = None):
-    assert self.has_collected()
+    assert self.has_collected
     if self.__type_index == 1 and self.__total_max_invalid_absolute is None:
       set_length = self.__get_set_length(collector_set)
       self.__total_max_invalid_absolute = \

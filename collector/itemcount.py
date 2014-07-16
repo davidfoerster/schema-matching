@@ -16,10 +16,10 @@ class ItemCountCollector(ItemCollector):
 
 
   def collect(self, item, collector_set = None):
-    assert not self.has_collected()
+    assert not self.has_collected
     self.count += 1
 
 
   def get_result(self, collector_set = None):
-    assert self.has_collected()
+    assert self.has_collected
     return self.count
