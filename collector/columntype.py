@@ -52,20 +52,24 @@ def tolong(item):
 
 
 
-class ColumnTypeItemCollector(ItemCollector):
-
-  __type_sequence = (long, float, unicode)
-  __type_rdict = utilities.rdict(enumerate(__type_sequence))
-  __distance_matrix = [
+def _make_type_distance_matrix(type_sequence):
+  return [
     [
         float(a is not b)
       if isinstance(a, Number) is isinstance(b, Number) else
         infinity
-      for a in __type_sequence
+      for a in type_sequence
     ]
-    for b in __type_sequence
+    for b in type_sequence
   ]
 
+class ColumnTypeItemCollector(ItemCollector):
+
+  result_dependencies = (ItemCountCollector,)
+
+  __type_sequence = (long, float, unicode)
+  __type_rdict = utilities.rdict(enumerate(__type_sequence))
+  __distance_matrix = _make_type_distance_matrix(__type_sequence)
   __transformers = (tolong, tofloat, utilities.string.DecodableUnicode)
 
 
@@ -155,5 +159,6 @@ def factory(string_collector, numeric_collector):
       type = type_or_predecessor
     collector = numeric_collector if issubclass(type, Number) else string_collector
     return ItemCollector.get_instance(collector, predecessor)
+
 
   return __factory
