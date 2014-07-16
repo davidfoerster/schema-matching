@@ -18,7 +18,7 @@ if __debug__:
 
 
 default_timelimit = 60
-number_format = '10.4e'
+number_format = '.3e'
 __interrupted = False
 
 
