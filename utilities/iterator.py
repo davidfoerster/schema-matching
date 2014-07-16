@@ -3,13 +3,14 @@ import __builtin__, itertools
 
 
 if __debug__:
-  from __builtin__ import (map, filter)
-  def filterfalse(function, iterable): return list(itertools.ifilterfalse(function, iterable))
+  from __builtin__ import map, filter, zip
+  def filterfalse(function, iterable): return tuple(itertools.ifilterfalse(function, iterable))
 
 else:
   from itertools import imap as map
   from itertools import ifilter as filter
   from itertools import ifilterfalse as filterfalse
+  from itertools import izip as zip
 
 
 def each(function, *iterables):
