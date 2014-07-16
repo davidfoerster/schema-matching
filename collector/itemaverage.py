@@ -1,8 +1,8 @@
-from __future__ import division
-from math import expm1
-from collector import ItemCollector
-from collector.itemsum import ItemSumCollector
-from collector.itemcount import ItemCountCollector
+from __future__ import division, absolute_import
+from .base import ItemCollector
+from .itemsum import ItemSumCollector
+from .itemcount import ItemCountCollector
+
 
 
 class ItemAverageCollector(ItemCollector):

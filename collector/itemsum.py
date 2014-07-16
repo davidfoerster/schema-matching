@@ -1,5 +1,7 @@
+from __future__ import absolute_import
 from math import isnan
-from . import ItemCollector
+from .base import ItemCollector
+
 
 
 class ItemSumCollector(ItemCollector):

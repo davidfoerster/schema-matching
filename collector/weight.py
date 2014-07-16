@@ -1,4 +1,4 @@
-import math, utilities, collections
+import math, utilities
 import utilities.iterator as uiterator
 import utilities.operator as uoperator
 from itertools import imap

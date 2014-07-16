@@ -12,7 +12,8 @@ from utilities import infinity
 from utilities.string import DecodableUnicode
 from utilities.iterator import each, map_inplace
 from utilities.functional import memberfn, composefn
-from collector import verbosity, MultiphaseCollector
+from collector import verbosity
+from collector.multiphase import MultiphaseCollector
 
 if __debug__:
   import timeit

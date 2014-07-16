@@ -1,8 +1,9 @@
 from __future__ import division, absolute_import
 from math import isnan, sqrt
 from utilities.operator import square
-from . import ItemCollector
+from .base import ItemCollector
 from .itemaverage import ItemAverageCollector
+
 
 
 class ItemVarianceCollector(ItemCollector):

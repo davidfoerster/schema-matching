@@ -1,5 +1,7 @@
-from . import ItemCollector
+from __future__ import absolute_import
+from .base import ItemCollector
 from utilities import infinity
+
 
 
 class MinItemCollector(ItemCollector):

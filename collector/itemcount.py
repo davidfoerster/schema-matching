@@ -1,5 +1,8 @@
+from __future__ import absolute_import
 import numbers
-from . import ItemCollector, ItemCollectorSet
+from .base import ItemCollector
+from .set import ItemCollectorSet
+
 
 
 class ItemCountCollector(ItemCollector):

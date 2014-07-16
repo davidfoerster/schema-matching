@@ -1,13 +1,14 @@
 from __future__ import absolute_import
-import numbers, itertools
+import numbers
 import utilities.iterator, utilities.functional
-from . import ItemCollector
+from .base import ItemCollector
 from .columntype import ColumnTypeItemCollector
 from .itemcount import ItemCountCollector
 from .minitem import MinItemCollector
 from .maxitem import MaxItemCollector
 from .variance import ItemVarianceCollector
 from utilities.distribution import UniformBinDistributionTable, SparseDistributionTable
+
 
 
 class ItemFrequencyCollector(ItemCollector):
