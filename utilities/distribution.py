@@ -6,6 +6,10 @@ from utilities.string import join, format_char
 
 
 
+default_number_format = '.4g'
+
+
+
 class DistributionTable(object):
 
   def count(self):
@@ -17,7 +21,7 @@ class DistributionTable(object):
 
 
   def __str__(self):
-    return self.__format__('.4g')
+    return self.__format__(default_number_format)
 
 
   def normalize(self, count=None):
