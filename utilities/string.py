@@ -36,7 +36,6 @@ def format_char(item):
     return item
 
 
-# TODO: Use this to frame strings conveniently wherever appropriate
 def join(*args):
   strtype = unicode if any((isinstance(s, unicode) for s in args)) else str
   return strtype().join(args)
