@@ -1,11 +1,15 @@
 from __future__ import absolute_import, print_function, division
-import itertools, functools, collections, math
+import collections, math
 import os, copy, inspect
 from .weight import WeightDict
-import utilities, utilities.string
+import utilities
 import utilities.iterator as uiterator
-import utilities.functional as ufunctional
 import utilities.operator as uoperator
+from itertools import imap, ifilter, ifilterfalse, izip, izip_longest, islice, chain
+from functools import partial as partialfn
+from utilities.iterator import each, consume
+from utilities.functional import memberfn, composefn
+from utilities.string import join
 
 if __debug__:
   import operator
@@ -115,7 +119,7 @@ class TagCollector(ItemCollector):
 
 
   def as_str(self, collector_set, format_spec=None):
-    return utilities.string.join(str(self.__id), ': ', str(self.data))
+    return join(str(self.__id), ': ', str(self.data))
 
 
   def __eq__(self, other):
@@ -142,19 +146,17 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
     self.predecessor = predecessor
     if predecessor:
-      assert all(itertools.imap(
-        ufunctional.apply_memberfn(getattr, 'has_collected'),
-        predecessor.itervalues()))
+      assert all(imap(memberfn(getattr, 'has_collected'), predecessor.itervalues()))
       self.update(predecessor)
-    uiterator.each(self.add, collectors)
+    each(self.add, collectors)
 
 
   def collect(self, item, collector_set = None):
     assert collector_set is self
     collect = ItemCollector.collect
     collect(self, item, self)
-    uiterator.each(ufunctional.apply_memberfn('collect', item, self),
-      itertools.ifilterfalse(ufunctional.apply_memberfn(getattr, 'has_collected'),
+    each(memberfn('collect', item, self),
+      ifilterfalse(memberfn(getattr, 'has_collected'),
         self.itervalues()))
 
 
@@ -209,8 +211,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
   def __forward_call(self, fn_name=None, *args):
     if fn_name is None:
       fn_name = inspect.stack()[1][3]
-    uiterator.each(ufunctional.apply_memberfn(fn_name, *args),
-      self.itervalues())
+    each(memberfn(fn_name, *args), self.itervalues())
     getattr(super(ItemCollectorSet, self), fn_name)(*args)
 
 
@@ -223,20 +224,18 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
 
   def get_transformer(self):
-    transformer = ufunctional.composefn(*itertools.ifilter(None,
-      itertools.imap(ufunctional.apply_memberfn('get_transformer'),
-        itertools.ifilterfalse(ufunctional.apply_memberfn(getattr, 'has_transformed'),
+    transformer = composefn(*ifilter(None,
+      imap(memberfn('get_transformer'),
+        ifilterfalse(memberfn(getattr, 'has_transformed'),
           self.itervalues()))))
     return None if transformer is uoperator.identity else transformer
 
 
   def as_str(self, collector_set=None, format_spec=''):
     assert collector_set is None
-    return utilities.string.join('{', u', '.join((
-        utilities.string.join(
-          type(collector).__name__, ': ', collector.as_str(self, format_spec))
-        for collector in self.itervalues()
-        if not collector.isdependency)),
+    return join('{', u', '.join((
+        join(type(collector).__name__, ': ', collector.as_str(self, format_spec))
+        for collector in self.itervalues() if not collector.isdependency)),
       '}')
 
 
@@ -261,7 +260,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
         assert collector is None
         return None
       collector.isdependency = isdependency
-      uiterator.each(self.__add_dependency, collector.result_dependencies)
+      each(self.__add_dependency, collector.result_dependencies)
       collector = self.setdefault(collector_type, collector)
 
     collector.isdependency &= isdependency
@@ -286,7 +285,7 @@ class RowCollector(list):
       print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file = sys.stderr)
 
     assert len(self) <= len(items)
-    uiterator.each(self.__collect_column, self, items)
+    each(self.__collect_column, self, items)
 
 
   @staticmethod
@@ -295,8 +294,8 @@ class RowCollector(list):
 
 
   def collect_all(self, rows):
-    uiterator.each(self.collect, rows)
-    uiterator.each(ufunctional.apply_memberfn('set_collected'), self)
+    each(self.collect, rows)
+    each(memberfn('set_collected'), self)
 
 
   class __transformer(tuple):
@@ -307,10 +306,9 @@ class RowCollector(list):
 
 
   def get_transformer(self):
-    column_transformers = \
-      tuple(itertools.ifilter(uoperator.second,
-        enumerate(itertools.imap(
-          ufunctional.apply_memberfn('get_transformer'), self))))
+    column_transformers = tuple(
+      ifilter(uoperator.second,
+        enumerate(imap(memberfn('get_transformer'), self))))
 
     if column_transformers:
       def row_transformer(items):
@@ -325,26 +323,23 @@ class RowCollector(list):
   def transform_all(self, rows):
     transformer = self.get_transformer()
     if transformer is not None:
-      uiterator.each(transformer, rows)
-      uiterator.each(ufunctional.apply_memberfn('set_transformed'), self)
+      each(transformer, rows)
+      each(memberfn('set_transformed'), self)
 
 
   def results_norms(a, b, weights=None):
-    get_result = ufunctional.apply_memberfn('get_result')
+    get_result = memberfn('get_result')
     # Materialise results of inner loop because they'll be scanned multiple times.
     resultsA = map(get_result, a)
-    resultsB = itertools.imap(get_result, b)
+    resultsB = imap(get_result, b)
     return [
       [collB.result_norm(resultA, resultB, weights) for resultA in resultsA]
-      for collB, resultB in itertools.izip(b, resultsB)
+      for collB, resultB in izip(b, resultsB)
     ]
 
 
   def as_str(self, format_spec=''):
-    return utilities.string.join('(', u', '.join(
-        itertools.imap(ufunctional.apply_memberfn(
-          'as_str', None, format_spec), self)),
-      ')')
+    return join('(', u', '.join(imap(memberfn('as_str', None, format_spec), self)), ')')
 
 
   def __str__(self): return self.as_str()
@@ -374,7 +369,7 @@ class MultiphaseCollector(object):
 
   def __emit_itemcollector_set(self, keep):
     if keep and isinstance(self.merged_predecessors, RowCollector):
-      keep = ufunctional.composefn(type, keep.__contains__)
+      keep = composefn(type, keep.__contains__)
       for predecessor in self.merged_predecessors:
         ics = ItemCollectorSet()
 
@@ -386,9 +381,8 @@ class MultiphaseCollector(object):
           collector = ics.setdefault(type(collector), copy.copy(collector))
           collector.isdependency &= isdependency
 
-        uiterator.each(
-          ufunctional.apply_memberfn(add_copy_and_dependencies, None),
-          itertools.ifilter(keep, predecessor.itervalues()))
+        each(memberfn(add_copy_and_dependencies, None),
+          ifilter(keep, predecessor.itervalues()))
         yield ics
     else:
       for _ in xrange(len(self.rowset[0])):
@@ -425,7 +419,7 @@ class MultiphaseCollector(object):
 
 
   def __gen_itemcollector_sets(self, phase_desc):
-    for desc, pred in itertools.izip(phase_desc, self.merged_predecessors):
+    for desc, pred in izip(phase_desc, self.merged_predecessors):
       if desc is None:
         yield pred
       else:
@@ -441,16 +435,16 @@ class MultiphaseCollector(object):
     return not all((
       isinstance(ctype, ItemCollector) or
         (type(ctype) is type and issubclass(ctype, ItemCollector))
-      for ctype in itertools.chain(*itertools.ifilter(None, phase_desc))))
+      for ctype in chain(*ifilter(None, phase_desc))))
 
 
   def get_phase_descriptions(self, collector_descriptions):
     # column-first ordering
     phase_descriptions = uiterator.map(
-      functools.partial(self.__get_dependency_chain, collector_descriptions),
+      partialfn(self.__get_dependency_chain, collector_descriptions),
       self.merged_predecessors)
     # transpose to phase-first ordering
-    phase_descriptions = itertools.izip_longest(*phase_descriptions)
+    phase_descriptions = izip_longest(*phase_descriptions)
     return phase_descriptions
 
 
@@ -462,7 +456,7 @@ class MultiphaseCollector(object):
     :param predecessors: ItemCollectorSet
     :return: list[dict]
     """
-    phase = dict(itertools.ifilterfalse(
+    phase = dict(ifilterfalse(
       lambda item: item[0] is None or item[0] in predecessors,
       ((template.get_type(predecessors), template)
         for template in collector_descriptions)))
@@ -482,11 +476,11 @@ class MultiphaseCollector(object):
 
     def add_dependencies(template):
       if template.pre_dependencies:
-        for dep in itertools.ifilterfalse(predecessors.__contains__, template.pre_dependencies):
+        for dep in ifilterfalse(predecessors.__contains__, template.pre_dependencies):
           phase_pre_dependencies.setdefault(dep, dep)
           collector_min_phases[dep] = len(phases) - 1
       else:
-        for dep in itertools.ifilter(must_add_dependency, template.result_dependencies):
+        for dep in ifilter(must_add_dependency, template.result_dependencies):
           add_dependencies(dep)
           phase_result_dependencies.add(dep)
 
@@ -494,15 +488,13 @@ class MultiphaseCollector(object):
     while phase:
       phase_pre_dependencies = dict()
       phase_result_dependencies.clear()
-      uiterator.each(add_dependencies, phase.iterkeys())
+      each(add_dependencies, phase.iterkeys())
       phases.append(phase)
       phase = phase_pre_dependencies
 
     # remove later duplicates
-    uiterator.consume((
-      uiterator.each(
-        ufunctional.apply_memberfn(dict.pop, ctype, None),
-        itertools.islice(phases, 0, -min_phase_idx))
+    consume((
+      each(memberfn(dict.pop, ctype, None), islice(phases, 0, -min_phase_idx))
       for ctype, min_phase_idx in collector_min_phases.iteritems()))
 
     if phases:

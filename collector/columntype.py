@@ -207,5 +207,5 @@ class factory(object):
 
 def _imap_attr(attr, default, *objects):
   return itertools.imap(
-    utilities.functional.apply_memberfn(getattr, attr, default),
+    utilities.functional.memberfn(getattr, attr, default),
     objects)

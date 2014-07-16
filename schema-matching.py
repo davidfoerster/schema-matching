@@ -1,15 +1,17 @@
 #!/usr/bin/python -OO
 from __future__ import print_function, absolute_import
 import sys, os, os.path, signal
-import itertools, functools, operator, collections
+import operator, collections
 import csv
 import imp, importlib
+from itertools import imap, ifilter, izip, repeat
+from functools import partial as partialfn
 
-import utilities, utilities.file, utilities.operator
+import utilities.file, utilities.operator
 from utilities import infinity
 from utilities.string import DecodableUnicode
-import utilities.iterator as uiterator
-import utilities.functional as ufunctional
+from utilities.iterator import each, map_inplace
+from utilities.functional import memberfn, composefn
 from collector import verbosity, MultiphaseCollector
 
 if __debug__:
@@ -131,13 +133,11 @@ def collect_analyse_match(collectors, collector_descriptions):
   :return: list[MultiphaseCollector], bool, tuple[int]
   """
   assert isinstance(collectors, collections.Sequence) and len(collectors) == 2
-  collect_functor = \
-    ufunctional.apply_memberfn(collect,
-      *collector_descriptions.descriptions)
+  collect_functor = memberfn(collect, *collector_descriptions.descriptions)
 
   if isinstance(collectors[0], MultiphaseCollector):
     assert isinstance(collectors[1], MultiphaseCollector)
-    uiterator.each(collect_functor, collectors)
+    each(collect_functor, collectors)
   else:
     collectors = map(collect_functor, collectors)
 
@@ -151,9 +151,8 @@ def collect_analyse_match(collectors, collector_descriptions):
     weights=collector_descriptions.weights)
   if verbosity >= 1:
     print(collectors[1].name, collectors[0].name, sep=' / ', end='\n| ', file=sys.stderr)
-    formatter = ufunctional.apply_memberfn(format, number_format)
-    print(
-      *['  '.join(itertools.imap(formatter, row)) for row in norms],
+    formatter = memberfn(format, number_format)
+    print(*('  '.join(imap(formatter, row)) for row in norms),
       sep=' |\n| ', end=' |\n\n', file=sys.stderr)
 
   # find minimal combination
@@ -178,10 +177,8 @@ def collect(src, *collector_descriptions):
 
     with open(src, 'rb') as f:
       reader = csv.reader(f, delimiter=';', skipinitialspace=True)
-      reader = itertools.imap(
-        functools.partial(uiterator.map_inplace,
-          lambda item: DecodableUnicode(item.strip())),
-        reader)
+      reader = imap(partialfn(map_inplace,
+        lambda item: DecodableUnicode(item.strip())), reader)
       multiphasecollector = MultiphaseCollector(reader, os.path.basename(src))
 
   multiphasecollector.do_phases(collector_descriptions,
@@ -209,10 +206,10 @@ def get_best_schema_mapping(distance_matrix):
   maxJ = len(distance_matrix[0]) # column count
   assert maxI >= maxJ
   rangeJ = xrange(maxJ)
-  known_mappings = list(itertools.repeat(None, maxJ))
+  known_mappings = list(repeat(None, maxJ))
 
   def iter_unmapped():
-    return itertools.ifilter(lambda j: known_mappings[j] is None, rangeJ)
+    return ifilter(lambda j: known_mappings[j] is None, rangeJ)
 
   def sweep_row(i, skippable_count):
     if __interrupted or skippable_count < 0:
@@ -258,8 +255,7 @@ def validate_result(in_paths, found_mappings, norm, offset=1):
     with open(os.path.splitext(path)[0] + '_desc.txt') as f:
       return {
         int(mapped): int(original)
-        for mapped, original
-        in itertools.imap(ufunctional.apply_memberfn(str.split, ',', 1), f)
+        for mapped, original in imap(memberfn(str.split, ',', 1), f)
       }
 
   schema_desc = map(read_descriptor, in_paths)
@@ -319,7 +315,7 @@ def compare_descriptions(in_paths, collectors, to_compare, desc=None):
     print_description_comment(desc)
     descriptions.append((desc, invalid_count + missing_count, best_match_norm))
 
-  for desc in itertools.imap(get_collector_description, to_compare or (None,)):
+  for desc in imap(get_collector_description, to_compare or (None,)):
     collectors, _, best_match = collect_analyse_match(collectors, desc)
     best_match_norm, best_match = best_match
     invalid_count, _, missing_count = \
@@ -349,12 +345,12 @@ def print_result(column_mappings, reversed=False, offset=1):
     return
 
   column_mappings = [
-    itertools.imap(str, xrange(offset, offset.__add__(len(column_mappings)))),
-    itertools.imap(ufunctional.composefn(offset.__add__, str), column_mappings)
+    imap(str, xrange(offset, offset.__add__(len(column_mappings)))),
+    imap(composefn(offset.__add__, str), column_mappings)
   ]
   if reversed:
     column_mappings.reverse()
-  print(*itertools.imap(','.join, itertools.izip(*column_mappings)), sep='\n')
+  print(*imap(','.join, izip(*column_mappings)), sep='\n')
 
 
 def print_description_comment(desc):

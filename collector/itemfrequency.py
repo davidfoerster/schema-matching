@@ -26,7 +26,7 @@ class ItemFrequencyCollector(ItemCollector):
         table_ctor = UniformBinDistributionTable.for_variance
       assert all(prereqs)
       utilities.iterator.map_inplace(
-        utilities.functional.apply_memberfn('get_result'), prereqs)
+        utilities.functional.memberfn('get_result'), prereqs)
       prereqs.append('I')
       self.frequencies = table_ctor(*prereqs)
     else:

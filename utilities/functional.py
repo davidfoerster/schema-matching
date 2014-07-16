@@ -2,7 +2,7 @@ import functools
 import operator
 
 
-def apply_memberfn(memberfn, *args):
+def memberfn(memberfn, *args):
   if callable(memberfn):
     return lambda instance: memberfn(instance, *args)
   else:
