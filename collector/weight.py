@@ -1,4 +1,4 @@
-import math, utilities
+import math, utilities, collections
 import utilities.iterator as uiterator
 import utilities.operator as uoperator
 from itertools import imap
@@ -34,6 +34,7 @@ class WeightDict(dict):
     dict.__init__(self)
     self.default = WeightDict.WeightFunctor(default)
     self.sum_data = sum
+    self.tags = kwargs.pop('tags', frozenset())
     uiterator.stareach(self.__setitem__, args)
     uiterator.stareach(self.__setitem__, kwargs.iteritems())
 

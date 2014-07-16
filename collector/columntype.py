@@ -1,8 +1,9 @@
 # coding=utf-8
 
 from __future__ import absolute_import, division
-import re, utilities, utilities.string, itertools, numbers
+import re, itertools
 from numbers import Number
+import utilities, utilities.string, utilities.functional
 from utilities import infinity
 from utilities.iterator import countif
 from . import ItemCollector
@@ -77,12 +78,12 @@ class ColumnTypeItemCollector(ItemCollector):
   def __get_set_length(x):
     if isinstance(x, dict):
       icc = x.get(ItemCountCollector)
-      x = icc.get_result(x) if icc else None
-    assert x is None or isinstance(x, numbers.Integral)
-    return x
+      if icc:
+        return icc.get_result(x)
+    return None
 
 
-  def __init__(self, set_length = None, max_invalid_absolute=2, max_invalid_relative=0.25, total_max_invalid=0.05):
+  def __init__(self, collector_set=None, max_invalid_absolute=2, max_invalid_relative=0.25, total_max_invalid=0.05):
     ItemCollector.__init__(self)
     self.__type_index = None
     self.__tolerance_exceeded_count = 0
@@ -90,12 +91,13 @@ class ColumnTypeItemCollector(ItemCollector):
     self.max_invalid_absolute = max_invalid_absolute
     self.max_invalid_relative = max_invalid_relative
     self.total_max_invalid = total_max_invalid
-    set_length = self.__get_set_length(set_length)
+    set_length = self.__get_set_length(collector_set)
     self.__total_max_invalid_absolute = \
       None if set_length is None else int(set_length * self.total_max_invalid)
 
 
   def collect(self, item, collector_set = None):
+    assert not self.has_collected
     if self.__type_index <= 0: # none or long
       if item == '-' or item.isdigit():
         self.__type_index = 0
@@ -115,6 +117,7 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
   def get_result(self, collector_set = None):
+    assert self.has_collected
     if self.__type_index == 1 and self.__total_max_invalid_absolute is None:
       set_length = self.__get_set_length(collector_set)
       self.__total_max_invalid_absolute = \
@@ -148,17 +151,61 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
 
-def factory(string_collector, numeric_collector):
+class factory(object):
 
-  def __factory(type_or_predecessor):
+  __pre_dependencies = (ColumnTypeItemCollector,)
+
+
+  def __init__(self, string_collector, numeric_collector):
+    object.__init__(self)
+    self.string_collector = string_collector
+    self.numeric_collector = numeric_collector
+    self.pre_dependencies = frozenset(itertools.chain(self.__pre_dependencies,
+      *_imap_attr('pre_dependencies', (), string_collector,
+        numeric_collector)))
+    self.result_dependencies = frozenset(itertools.chain(
+      *_imap_attr('result_dependencies', (), string_collector,
+        numeric_collector)))
+
+
+  def __call__(self, type_or_predecessor):
     if isinstance(type_or_predecessor, dict):
       predecessor = type_or_predecessor
       type = predecessor[ColumnTypeItemCollector].get_result()
     else:
       predecessor = None
       type = type_or_predecessor
-    collector = numeric_collector if issubclass(type, Number) else string_collector
-    return ItemCollector.get_instance(collector, predecessor)
+    return ItemCollector.get_instance(self.__for_type(type), predecessor)
 
 
-  return __factory
+  def get_type(self, collector_set):
+    if collector_set:
+      ctc = collector_set.get(ColumnTypeItemCollector)
+      if ctc is not None:
+        return self.__for_type(ctc.get_result())
+    return self
+
+
+  def __for_type(self, type):
+    return self.numeric_collector if issubclass(type, Number) else self.string_collector
+
+
+  def __eq__(self, other):
+    return (isinstance(other, factory) and
+      self.string_collector == other.string_collector and
+      self.numeric_collector == other.numeric_collector)
+
+
+  def __ne__(self, other):
+    return not self.__eq__(other)
+
+
+  def __hash__(self):
+    return 0x4a9fd98f ^ hash(self.string_collector) ^ hash(self.numeric_collector)
+
+
+
+def _imap_attr(attr, default, *objects):
+  return itertools.imap(
+    utilities.functional.apply_memberfn(getattr, attr, default),
+    objects)

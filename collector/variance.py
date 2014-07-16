@@ -7,6 +7,8 @@ from .itemaverage import ItemAverageCollector
 
 class ItemVarianceCollector(ItemCollector):
 
+  pre_dependencies = (ItemAverageCollector,)
+
   def __init__(self, previous_collector_set):
     ItemCollector.__init__(self, previous_collector_set)
     self.average = \

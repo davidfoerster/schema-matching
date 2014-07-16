@@ -8,6 +8,8 @@ from .letteraverage import ItemLetterAverageCollector
 
 class LetterVarianceCollector(ItemCollector):
 
+  pre_dependencies = (ItemLetterAverageCollector,)
+
   result_dependencies = (ItemLetterCountCollector,)
 
 
