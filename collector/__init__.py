@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, division
-import os, itertools, functools, copy, collections, math
+import itertools, functools, collections, math
+import os, copy, inspect
 from .weight import WeightDict
 import utilities, utilities.string
 import utilities.iterator as uiterator
@@ -200,18 +201,17 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
         return utilities.NaN
 
 
-  def set_collected(self):
-    setter = ItemCollector.set_collected
-    uiterator.each(ufunctional.apply_memberfn(setter.__name__),
-      self.itervalues())
-    setter(self)
+  def set_collected(self): self.__forward_call()
+
+  def set_transformed(self): self.__forward_call()
 
 
-  def set_transformed(self):
-    setter = ItemCollector.set_transformed
-    uiterator.each(ufunctional.apply_memberfn(setter.__name__),
+  def __forward_call(self, fn_name=None, *args):
+    if fn_name is None:
+      fn_name = inspect.stack()[1][3]
+    uiterator.each(ufunctional.apply_memberfn(fn_name, *args),
       self.itervalues())
-    setter(self)
+    getattr(super(ItemCollectorSet, self), fn_name)(*args)
 
 
   def get_result(self, collector_set = None):
@@ -232,10 +232,11 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
   def as_str(self, collector_set=None, format_spec=''):
     assert collector_set is None
-    return utilities.string.join('{', u', '.join(
-        (u'{}: {}'.format(type(collector).__name__, collector.as_str(self, format_spec))
-          for collector in self.itervalues()
-          if not collector.isdependency)),
+    return utilities.string.join('{', u', '.join((
+        utilities.string.join(
+          type(collector).__name__, ': ', collector.as_str(self, format_spec))
+        for collector in self.itervalues()
+        if not collector.isdependency)),
       '}')
 
 
@@ -295,8 +296,7 @@ class RowCollector(list):
 
   def collect_all(self, rows):
     uiterator.each(self.collect, rows)
-    uiterator.each(ufunctional.apply_memberfn(
-      ItemCollector.set_collected.__name__), self)
+    uiterator.each(ufunctional.apply_memberfn('set_collected'), self)
 
 
   class __transformer(tuple):
@@ -307,10 +307,10 @@ class RowCollector(list):
 
 
   def get_transformer(self):
-    column_transformers = tuple(itertools.ifilter(uoperator.second,
-      enumerate(itertools.imap(
-        ufunctional.apply_memberfn(ItemCollector.get_transformer.__name__),
-        self))))
+    column_transformers = \
+      tuple(itertools.ifilter(uoperator.second,
+        enumerate(itertools.imap(
+          ufunctional.apply_memberfn('get_transformer'), self))))
 
     if column_transformers:
       def row_transformer(items):
@@ -326,8 +326,7 @@ class RowCollector(list):
     transformer = self.get_transformer()
     if transformer is not None:
       uiterator.each(transformer, rows)
-      uiterator.each(ufunctional.apply_memberfn(
-        ItemCollector.set_transformed.__name__), self)
+      uiterator.each(ufunctional.apply_memberfn('set_transformed'), self)
 
 
   def results_norms(a, b, weights=None):
