@@ -386,8 +386,9 @@ class MultiphaseCollector(object):
           collector = ics.setdefault(type(collector), copy.copy(collector))
           collector.isdependency &= isdependency
 
-        for collector in itertools.ifilter(keep, predecessor.itervalues()): # TODO: Rewrite functionally
-          add_copy_and_dependencies(collector, None)
+        uiterator.each(
+          ufunctional.apply_memberfn(add_copy_and_dependencies, None),
+          itertools.ifilter(keep, predecessor.itervalues()))
         yield ics
     else:
       for _ in xrange(len(self.rowset[0])):
@@ -461,54 +462,51 @@ class MultiphaseCollector(object):
     :param predecessors: ItemCollectorSet
     :return: list[dict]
     """
-    phase = {template.get_type(predecessors): template
-      for template in collector_descriptions}
-    phase.pop(None, None)
-    independent = TagCollector('independent', set(phase.iterkeys()))
+    phase = dict(itertools.ifilterfalse(
+      lambda item: item[0] is None or item[0] in predecessors,
+      ((template.get_type(predecessors), template)
+        for template in collector_descriptions)))
     for ctype in predecessors.iterkeys():
       phase.pop(ctype, None)
+    independent = TagCollector('independent', frozenset(phase.iterkeys()))
 
     phases = []
     collector_min_phases = dict()
     phase_pre_dependencies = None
     phase_result_dependencies = set()
-    current_phase_idx = 1 # Phases will have negative indices starting from zero since we're building them from the back; TODO: probably unnecessary
 
-    def add_dependencies(template, phase_idx):
+    def must_add_dependency(dep):
+      return (dep not in phase and
+        dep not in phase_result_dependencies and
+        dep not in phase_pre_dependencies)
+
+    def add_dependencies(template):
       if template.pre_dependencies:
-        for dep in template.pre_dependencies: # TODO: Rewrite functionally
-          if not dep in predecessors:
-            phase_pre_dependencies.setdefault(dep, dep)
-            assert phase_idx - 1 <= collector_min_phases.get(dep, 0)
-            collector_min_phases[dep] = phase_idx - 1
+        for dep in itertools.ifilterfalse(predecessors.__contains__, template.pre_dependencies):
+          phase_pre_dependencies.setdefault(dep, dep)
+          collector_min_phases[dep] = len(phases) - 1
       else:
-        for dep in template.result_dependencies: # TODO: Rewrite functionally
-          if dep not in phase and dep not in phase_result_dependencies and dep not in phase_pre_dependencies:
-            add_dependencies(dep, phase_idx)
-            phase_result_dependencies.add(dep)
+        for dep in itertools.ifilter(must_add_dependency, template.result_dependencies):
+          add_dependencies(dep)
+          phase_result_dependencies.add(dep)
 
     # resolve dependencies and push them to an earlier phase
     while phase:
-      current_phase_idx -= 1
-      phases.append(phase)
       phase_pre_dependencies = dict()
       phase_result_dependencies.clear()
-
-      for ctype in phase.iterkeys(): # TODO: Rewrite functionally
-        add_dependencies(ctype, current_phase_idx)
-         # TODO: Does this ever happen?
-        assert current_phase_idx >= collector_min_phases.get(ctype, 0)
-        if current_phase_idx < collector_min_phases.get(ctype, 0):
-          collector_min_phases[ctype] = current_phase_idx
-
+      uiterator.each(add_dependencies, phase.iterkeys())
+      phases.append(phase)
       phase = phase_pre_dependencies
 
     # remove later duplicates
-    for ctype, min_phase_idx in collector_min_phases.iteritems(): # TODO: Rewrite functionally
-      for phase in itertools.islice(phases, 0, -min_phase_idx):
-        phase.pop(ctype, None)
+    uiterator.consume((
+      uiterator.each(
+        ufunctional.apply_memberfn(dict.pop, ctype, None),
+        itertools.islice(phases, 0, -min_phase_idx))
+      for ctype, min_phase_idx in collector_min_phases.iteritems()))
 
-    phases[-1][independent] = independent
+    if phases:
+      phases[-1][independent] = independent
     return uiterator.filter(None, reversed(phases))
 
 
