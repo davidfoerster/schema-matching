@@ -13,6 +13,10 @@ else:
   from itertools import izip as zip
 
 
+
+__iterator_cookie = object()
+
+
 def each(function, *iterables):
   if not iterables:
     return
@@ -26,6 +30,12 @@ def each(function, *iterables):
 def stareach(function, iterable):
   for args in iterable:
     function(*args)
+
+
+def consume(iterable):
+  iterator = iter(iterable)
+  while next(iterator, __iterator_cookie) is not __iterator_cookie:
+    pass
 
 
 def __slice_to_tuple(slice):
