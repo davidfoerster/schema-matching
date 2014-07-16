@@ -5,6 +5,7 @@ from ...itemaverage import ItemAverageCollector
 from ...letteraverage import ItemLetterAverageCollector
 from ...variance import ItemVariationCoefficientCollector
 from ...lettervariance import LetterVariationCoefficient
+from ...itemprobability import ItemProbabilityCollector
 from ...letterprobability import LetterProbablilityCollector
 
 
@@ -17,7 +18,7 @@ descriptions = (
   columntype.factory(
     LetterVariationCoefficient, ItemVariationCoefficientCollector),
   columntype.factory(
-    LetterProbablilityCollector, None)
+    LetterProbablilityCollector, ItemProbabilityCollector)
 )
 
 
