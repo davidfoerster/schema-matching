@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from ...weight import WeightDict, normalize_exp
 from ... import columntype
 from ...itemaverage import ItemAverageCollector

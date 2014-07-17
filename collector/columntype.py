@@ -1,6 +1,5 @@
 # coding=utf-8
 
-from __future__ import absolute_import, division
 import re, itertools
 from numbers import Number
 import utilities, utilities.string, utilities.functional

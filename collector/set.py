@@ -1,4 +1,3 @@
-from __future__ import absolute_import, division
 import collections, math, inspect
 from .base import ItemCollector
 from .weight import WeightDict

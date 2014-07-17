@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import numbers
 from .base import ItemCollector
 from .set import ItemCollectorSet

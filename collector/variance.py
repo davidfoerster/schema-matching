@@ -1,4 +1,3 @@
-from __future__ import division, absolute_import
 from math import isnan, sqrt
 from utilities.operator import square
 from .base import ItemCollector

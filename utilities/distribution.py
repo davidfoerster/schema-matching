@@ -1,4 +1,3 @@
-from __future__  import absolute_import, division
 import numbers, array, itertools, operator, math
 from collections import defaultdict
 from math import fsum, fabs

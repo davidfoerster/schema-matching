@@ -1,5 +1,4 @@
 #!/usr/bin/python -OO
-from __future__ import print_function, absolute_import
 import sys, os.path, signal
 import operator, collections
 import csv

@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import math, utilities.operator
 from ...weight import WeightDict, normalize_exp
 from .L1 import descriptions

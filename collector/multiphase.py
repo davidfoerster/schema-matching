@@ -1,4 +1,3 @@
-from __future__ import absolute_import, print_function, division
 import copy, collections
 import utilities.iterator as uiterator
 from itertools import filterfalse, zip_longest, islice, chain

@@ -1,4 +1,3 @@
-from __future__ import division, absolute_import
 from .base import ItemCollector
 from .itemsum import ItemSumCollector
 from .itemcount import ItemCountCollector

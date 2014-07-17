@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import sys
 
 
@@ -14,4 +13,3 @@ def openspecial(path, mode='r', *args):
   else:
     f = __openspecial_names.get(path)
     return open(path, mode, *args) if f is None else f
-
