@@ -113,7 +113,6 @@ def schema_matching(action, in1, in2, collector_descriptions=None, out=sys.stdou
   return 0
 
 
-
 def get_collector_description(srcpath=None):
   """
   :param srcpath: basestring
@@ -142,7 +141,6 @@ def get_collector_description(srcpath=None):
       "missing attribute 'description'")
 
   return collector_description
-
 
 
 def collect_analyse_match(collectors, collector_descriptions, out=sys.stdout):
@@ -178,7 +176,6 @@ def collect_analyse_match(collectors, collector_descriptions, out=sys.stdout):
   return collectors, isreversed, get_best_schema_mapping(norms)
 
 
-
 def collect(src, collector_descriptions, out=sys.stdout):
   """
   Collects info about the columns of the data set in file "path" according
@@ -211,7 +208,6 @@ def collect(src, collector_descriptions, out=sys.stdout):
 
 def print_phase_results(multiphasecollector):
   print(multiphasecollector.merged_predecessors.as_str(number_format), file=sys.stderr)
-
 
 
 def get_best_schema_mapping(distance_matrix):
@@ -257,7 +253,6 @@ def get_best_schema_mapping(distance_matrix):
     return minlength, minpath
 
   return sweep_row(0, maxI - maxJ)
-
 
 
 def validate_result(in_paths, found_mappings, norm, out=sys.stdout, offset=1):
@@ -315,7 +310,6 @@ def validate_result(in_paths, found_mappings, norm, out=sys.stdout, offset=1):
     file=out)
 
   return invalid_count, impossible_count, missing_count
-
 
 
 def compare_descriptions(in_paths, collectors, to_compare, desc=None, out=sys.stdout):
@@ -380,19 +374,16 @@ def print_result(column_mappings, reversed=False, out=sys.stdout, offset=1):
   print(*imap(','.join, izip(*column_mappings)), sep='\n', file=out)
 
 
-
 def print_description_comment(desc, out):
   print(u'... with collector descriptions and weights from {} ({}).'.format(
     desc.__file__, desc.__name__),
     end='\n\n', file=out)
 
 
-
 def __timeout_handler(signum, frame):
   if signum == signal.SIGALRM:
     global __interrupted
     __interrupted = timeit.default_timer() if __debug__ else True
-
 
 
 if __name__ == '__main__':
