@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function
 import utilities.operator as uoperator
 from . import verbosity
-from itertools import imap, ifilter, izip
 from utilities.iterator import each
 from utilities.functional import memberfn
 from utilities.string import join
@@ -46,8 +45,8 @@ class RowCollector(list):
 
   def get_transformer(self):
     column_transformers = tuple(
-      ifilter(uoperator.second,
-        enumerate(imap(memberfn('get_transformer'), self))))
+      filter(uoperator.second,
+        enumerate(map(memberfn('get_transformer'), self))))
 
     if column_transformers:
       def row_transformer(items):
@@ -69,16 +68,16 @@ class RowCollector(list):
   def results_norms(a, b, weights=None):
     get_result = memberfn('get_result')
     # Materialise results of inner loop because they'll be scanned multiple times.
-    resultsA = map(get_result, a)
-    resultsB = imap(get_result, b)
+    resultsA = tuple(map(get_result, a))
+    resultsB = map(get_result, b)
     return [
       [collB.result_norm(resultA, resultB, weights) for resultA in resultsA]
-      for collB, resultB in izip(b, resultsB)
+      for collB, resultB in zip(b, resultsB)
     ]
 
 
   def as_str(self, format_spec=''):
-    return join('(', ', '.join(imap(memberfn('as_str', None, format_spec), self)), ')')
+    return join('(', ', '.join(map(memberfn('as_str', None, format_spec), self)), ')')
 
 
   def __str__(self): return self.as_str()

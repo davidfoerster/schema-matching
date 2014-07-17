@@ -4,7 +4,7 @@ from .base import ItemCollector
 from .weight import WeightDict
 import utilities
 import utilities.operator as uoperator
-from itertools import imap, ifilter, ifilterfalse
+from itertools import filterfalse
 from utilities.iterator import each
 from utilities.functional import memberfn, composefn
 from utilities.string import join
@@ -20,7 +20,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
     self.predecessor = predecessor
     if predecessor:
-      assert all(imap(memberfn(getattr, 'has_collected'), predecessor.itervalues()))
+      assert all(map(memberfn(getattr, 'has_collected'), predecessor.itervalues()))
       self.update(predecessor)
     each(self.add, collectors)
 
@@ -30,7 +30,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
     collect = ItemCollector.collect
     collect(self, item, self)
     each(memberfn('collect', item, self),
-      ifilterfalse(memberfn(getattr, 'has_collected'),
+      filterfalse(memberfn(getattr, 'has_collected'),
         self.itervalues()))
 
 
@@ -100,9 +100,9 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
 
   def get_transformer(self):
-    transformer = composefn(*ifilter(None,
-      imap(memberfn('get_transformer'),
-        ifilterfalse(memberfn(getattr, 'has_transformed'),
+    transformer = composefn(*filter(None,
+      map(memberfn('get_transformer'),
+        filterfalse(memberfn(getattr, 'has_transformed'),
           self.itervalues()))))
     return None if transformer is uoperator.identity else transformer
 

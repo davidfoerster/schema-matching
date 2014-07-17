@@ -143,7 +143,7 @@ class UniformBinDistributionTable(DistributionTable):
 
   def __truediv__(self, divisor):
     return UniformBinDistributionTable(self.lower, self.upper, self.bincount(), 'd',
-      itertools.imap(float(divisor).__rtruediv__, self.data))
+      map(float(divisor).__rtruediv__, self.data))
 
 
   def distance_to(self, compare_to):
@@ -157,7 +157,7 @@ class UniformBinDistributionTable(DistributionTable):
         return float('inf')
 
     assert not hasattr(compare_to, '__len__') or len(self.data) == len(compare_to)
-    return fsum(itertools.imap(fabs, itertools.imap(operator.sub, self.data, compare_to)))
+    return fsum(map(fabs, map(operator.sub, self.data, compare_to)))
 
 
   def __format__(self, number_format_spec=''):

@@ -19,7 +19,7 @@ class ItemFrequencyCollector(ItemCollector):
   def __init__(self, previous_collector_set):
     ItemCollector.__init__(self, previous_collector_set)
     if issubclass(previous_collector_set[ColumnTypeItemCollector].get_result(previous_collector_set), numbers.Real):
-      prereqs = map(previous_collector_set.get, self.pre_dependencies)
+      prereqs = list(map(previous_collector_set.get, self.pre_dependencies))
       if prereqs[-1] is None:
         del prereqs[-1]
         table_ctor = UniformBinDistributionTable.for_count

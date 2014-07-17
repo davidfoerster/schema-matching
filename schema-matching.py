@@ -3,7 +3,7 @@ from __future__ import print_function, absolute_import
 import sys, os.path, signal
 import operator, collections
 import csv
-from itertools import imap, ifilter, izip, repeat
+from itertools import repeat
 from functools import partial as partialfn
 
 import utilities.file, utilities.operator
@@ -153,7 +153,7 @@ def collect_analyse_match(collectors, collector_descriptions, out=sys.stdout):
     assert isinstance(collectors[1], MultiphaseCollector)
     each(collect_functor, collectors)
   else:
-    collectors = map(collect_functor, collectors)
+    collectors = list(map(collect_functor, collectors))
 
   # The first collector shall have the least columns.
   isreversed = len(collectors[0].merged_predecessors) > len(collectors[1].merged_predecessors)
@@ -166,7 +166,7 @@ def collect_analyse_match(collectors, collector_descriptions, out=sys.stdout):
   if verbosity >= 1:
     print(collectors[1].name, collectors[0].name, sep=' / ', end='\n| ', file=sys.stderr)
     formatter = memberfn(format, number_format)
-    print(*('  '.join(imap(formatter, row)) for row in norms),
+    print(*('  '.join(map(formatter, row)) for row in norms),
       sep=' |\n| ', end=' |\n\n', file=sys.stderr)
 
   # find minimal combination
@@ -218,11 +218,11 @@ def get_best_schema_mapping(distance_matrix):
   maxI = len(distance_matrix) # row count
   maxJ = len(distance_matrix[0]) # column count
   assert maxI >= maxJ
-  rangeJ = xrange(maxJ)
+  rangeJ = range(maxJ)
   known_mappings = list(repeat(None, maxJ))
 
   def iter_unmapped():
-    return ifilter(lambda j: known_mappings[j] is None, rangeJ)
+    return filter(lambda j: known_mappings[j] is None, rangeJ)
 
   def sweep_row(i, skippable_count):
     if __interrupted or skippable_count < 0:
@@ -268,11 +268,11 @@ def validate_result(in_paths, found_mappings, norm, out=sys.stdout, offset=1):
     with open(os.path.splitext(path)[0] + '_desc.txt') as f:
       return {
         int(mapped): int(original)
-        for mapped, original in imap(memberfn(str.split, ',', 1), f)
+        for mapped, original in map(memberfn(str.split, ',', 1), f)
       }
 
-  schema_desc = map(read_descriptor, in_paths)
-  rschema_desc = map(utilities.rdict, schema_desc)
+  schema_desc = tuple(map(read_descriptor, in_paths))
+  rschema_desc = tuple(map(utilities.rdict, schema_desc))
 
   # build column mapping dictionary
   found_mappings = {k + offset: v + offset for k, v in enumerate(found_mappings) if v is not None}
@@ -281,7 +281,7 @@ def validate_result(in_paths, found_mappings, norm, out=sys.stdout, offset=1):
 
   # find mismatches
   for found_mapping in found_mappings.iteritems():
-    original_mapping = map(dict.__getitem__, schema_desc, found_mapping)
+    original_mapping = tuple(map(dict.__getitem__, schema_desc, found_mapping))
     expected = rschema_desc[1].get(original_mapping[0])
     if expected is None:
       impossible_count += 1
@@ -330,7 +330,7 @@ def compare_descriptions(in_paths, collectors, to_compare, desc=None, out=sys.st
     print_description_comment(desc, out)
     descriptions.append((desc, invalid_count + missing_count, best_match_norm))
 
-  for desc in imap(get_collector_description, to_compare or (None,)):
+  for desc in map(get_collector_description, to_compare or (None,)):
     collectors, _, best_match = collect_analyse_match(collectors, desc, out)
     best_match_norm, best_match = best_match
     invalid_count, _, missing_count = \
@@ -362,12 +362,12 @@ def print_result(column_mappings, reversed=False, out=sys.stdout, offset=1):
     return
 
   column_mappings = [
-    imap(str, xrange(offset, offset.__add__(len(column_mappings)))),
-    imap(composefn(offset.__add__, str), column_mappings)
+    map(str, range(offset, offset.__add__(len(column_mappings)))),
+    map(composefn(offset.__add__, str), column_mappings)
   ]
   if reversed:
     column_mappings.reverse()
-  print(*imap(','.join, izip(*column_mappings)), sep='\n', file=out)
+  print(*map(','.join, zip(*column_mappings)), sep='\n', file=out)
 
 
 def print_description_comment(desc, out):

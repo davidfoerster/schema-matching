@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, division
 import copy, collections
 import utilities.iterator as uiterator
-from itertools import ifilter, ifilterfalse, izip, izip_longest, islice, chain
+from itertools import filterfalse, zip_longest, islice, chain
 from functools import partial as partialfn
 from utilities.iterator import each, consume
 from utilities.functional import memberfn, composefn
@@ -24,7 +24,7 @@ class MultiphaseCollector(object):
   def __init__(self, rowset, name=None):
     self.name = name
     self.rowset = rowset if isinstance(rowset, collections.Sequence) else tuple(rowset)
-    #assert operator.eq(*utilities.minmax(imap(len, self.rowset)))
+    #assert operator.eq(*utilities.minmax(map(len, self.rowset)))
     self.reset(None)
 
 
@@ -48,10 +48,10 @@ class MultiphaseCollector(object):
           collector.isdependency &= isdependency
 
         each(memberfn(add_copy_and_dependencies, None),
-          ifilter(keep, predecessor.itervalues()))
+          filter(keep, predecessor.itervalues()))
         yield ics
     else:
-      for _ in xrange(len(self.rowset[0])):
+      for _ in range(len(self.rowset[0])):
         ics = ItemCollectorSet()
         ics.add(ItemCountCollector(len(self.rowset)), True)
         yield ics
@@ -87,7 +87,7 @@ class MultiphaseCollector(object):
   def __gen_itemcollector_sets(self, phase_desc):
     return (
       pred if desc is None else ItemCollectorSet(desc.itervalues(), pred)
-      for desc, pred in izip(phase_desc, self.merged_predecessors))
+      for desc, pred in zip(phase_desc, self.merged_predecessors))
 
 
   @staticmethod
@@ -95,16 +95,16 @@ class MultiphaseCollector(object):
     return not all((
       isinstance(ctype, ItemCollector) or
         (type(ctype) is type and issubclass(ctype, ItemCollector))
-      for ctype in chain(*ifilter(None, phase_desc))))
+      for ctype in chain(*filter(None, phase_desc))))
 
 
   def get_phase_descriptions(self, collector_descriptions):
     # column-first ordering
-    phase_descriptions = uiterator.map(
+    phase_descriptions = map(
       partialfn(self.__get_dependency_chain, collector_descriptions),
       self.merged_predecessors)
     # transpose to phase-first ordering
-    phase_descriptions = izip_longest(*phase_descriptions)
+    phase_descriptions = zip_longest(*phase_descriptions)
     return phase_descriptions
 
 
@@ -116,7 +116,7 @@ class MultiphaseCollector(object):
     :param predecessors: ItemCollectorSet
     :return: list[dict]
     """
-    phase = dict(ifilterfalse(
+    phase = dict(filterfalse(
       lambda item: item[0] is None or item[0] in predecessors,
       ((template.get_type(predecessors), template)
         for template in collector_descriptions)))
@@ -134,11 +134,11 @@ class MultiphaseCollector(object):
 
     def add_dependencies(template):
       if template.pre_dependencies:
-        for dep in ifilterfalse(predecessors.__contains__, template.pre_dependencies):
+        for dep in filterfalse(predecessors.__contains__, template.pre_dependencies):
           phase_pre_dependencies.setdefault(dep, dep)
           collector_min_phases[dep] = len(phases) - 1
       else:
-        for dep in ifilter(must_add_dependency, template.result_dependencies):
+        for dep in filter(must_add_dependency, template.result_dependencies):
           add_dependencies(dep)
           phase_result_dependencies.add(dep)
 

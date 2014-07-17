@@ -1,16 +1,25 @@
 from __future__ import absolute_import
-import __builtin__, itertools
+import itertools
 
 
 if __debug__:
-  from __builtin__ import map, filter, zip
-  def filterfalse(function, iterable): return tuple(itertools.ifilterfalse(function, iterable))
+  import builtins
+
+  def map(*args):
+    return tuple(builtins.map(*args))
+
+  def zip(*args):
+    return tuple(builtins.zip(*args))
+
+  def filter(function, iterable):
+    return tuple(builtins.filter(function, iterable))
+
+  def filterfalse(function, iterable):
+    return tuple(itertools.filterfalse(function, iterable))
 
 else:
-  from itertools import imap as map
-  from itertools import ifilter as filter
-  from itertools import ifilterfalse as filterfalse
-  from itertools import izip as zip
+  from builtins import map, filter, zip
+  from itertools import filterfalse
 
 
 
@@ -24,7 +33,7 @@ def each(function, *iterables):
     for args in iterables[0]:
       function(args)
   else:
-    stareach(function, itertools.izip(*iterables))
+    stareach(function, zip(*iterables))
 
 
 def stareach(function, iterable):
@@ -53,9 +62,9 @@ def islice(iterable, *args):
 def map_inplace(function, list, depth=0, slice=None):
   if depth <= 0:
     if slice is None:
-      list[:] = itertools.imap(function, list)
+      list[:] = map(function, list)
     else:
-      list[slice] = itertools.imap(function,
+      list[slice] = map(function,
         itertools.islice(list, slice.start, slice.stop, slice.step))
   else:
     for item in list:
@@ -64,7 +73,7 @@ def map_inplace(function, list, depth=0, slice=None):
 
 
 def countif(function, *iterables):
-  return sum(itertools.imap(bool, itertools.starmap(function, *iterables)))
+  return sum(map(bool, itertools.starmap(function, *iterables)))
 
 
 def teemap(iterable, *functions):

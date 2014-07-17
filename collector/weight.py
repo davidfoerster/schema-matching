@@ -1,8 +1,8 @@
 import math, utilities
 import utilities.iterator as uiterator
 import utilities.operator as uoperator
-from itertools import imap
 from math import expm1, fsum
+
 
 
 class WeightDict(dict):
@@ -52,7 +52,7 @@ class WeightDict(dict):
 
 
   def sum(self, iterable):
-    return self.sum_data[1](fsum(imap(self.sum_data[0], iterable)))
+    return self.sum_data[1](fsum(map(self.sum_data[0], iterable)))
 
 
 

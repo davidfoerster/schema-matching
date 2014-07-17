@@ -1,5 +1,6 @@
-import functools
-import operator
+from __future__ import absolute_import
+import functools, utilities.operator
+
 
 
 def memberfn(memberfn, *args):
@@ -15,8 +16,8 @@ def rapply(arg, function):
 
 def composefn(*functions):
   if not functions:
-    return operator.identity
+    return utilities.operator.identity
   if len(functions) == 1:
     return functions[0]
   else:
-    return functools.partial(reduce, rapply, functions)
+    return functools.partial(functools.reduce, rapply, functions)

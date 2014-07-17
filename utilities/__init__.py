@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-import itertools, functools, random
+
 
 
 infinity = float('inf')
@@ -28,7 +28,7 @@ def starmap(function, iterable):
 
 
 def issubset(iterable, set):
-  return all(itertools.imap(set.__contains__, iterable))
+  return all(map(set.__contains__, iterable))
 
 
 def rdict(d):
@@ -44,7 +44,7 @@ def rdict(d):
 def min_index(*args, **kwargs):
   key = kwargs.get('key')
   kwargs['key'] = args.__getitem__ if key is None else lambda idx: key(args[idx])
-  return min(*xrange(len(args)), **kwargs)
+  return min(*range(len(args)), **kwargs)
 
 
 class NonLocal:
