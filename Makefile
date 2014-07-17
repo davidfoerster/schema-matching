@@ -1,4 +1,4 @@
-PYTHON ?= python
+PYTHON ?= python3
 PYTHON_FLAGS += -OO
 
 ASSIGNMENT = 05
