@@ -280,7 +280,7 @@ def validate_result(in_paths, found_mappings, norm, out=sys.stdout, offset=1):
   impossible_count = 0
 
   # find mismatches
-  for found_mapping in found_mappings.iteritems():
+  for found_mapping in found_mappings.items():
     original_mapping = tuple(map(dict.__getitem__, schema_desc, found_mapping))
     expected = rschema_desc[1].get(original_mapping[0])
     if expected is None:
@@ -294,7 +294,7 @@ def validate_result(in_paths, found_mappings, norm, out=sys.stdout, offset=1):
 
   # find missing matches
   missing_count = 0
-  for k in rschema_desc[0].viewkeys() | rschema_desc[1].viewkeys():
+  for k in rschema_desc[0].keys() | rschema_desc[1].keys():
     v = rschema_desc[1].get(k)
     k = rschema_desc[0].get(k)
     if k is not None and v is not None and k not in found_mappings:

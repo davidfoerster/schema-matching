@@ -46,12 +46,12 @@ class SparseDistributionTable(DistributionTable, defaultdict):
 
 
   def distance_to(self, compare_to):
-    return fsum((fabs(p - compare_to[bin]) for bin, p in self.iteritems())) + \
-      fsum(p for bin, p in compare_to.iteritems() if bin not in self)
+    return fsum((fabs(p - compare_to[bin]) for bin, p in self.items())) + \
+      fsum(p for bin, p in compare_to.items() if bin not in self)
 
 
   def count(self):
-    return sum(self.itervalues())
+    return sum(self.values())
 
 
   def __truediv__(self, divisor):
@@ -61,14 +61,14 @@ class SparseDistributionTable(DistributionTable, defaultdict):
     """
     divisor = float(divisor)
     return SparseDistributionTable(float,
-      ((k, v / divisor) for k, v in self.iteritems()))
+      ((k, v / divisor) for k, v in self.items()))
 
 
   def __format__(self, number_format_spec=''):
     return join('(',
       ', '.join((
         '{}: {:{}}'.format(format_char(event), frequency, number_format_spec)
-        for event, frequency in self.iteritems())),
+        for event, frequency in self.items())),
       ')')
 
 

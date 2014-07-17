@@ -33,7 +33,7 @@ def issubset(iterable, set):
 
 def rdict(d):
   if isinstance(d, dict):
-    d = d.iteritems()
+    d = d.items()
   if __debug__:
     d = frozenset(d)
   rdict = {v: k for k, v in d}

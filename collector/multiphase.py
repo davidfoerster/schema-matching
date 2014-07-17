@@ -48,7 +48,7 @@ class MultiphaseCollector(object):
           collector.isdependency &= isdependency
 
         each(memberfn(add_copy_and_dependencies, None),
-          filter(keep, predecessor.itervalues()))
+          filter(keep, predecessor.values()))
         yield ics
     else:
       for _ in range(len(self.rowset[0])):
@@ -78,7 +78,7 @@ class MultiphaseCollector(object):
     if __debug__:
       for coll_set in self.merged_predecessors:
         independent = frozenset((template.get_type(coll_set) for template in collector_descriptions))
-        for ctype, coll in coll_set.iteritems():
+        for ctype, coll in coll_set.items():
           assert coll.isdependency is (ctype not in independent)
 
     return phase_count
@@ -86,7 +86,7 @@ class MultiphaseCollector(object):
 
   def __gen_itemcollector_sets(self, phase_desc):
     return (
-      pred if desc is None else ItemCollectorSet(desc.itervalues(), pred)
+      pred if desc is None else ItemCollectorSet(desc.values(), pred)
       for desc, pred in zip(phase_desc, self.merged_predecessors))
 
 
@@ -120,7 +120,7 @@ class MultiphaseCollector(object):
       lambda item: item[0] is None or item[0] in predecessors,
       ((template.get_type(predecessors), template)
         for template in collector_descriptions)))
-    independent = TagCollector('independent', frozenset(phase.iterkeys()), True)
+    independent = TagCollector('independent', frozenset(phase.keys()), True)
 
     phases = []
     collector_min_phases = dict()
@@ -146,14 +146,14 @@ class MultiphaseCollector(object):
     while phase:
       phase_pre_dependencies = dict()
       phase_result_dependencies.clear()
-      each(add_dependencies, phase.iterkeys())
+      each(add_dependencies, phase.keys())
       phases.append(phase)
       phase = phase_pre_dependencies
 
     # remove later duplicates
     consume((
       each(memberfn(dict.pop, ctype, None), islice(phases, 0, -min_phase_idx))
-      for ctype, min_phase_idx in collector_min_phases.iteritems()))
+      for ctype, min_phase_idx in collector_min_phases.items()))
 
     if predecessors is not None:
       predecessors[independent] = independent

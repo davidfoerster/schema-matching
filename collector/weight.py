@@ -36,7 +36,7 @@ class WeightDict(dict):
     self.sum_data = sum
     self.tags = kwargs.pop('tags', frozenset())
     uiterator.stareach(self.__setitem__, args)
-    uiterator.stareach(self.__setitem__, kwargs.iteritems())
+    uiterator.stareach(self.__setitem__, kwargs.items())
 
 
   def __missing__(self, key):

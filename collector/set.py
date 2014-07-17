@@ -20,7 +20,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
     self.predecessor = predecessor
     if predecessor:
-      assert all(map(memberfn(getattr, 'has_collected'), predecessor.itervalues()))
+      assert all(map(memberfn(getattr, 'has_collected'), predecessor.values()))
       self.update(predecessor)
     each(self.add, collectors)
 
@@ -31,7 +31,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
     collect(self, item, self)
     each(memberfn('collect', item, self),
       filterfalse(memberfn(getattr, 'has_collected'),
-        self.itervalues()))
+        self.values()))
 
 
   class __result_type(object):
@@ -42,13 +42,13 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
     def __iter__(self):
       collector_set = self.__collector_set
-      return (c.get_result(collector_set) for c in collector_set.itervalues())
+      return (c.get_result(collector_set) for c in collector_set.values())
 
     def __cmp__(self, other, weights = WeightDict()):
       assert isinstance(other, type(self))
       a = self.__collector_set
       b = other.__collector_set
-      if not utilities.issubset(a.iterkeys(), b):
+      if not utilities.issubset(a.keys(), b):
         return weights[ItemCollectorSet].for_infinity
 
       def distance_of_unweighted(a_coll):
@@ -68,7 +68,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
           return weight(distance_of_unweighted(a_coll))
 
       value_sum = weights.sum((
-        distance_of(coll) for coll in a.itervalues() if not coll.isdependency))
+        distance_of(coll) for coll in a.values() if not coll.isdependency))
       if value_sum:
         assert weight_sum.value > 0
         assert not 'normalized' in weights.tags or math.fabs(value_sum / weight_sum.value) <= 1.0
@@ -85,7 +85,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
   def __forward_call(self, fn_name=None, *args):
     if fn_name is None:
       fn_name = inspect.stack()[1][3]
-    each(memberfn(fn_name, *args), self.itervalues())
+    each(memberfn(fn_name, *args), self.values())
     getattr(super(ItemCollectorSet, self), fn_name)(*args)
 
 
@@ -103,7 +103,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
     transformer = composefn(*filter(None,
       map(memberfn('get_transformer'),
         filterfalse(memberfn(getattr, 'has_transformed'),
-          self.itervalues()))))
+          self.values()))))
     return None if transformer is uoperator.identity else transformer
 
 
@@ -111,7 +111,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
     assert collector_set is None
     return join('{', ', '.join((
         join(type(collector).__name__, ': ', collector.as_str(self, format_spec))
-        for collector in self.itervalues() if not collector.isdependency)),
+        for collector in self.values() if not collector.isdependency)),
       '}')
 
 
