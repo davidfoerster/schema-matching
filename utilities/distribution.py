@@ -27,7 +27,6 @@ class DistributionTable(object):
   def normalize(self, count=None):
     if count is None:
       count = self.count()
-    assert count == self.count()
     return self / count
 
 
