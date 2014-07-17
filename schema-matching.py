@@ -1,9 +1,8 @@
 #!/usr/bin/python -OO
 from __future__ import print_function, absolute_import
-import sys, os, os.path, signal
+import sys, os.path, signal
 import operator, collections
 import csv
-import imp, importlib
 from itertools import imap, ifilter, izip, repeat
 from functools import partial as partialfn
 
@@ -103,17 +102,18 @@ def get_collector_description(srcpath=None):
   :param srcpath: basestring
   :return: dict
   """
-  if not srcpath or srcpath == ':':
+  if srcpath is None or srcpath == ':':
     from collector.description import default as collector_description
   elif srcpath.startswith(':'):
+    import importlib
     collector_description = importlib.import_module(srcpath[1:])
   else:
+    import os, imp
     import collector.description as parent_package # needs to be imported before its child modules
     with open(srcpath) as f:
-      f_stat = os.fstat(f.fileno())
       module_name = \
-        '{}._anonymous_{}_{}'.format(
-          parent_package.__name__, f_stat.st_dev, f_stat.st_ino)
+        '{0}._anonymous_{1.st_dev}_{1.st_ino}'.format(
+          parent_package.__name__, os.fstat(f.fileno()))
       collector_description = imp.load_source(module_name, srcpath, f)
     assert isinstance(getattr(collector_description, '__file__', None), basestring)
 
