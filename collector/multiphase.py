@@ -41,7 +41,7 @@ class MultiphaseCollector(object):
 
         def add_copy_and_dependencies(collector, isdependency):
           for dep in collector.result_dependencies: # TODO: Rewrite functionally
-            add_copy_and_dependencies(predecessor[type(dep)], True)
+            add_copy_and_dependencies(predecessor[dep], True)
           if isdependency is None:
             isdependency = collector.isdependency
           collector = ics.setdefault(type(collector), copy.copy(collector))
@@ -85,15 +85,9 @@ class MultiphaseCollector(object):
 
 
   def __gen_itemcollector_sets(self, phase_desc):
-    for desc, pred in izip(phase_desc, self.merged_predecessors):
-      if desc is None:
-        yield pred
-      else:
-        independent = (desc.get('independent') or pred.get('independent')).data
-        ics = ItemCollectorSet((), pred)
-        for template in desc.itervalues(): # TODO: Rewrite functionally
-          ics.add(template, template not in independent)
-        yield ics
+    return (
+      pred if desc is None else ItemCollectorSet(desc.itervalues(), pred)
+      for desc, pred in izip(phase_desc, self.merged_predecessors))
 
 
   @staticmethod
@@ -126,9 +120,7 @@ class MultiphaseCollector(object):
       lambda item: item[0] is None or item[0] in predecessors,
       ((template.get_type(predecessors), template)
         for template in collector_descriptions)))
-    for ctype in predecessors.iterkeys():
-      phase.pop(ctype, None)
-    independent = TagCollector('independent', frozenset(phase.iterkeys()))
+    independent = TagCollector('independent', frozenset(phase.iterkeys()), True)
 
     phases = []
     collector_min_phases = dict()
