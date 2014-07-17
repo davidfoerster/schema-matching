@@ -94,7 +94,9 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
     return ItemCollectorSet.__result_type(self)
 
 
-  result_norm = __result_type.__cmp__
+  @staticmethod
+  def result_norm(a, b, *args):
+    return ItemCollectorSet.__result_type.__cmp__(a, b, *args)
 
 
   def get_transformer(self):

@@ -60,7 +60,7 @@ class ItemCollector(object):
 
 
   @staticmethod
-  def result_norm(a, b):
+  def result_norm(a, b, *args):
     return abs(a - b)
 
 
