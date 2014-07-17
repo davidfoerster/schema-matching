@@ -6,9 +6,10 @@ NaN = float('NaN')
 
 
 def minmax(*args):
-  min = None
-  max = None
-  for x in args:
+  iterator = iter(args if len(args) > 1 else args[0])
+  min = next(iterator)
+  max = min
+  for x in iterator:
     if max < x:
       max = x
     if x > min:

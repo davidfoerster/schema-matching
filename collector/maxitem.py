@@ -11,7 +11,7 @@ class MaxItemCollector(ItemCollector):
 
 
   def collect(self, item, collector_set = None):
-    if item > self.max:
+    if item is not None and item > self.max:
       self.max = item
 
 

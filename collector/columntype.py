@@ -84,7 +84,7 @@ class ColumnTypeItemCollector(ItemCollector):
 
   def __init__(self, collector_set=None, max_invalid_absolute=2, max_invalid_relative=0.25, total_max_invalid=0.05):
     ItemCollector.__init__(self)
-    self.__type_index = None
+    self.__type_index = -1
     self.__tolerance_exceeded_count = 0
 
     self.max_invalid_absolute = max_invalid_absolute

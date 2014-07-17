@@ -17,6 +17,7 @@ class ItemFrequencyCollector(ItemCollector):
 
   def __init__(self, previous_collector_set):
     ItemCollector.__init__(self, previous_collector_set)
+
     if issubclass(previous_collector_set[ColumnTypeItemCollector].get_result(previous_collector_set), numbers.Real):
       prereqs = list(map(previous_collector_set.get, self.pre_dependencies))
       if prereqs[-1] is None:
@@ -34,7 +35,8 @@ class ItemFrequencyCollector(ItemCollector):
 
 
   def collect(self, item, collector_set=None):
-    self.frequencies.increase(item, 1)
+    if item is not None:
+      self.frequencies.increase(item, 1)
 
 
   def get_result(self, collector_set=None):
