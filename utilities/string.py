@@ -1,5 +1,9 @@
 from __future__ import absolute_import
-import locale, unicodedata
+import unicodedata
+
+
+
+basestring = (str, bytes)
 
 
 def isprint(c):
@@ -30,34 +34,11 @@ def format_char(item):
     else:
       code = ord(item)
       return \
-        ('\\u{:04x}' if code >= 0x80 and isinstance(item, unicode) else '\\x{:02x}') \
+        ('\\u{:04x}' if code >= 0x80 and isinstance(item, str) else '\\x{:02x}') \
           .format(code)
   else:
     return item
 
 
 def join(*args):
-  strtype = unicode if any((isinstance(s, unicode) for s in args)) else str
-  return strtype().join(args)
-
-
-class DecodableUnicode(unicode):
-
-  default_encoding = locale.getpreferredencoding()
-
-
-  def __new__(cls, s, encoding=default_encoding, *args):
-    return s if isinstance(s, unicode) else unicode.__new__(cls, s, encoding, *args)
-
-
-  def decode(self, *args):
-    return self
-
-
-  def encode(self, *args):
-    return self.sencode(self, *args)
-
-
-  @staticmethod
-  def sencode(self, encoding=default_encoding, *args):
-    return unicode.encode(self, encoding, *args)
+  return ''.join(args)

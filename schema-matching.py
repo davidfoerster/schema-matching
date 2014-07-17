@@ -8,7 +8,6 @@ from functools import partial as partialfn
 
 import utilities.file, utilities.operator
 from utilities import infinity
-from utilities.string import DecodableUnicode
 from utilities.iterator import each, map_inplace
 from utilities.functional import memberfn, composefn
 from collector import verbosity
@@ -58,8 +57,6 @@ def main(argv, time_limit=None):
   else:
     out = sys.stdout
 
-  if action is not None:
-    out = utilities.file.fix_file_encoding(out)
 
   # read and analyse data
   rv = schema_matching(action, in1, in2, argv, out)
@@ -115,7 +112,7 @@ def schema_matching(action, in1, in2, collector_descriptions=None, out=sys.stdou
 
 def get_collector_description(srcpath=None):
   """
-  :param srcpath: basestring
+  :param srcpath: str
   :return: dict
   """
   if srcpath is None or srcpath == ':':
@@ -131,7 +128,7 @@ def get_collector_description(srcpath=None):
         '{0}._anonymous_{1.st_dev}_{1.st_ino}'.format(
           parent_package.__name__, os.fstat(f.fileno()))
       collector_description = imp.load_source(module_name, srcpath, f)
-    assert isinstance(getattr(collector_description, '__file__', None), basestring)
+    assert isinstance(getattr(collector_description, '__file__', None), str)
 
   utilities.setattr_default(collector_description, '__file__', '<unknown file>')
   if not hasattr(collector_description, 'descriptions'):
@@ -145,7 +142,7 @@ def get_collector_description(srcpath=None):
 
 def collect_analyse_match(collectors, collector_descriptions, out=sys.stdout):
   """
-  :param collectors: list[basestring | MultiphaseCollector]
+  :param collectors: list[str | MultiphaseCollector]
   :param collector_descriptions: object
   :return: list[MultiphaseCollector], bool, tuple[int]
   """
@@ -181,7 +178,7 @@ def collect(src, collector_descriptions, out=sys.stdout):
   Collects info about the columns of the data set in file "path" according
   over multiple phases based on a description of those phases.
 
-  :param path: str, MultiphaseCollector
+  :param src: str, MultiphaseCollector
   :param collector_descriptions: tuple[type | ItemCollector | callable]
   :return: MultiphaseCollector
   """
@@ -192,10 +189,9 @@ def collect(src, collector_descriptions, out=sys.stdout):
     if verbosity >= 2:
       print(src, end=':\n', file=sys.stderr)
 
-    with open(src, 'rb') as f:
+    with open(src) as f:
       reader = csv.reader(f, delimiter=';', skipinitialspace=True)
-      reader = imap(partialfn(map_inplace,
-        lambda item: DecodableUnicode(item.strip())), reader)
+      reader = map(partialfn(map_inplace, str.strip), reader)
       multiphasecollector = MultiphaseCollector(reader, os.path.basename(src))
 
   multiphasecollector.do_phases(collector_descriptions,
@@ -314,8 +310,8 @@ def validate_result(in_paths, found_mappings, norm, out=sys.stdout, offset=1):
 
 def compare_descriptions(in_paths, collectors, to_compare, desc=None, out=sys.stdout):
   """
-  :param collectors: list[basestring | MultiphaseCollector]
-  :param to_compare: tuple[basestring]
+  :param collectors: list[str | MultiphaseCollector]
+  :param to_compare: tuple[str]
   :param desc: dict, float, tuple(int)
   :return:
   """
@@ -346,7 +342,7 @@ def compare_descriptions(in_paths, collectors, to_compare, desc=None, out=sys.st
   last_error_count = None
   descriptions.sort(key=utilities.operator.getitemfn(slice(1, 3)))
   for desc in descriptions:
-    print(u'{}. {}, errors={}, norm={:{}}'.format(
+    print('{}. {}, errors={}, norm={:{}}'.format(
       i, desc[0].__file__, desc[1], desc[2], number_format),
       file=out)
     i += last_error_count != desc[1]
@@ -375,7 +371,7 @@ def print_result(column_mappings, reversed=False, out=sys.stdout, offset=1):
 
 
 def print_description_comment(desc, out):
-  print(u'... with collector descriptions and weights from {} ({}).'.format(
+  print('... with collector descriptions and weights from {} ({}).'.format(
     desc.__file__, desc.__name__),
     end='\n\n', file=out)
 
@@ -387,8 +383,6 @@ def __timeout_handler(signum, frame):
 
 
 if __name__ == '__main__':
-  assert DecodableUnicode.default_encoding.upper() == 'UTF-8'
-  sys.stderr = utilities.file.fix_file_encoding(sys.stderr)
   rv = main(sys.argv[1:], default_timelimit)
   if __debug__ and __interrupted:
     print('INFO:', timeit.default_timer() - __interrupted,

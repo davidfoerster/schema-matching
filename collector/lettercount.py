@@ -1,6 +1,9 @@
 from __future__ import absolute_import
 from .base import ItemCollector
 
+if __debug__:
+  from utilities.string import basestring
+
 
 
 class ItemLetterCountCollector(ItemCollector):

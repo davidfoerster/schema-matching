@@ -45,9 +45,9 @@ def tofloat(item):
     return None
 
 
-def tolong(item):
+def toint(item):
   try:
-    return long(item)
+    return int(item)
   except ValueError:
     return None
 
@@ -68,10 +68,10 @@ class ColumnTypeItemCollector(ItemCollector):
 
   result_dependencies = (ItemCountCollector,)
 
-  __type_sequence = (long, float, unicode)
+  __type_sequence = (int, float, str)
   __type_rdict = utilities.rdict(enumerate(__type_sequence))
   __distance_matrix = _make_type_distance_matrix(__type_sequence)
-  __transformers = (tolong, tofloat, utilities.string.DecodableUnicode)
+  __transformers = (toint, tofloat, str)
 
 
   @staticmethod
@@ -98,7 +98,7 @@ class ColumnTypeItemCollector(ItemCollector):
 
   def collect(self, item, collector_set = None):
     assert not self.has_collected
-    if self.__type_index <= 0: # none or long
+    if self.__type_index <= 0: # none or int
       if item == '-' or item.isdigit():
         self.__type_index = 0
         return

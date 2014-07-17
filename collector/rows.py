@@ -78,7 +78,7 @@ class RowCollector(list):
 
 
   def as_str(self, format_spec=''):
-    return join('(', u', '.join(imap(memberfn('as_str', None, format_spec), self)), ')')
+    return join('(', ', '.join(imap(memberfn('as_str', None, format_spec), self)), ')')
 
 
   def __str__(self): return self.as_str()

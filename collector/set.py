@@ -109,7 +109,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
   def as_str(self, collector_set=None, format_spec=''):
     assert collector_set is None
-    return join('{', u', '.join((
+    return join('{', ', '.join((
         join(type(collector).__name__, ': ', collector.as_str(self, format_spec))
         for collector in self.itervalues() if not collector.isdependency)),
       '}')

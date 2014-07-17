@@ -66,8 +66,8 @@ class SparseDistributionTable(DistributionTable, defaultdict):
 
   def __format__(self, number_format_spec=''):
     return join('(',
-      u', '.join((
-        u'{}: {:{}}'.format(format_char(event), frequency, number_format_spec)
+      ', '.join((
+        '{}: {:{}}'.format(format_char(event), frequency, number_format_spec)
         for event, frequency in self.iteritems())),
       ')')
 
@@ -143,7 +143,7 @@ class UniformBinDistributionTable(DistributionTable):
 
   def __truediv__(self, divisor):
     return UniformBinDistributionTable(self.lower, self.upper, self.bincount(), 'd',
-      itertools.imap(float(divisor).__rdiv__, self.data))
+      itertools.imap(float(divisor).__rtruediv__, self.data))
 
 
   def distance_to(self, compare_to):
@@ -162,8 +162,8 @@ class UniformBinDistributionTable(DistributionTable):
 
   def __format__(self, number_format_spec=''):
     return join('(',
-      u', '.join((
-        u'{2:{0}}-{3:{0}}: {1:{0}}'.format(
+      ', '.join((
+        '{2:{0}}-{3:{0}}: {1:{0}}'.format(
           number_format_spec, frequency, *self.getbinlimits(bin_idx))
         for bin_idx, frequency in enumerate(self))),
       ')')

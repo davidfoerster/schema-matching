@@ -1,6 +1,5 @@
 from __future__ import absolute_import
-import sys, codecs
-from .string import DecodableUnicode
+import sys
 
 
 def is_write_mode(mode):
@@ -16,9 +15,3 @@ def openspecial(path, mode='r', *args):
     f = __openspecial_names.get(path)
     return open(path, mode, *args) if f is None else f
 
-
-def fix_file_encoding(file):
-  if not file.encoding:
-    wrapper_factory = codecs.getwriter if is_write_mode(file.mode) else codecs.getreader
-    file = wrapper_factory(DecodableUnicode.default_encoding)(file)
-  return file
