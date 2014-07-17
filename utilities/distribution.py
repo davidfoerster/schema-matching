@@ -149,8 +149,14 @@ class UniformBinDistributionTable(DistributionTable):
 
   def distance_to(self, compare_to):
     if isinstance(compare_to, UniformBinDistributionTable):
-      assert all((getattr(self, k) == getattr(compare_to, k) for k in ('lower', 'upper', 'step')))
-      compare_to = compare_to.data
+      if self.lower == compare_to.lower and self.upper == compare_to.upper and self.step == compare_to.step:
+        assert self.bincount() == compare_to.bincount()
+        compare_to = compare_to.data
+      else:
+        # TODO
+        #return NotImplemented
+        return float('inf')
+
     assert not hasattr(compare_to, '__len__') or len(self.data) == len(compare_to)
     return fsum(itertools.imap(fabs, itertools.imap(operator.sub, self.data, compare_to)))
 
