@@ -163,8 +163,11 @@ class MultiphaseCollector(object):
       each(memberfn(dict.pop, ctype, None), islice(phases, 0, -min_phase_idx))
       for ctype, min_phase_idx in collector_min_phases.iteritems()))
 
-    if phases:
+    if predecessors is not None:
+      predecessors[independent] = independent
+    elif phases:
       phases[-1][independent] = independent
+
     return uiterator.filter(None, reversed(phases))
 
 
