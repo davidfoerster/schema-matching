@@ -1,4 +1,4 @@
-import collections, math, inspect
+import collections, inspect
 from operator import methodcaller, attrgetter
 from .base import ItemCollector
 from .weight import WeightDict
@@ -71,7 +71,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
         distance_of(coll) for coll in a.values() if not coll.isdependency))
       if value_sum:
         assert weight_sum.value > 0
-        assert not 'normalized' in weights.tags or math.fabs(value_sum / weight_sum.value) <= 1.0
+        assert not 'normalized' in weights.tags or abs(value_sum / weight_sum.value) <= 1
         return value_sum / weight_sum.value
       else:
         return utilities.NaN

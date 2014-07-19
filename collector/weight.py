@@ -1,4 +1,4 @@
-import math, utilities
+import utilities
 import utilities.iterator as uiterator
 import utilities.operator as uoperator
 from math import expm1, fsum
@@ -30,7 +30,7 @@ class WeightDict(dict):
     return dict.__new__(cls)
 
 
-  def __init__(self, default=uoperator.identity, sum=(math.fabs, uoperator.identity), *args, **kwargs):
+  def __init__(self, default=uoperator.identity, sum=(abs, uoperator.identity), *args, **kwargs):
     dict.__init__(self)
     self.default = WeightDict.WeightFunctor(default)
     self.sum_data = sum
