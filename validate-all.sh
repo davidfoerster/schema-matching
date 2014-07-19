@@ -1,8 +1,9 @@
 #!/bin/bash
 set -e
 SRCPATH="${0%/*}"
-[ "$SRCPATH" != "$0" ] || SRCPATH=.
-SCRIPT="$SRCPATH/schema-matching.py"
+[ "$SRCPATH" != "$0" ] || SRCPATH="$PWD"
+export PYTHONPATH="$SRCPATH/src"
+SCRIPT="$SRCPATH/src/schema-matching.py"
 #[ -n "$PYTHON" ] || PYTHON="`read -r cmd < "$SCRIPT" && [ "${cmd:0:2}" = '#!' ] && cmd="${cmd:2}" && echo "${cmd%% *}" || command -v python`"
 
 ACTION=schema_matching
@@ -28,7 +29,7 @@ while :; do
 done
 
 if [ $# -eq 0 ]; then
-  [ "$PWD" -ef "$SRCPATH" ] || cd "$SRCPATH"
+	cd "$SRCPATH"
 	set -- input-data/*.csv
 fi
 

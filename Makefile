@@ -6,7 +6,7 @@ GROUP = gr1
 PACKFILE = uebung$(ASSIGNMENT)-$(GROUP).tar.xz
 
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
-MODULES = $(call rwildcard, , *.py)
+MODULES = $(call rwildcard, src, *.py)
 
 .PHONY: optimized clean pack
 
@@ -14,7 +14,7 @@ optimized: $(MODULES)
 	$(PYTHON) $(PYTHON_FLAGS) -m compileall $^
 
 clean:
-	rm -rf $(addsuffix c, $(MODULES)) $(addsuffix o, $(MODULES))
+	rm -rf $(addsuffix c, $(MODULES)) $(addsuffix o, $(MODULES)) $(call rwildcard, tests, *.pyc *.pyo)
 
 $(PACKFILE): $(MODULES) Makefile README
 	tar -caf $@ -- $^
