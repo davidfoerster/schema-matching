@@ -18,8 +18,12 @@ class WeightDict(dict):
 
     def __init__(self, weight):
       object.__init__(self)
-      self.weightfn = weight if callable(weight) else weight.__mul__
-      self.for_infinity = self.weightfn(utilities.infinity)
+      if callable(weight):
+        self.weightfn = weight
+        self.coefficient = 1
+      else:
+        self.weightfn = weight.__mul__
+        self.coefficient = weight
       self.__cache.setdefault(weight, self)
 
     def __call__(self, x):

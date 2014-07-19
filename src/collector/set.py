@@ -49,7 +49,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
       a = self.__collector_set
       b = other.__collector_set
       if not utilities.issubset(a.keys(), b):
-        return weights[ItemCollectorSet].for_infinity
+        return weights[ItemCollectorSet].coefficient
 
       def distance_of_unweighted(a_coll):
         assert a[type(a_coll)] is a_coll and type(b[type(a_coll)]) is type(a_coll)
@@ -64,7 +64,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
       else:
         def distance_of(a_coll):
           weight = weights[type(a_coll)]
-          weight_sum.value += weight.for_infinity
+          weight_sum.value += weight.coefficient
           return weight(distance_of_unweighted(a_coll))
 
       value_sum = weights.sum(map(distance_of,
