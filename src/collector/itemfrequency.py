@@ -35,7 +35,7 @@ class ItemFrequencyCollector(ItemCollector):
 
   def collect(self, item, collector_set=None):
     if item is not None:
-      self.frequencies.increase(item, 1)
+      self.frequencies.increase(item)
 
 
   def get_result(self, collector_set=None):

@@ -1,6 +1,7 @@
 import numbers, array, itertools, operator, math
 from collections import defaultdict
-from math import fsum, fabs
+from math import fsum
+from utilities import minmax2
 from utilities.string import join, format_char
 
 
@@ -44,13 +45,17 @@ class SparseDistributionTable(DistributionTable, defaultdict):
     defaultdict.__init__(self, type, *args)
 
 
-  def distance_to(self, compare_to):
-    return fsum((fabs(p - compare_to[bin]) for bin, p in self.items())) + \
-      fsum(p for bin, p in compare_to.items() if bin not in self)
+  def distance_to(self, other):
+    return fsum((abs(p - other[bin]) for bin, p in self.items())) + \
+      fsum(p for bin, p in other.items() if bin not in self)
 
 
   def count(self):
     return sum(self.values())
+
+
+  def increase(self, item, value=1):
+    self[item] += value
 
 
   def __truediv__(self, divisor):
@@ -84,6 +89,8 @@ class UniformBinDistributionTable(DistributionTable):
     self.lower = start
     self.upper = stop
     self.step = (stop - start) / bincount
+    if self.step.is_integer():
+      self.step = int(self.step)
 
     if initializer is None:
       initializer = itertools.repeat(0, bincount)
@@ -99,12 +106,16 @@ class UniformBinDistributionTable(DistributionTable):
     return self.data.typecode if isinstance(self.data, array.array) else None
 
 
-  def bincount(self):
-    return len(self.data) + 1
+  def getbinlower(self, binidx):
+    return binidx * self.step + self.lower
+
+
+  def getbinupper(self, binidx):
+    return self.getbinlower(binidx + 1)
 
 
   def getbinlimits(self, binidx):
-    return binidx * self.step + self.lower, (binidx + 1) * self.step + self.lower
+    return self.getbinlower(binidx), self.getbinupper(binidx)
 
 
   def getbinidx(self, key):
@@ -113,7 +124,11 @@ class UniformBinDistributionTable(DistributionTable):
     if key >= self.upper:
       return len(self.data) - 1
     else:
-      return int((key - self.lower) / self.step)
+      return self.__getbinidx_raw(key)
+
+
+  def __getbinidx_raw(self, key):
+    return int((key - self.lower) / self.step)
 
 
   def __getitem__(self, key):
@@ -124,7 +139,7 @@ class UniformBinDistributionTable(DistributionTable):
     self.data[self.getbinidx(key)] = value
 
 
-  def increase(self, key, value):
+  def increase(self, key, value=1):
     self.data[self.getbinidx(key)] += value
 
 
@@ -141,31 +156,110 @@ class UniformBinDistributionTable(DistributionTable):
 
 
   def __truediv__(self, divisor):
-    return UniformBinDistributionTable(self.lower, self.upper, self.bincount(), 'd',
+    return UniformBinDistributionTable(self.lower, self.upper, len(self.data), 'd',
       map(float(divisor).__rtruediv__, self.data))
 
 
-  def distance_to(self, compare_to):
-    if isinstance(compare_to, UniformBinDistributionTable):
-      if self.lower == compare_to.lower and self.upper == compare_to.upper and self.step == compare_to.step:
-        assert self.bincount() == compare_to.bincount()
-        compare_to = compare_to.data
+  def distance_to(self, other):
+    """
+    :param other: UniformBinDistributionTable
+    :return: float
+    """
+    if isinstance(other, UniformBinDistributionTable):
+      if self.lower == other.lower and self.upper == other.upper and self.step == other.step:
+        other = other.data
       else:
-        # TODO
-        #return NotImplemented
-        return float('inf')
+        return self.__distance_to2(other)
 
-    assert not hasattr(compare_to, '__len__') or len(self.data) == len(compare_to)
-    return fsum(map(fabs, map(operator.sub, self.data, compare_to)))
+    assert not hasattr(other, '__len__') or len(self.data) == len(other)
+    return fsum(map(abs, map(operator.sub, self.data, other)))
+
+
+  def __distance_to2(self, other):
+    """
+    :param other: UniformBinDistributionTable
+    :return: float
+    """
+    lower = \
+      UniformBinDistributionTable.__distance_to2_lower(
+        *minmax2(self, other, 'lower'))
+    upper = \
+      UniformBinDistributionTable.__distance_to2_upper(
+        *minmax2(self, other, 'upper', True))
+    middle = \
+      UniformBinDistributionTable.__distance_to2_middle(
+        *minmax2(self, other, 'step'))
+    return lower + upper + middle
+
+
+  def __distance_to2_middle(self, other):
+    """
+    :param other: UniformBinDistributionTable
+    :return: float
+    """
+    assert self.step <= other.step
+    assert self.lower < self.upper and other.lower < other.upper
+    # TODO: optimise and use iterators and fsum()
+    d = 0
+    lower = max(self.lower, other.lower)
+    self_binidx = self.__getbinidx_raw(lower)
+    other_binidx = other.__getbinidx_raw(lower)
+    while self_binidx < len(self.data) and other_binidx < len(other.data):
+      self_binlimits = self.getbinlimits(self_binidx)
+      other_binlimits = other.getbinlimits(other_binidx)
+      overlap_start = max(self_binlimits[0], other_binlimits[0])
+      overlap_end = min(self_binlimits[1], other_binlimits[1])
+      overlap_length = overlap_end - overlap_start
+      self_partialbin_value = self.data[self_binidx] / self.step * overlap_length
+      other_partialbin_value = other.data[other_binidx] / other.step * overlap_length
+      d += abs(self_partialbin_value - other_partialbin_value)
+
+      self_binidx  += self_binlimits[1] <= other_binlimits[1]
+      other_binidx += self_binlimits[1] >= other_binlimits[1]
+    return d
+
+
+  def __distance_to2_lower(self, other):
+    """
+    :param other: UniformBinDistributionTable
+    :return: float
+    """
+    assert self.lower <= other.lower
+    lower_bin_end = (
+        self.__getbinidx_raw(other.lower)
+      if self.upper > other.lower else
+        len(self.data))
+    lower = fsum(itertools.islice(self.data, 0, lower_bin_end))
+    if lower_bin_end < len(self.data):
+      lower += self.data[lower_bin_end] / self.step * \
+        (other.lower - self.getbinlower(lower_bin_end))
+    return lower
+
+
+  def __distance_to2_upper(self, other):
+    """
+    :param other: UniformBinDistributionTable
+    :return: float
+    """
+    assert self.upper >= other.upper
+    upper_bin_start = (
+        self.__getbinidx_raw(other.upper)
+      if self.lower < other.upper else
+        0)
+    upper = fsum(itertools.islice(self.data, upper_bin_start + 1, len(self.data)))
+    if upper_bin_start < len(self.data):
+      upper += self.data[upper_bin_start] / self.step * \
+        (self.getbinupper(upper_bin_start) - other.upper)
+    return upper
 
 
   def __format__(self, number_format_spec=''):
-    return join('(',
+    return join('[',
       ', '.join((
-        '{2:{0}}-{3:{0}}: {1:{0}}'.format(
+        '[{2:{0}}-{3:{0}}): {1:{0}}'.format(
           number_format_spec, frequency, *self.getbinlimits(bin_idx))
         for bin_idx, frequency in enumerate(self))),
-      ')')
+      ']')
 
 
   @staticmethod
@@ -193,6 +287,7 @@ class UniformBinDistributionTable(DistributionTable):
 
 
 def _sturges_rule(n):
+  assert isinstance(n, numbers.Integral) and n > 0
   return (n - 1).bit_length() + 1
 
 
