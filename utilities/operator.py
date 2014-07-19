@@ -1,7 +1,3 @@
-def getitemfn(idx):
-  return lambda seq: seq[idx]
-
-
 def first(sequence):
   return sequence[0]
 
