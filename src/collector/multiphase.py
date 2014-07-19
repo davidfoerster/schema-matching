@@ -39,7 +39,7 @@ class MultiphaseCollector(object):
         ics = ItemCollectorSet()
 
         def add_copy_and_dependencies(collector, isdependency):
-          for dep in collector.result_dependencies: # TODO: Rewrite functionally
+          for dep in collector.result_dependencies:
             add_copy_and_dependencies(predecessor[dep], True)
           if isdependency is None:
             isdependency = collector.isdependency

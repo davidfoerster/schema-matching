@@ -42,7 +42,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
 
     def __iter__(self):
       collector_set = self.__collector_set
-      return (c.get_result(collector_set) for c in collector_set.values())
+      return map(methodcaller('get_result', collector_set), collector_set.values())
 
     def __cmp__(self, other, weights = WeightDict()):
       assert isinstance(other, type(self))
@@ -67,8 +67,8 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
           weight_sum.value += weight.for_infinity
           return weight(distance_of_unweighted(a_coll))
 
-      value_sum = weights.sum((
-        distance_of(coll) for coll in a.values() if not coll.isdependency))
+      value_sum = weights.sum(map(distance_of,
+        filterfalse(attrgetter('isdependency'), a.values())))
       if value_sum:
         assert weight_sum.value > 0
         assert not 'normalized' in weights.tags or abs(value_sum / weight_sum.value) <= 1
