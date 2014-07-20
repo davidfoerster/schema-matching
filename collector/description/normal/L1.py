@@ -1,11 +1,11 @@
-from ...weight import WeightDict, normalize_exp
-from ... import columntype
-from ...itemaverage import ItemAverageCollector
-from ...letteraverage import ItemLetterAverageCollector
-from ...variance import ItemVariationCoefficientCollector
-from ...lettervariance import LetterVariationCoefficient
-from ...itemprobability import ItemProbabilityCollector
-from ...letterprobability import LetterProbablilityCollector
+from collector.weight import WeightDict, normalize_exp
+from collector import columntype
+from collector.itemaverage import ItemAverageCollector
+from collector.letteraverage import ItemLetterAverageCollector
+from collector.variance import ItemVariationCoefficientCollector
+from collector.lettervariance import LetterVariationCoefficient
+from collector.itemprobability import ItemProbabilityCollector
+from collector.letterprobability import LetterProbablilityCollector
 
 
 

@@ -1,6 +1,6 @@
 import math, utilities.operator
-from ...weight import WeightDict, normalize_exp
-from .L1 import descriptions
+from collector.weight import WeightDict, normalize_exp
+from collector.description.normal.L1 import descriptions
 
 
 # Normalised distances and L2-normalised (Euclidean norm) collector sets
