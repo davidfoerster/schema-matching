@@ -2,11 +2,11 @@ import functools, utilities.operator
 
 
 
-def memberfn(memberfn, *args):
+def memberfn(memberfn, *args, **kwargs):
   if callable(memberfn):
-    return lambda instance: memberfn(instance, *args)
+    return lambda instance: memberfn(instance, *args, **kwargs)
   else:
-    return lambda instance: getattr(instance, memberfn)(*args)
+    return lambda instance: getattr(instance, memberfn)(*args, **kwargs)
 
 
 def rapply(arg, function):

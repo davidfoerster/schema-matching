@@ -1,106 +1,145 @@
 #!/usr/bin/python3 -OO
 import sys, os.path, signal
-import operator, collections
+import operator, collections, argparse
 import csv
 from itertools import repeat
 from functools import partial as partialfn
 
-import utilities.file, utilities.operator
+import utilities.operator, utilities.argparse
 from utilities import infinity
 from utilities.iterator import each, map_inplace
 from utilities.functional import memberfn, composefn
-from collector import verbosity
+import collector.description
 from collector.multiphase import MultiphaseCollector
 
 if __debug__:
-  import timeit
+  from timeit import default_timer as __timer
 
 
-default_timelimit = 60
-number_format = '.3e'
-__interrupted = False
+__interrupted = None
 
 
+def main(argv=None):
+  global __interrupted
 
-def main(argv, time_limit=None):
-  # parse arguments
-  argv = collections.deque(argv)
+  opts = __argument_parser.parse_args(argv)
 
-  # action to perform
-  if argv[0].startswith('--'):
-    action = argv.popleft()[2:]
-  else:
+  if opts.action == 'match':
     # default action; set up alarm handler
-    action = None
-    global __interrupted
+    if __interrupted is not None:
+      raise RuntimeError("Schema matching is not re-entrant, if a time limit is used")
     __interrupted = False
-    if time_limit > 0:
+    if opts.time_limit > 0:
       signal.signal(signal.SIGALRM, __timeout_handler)
-      if signal.alarm(time_limit):
+      if signal.alarm(opts.time_limit):
         raise RuntimeError('Who set the alarm before us?!!')
+  elif opts.time_limit:
+    print(
+      "Warning: The time limit option doesn't work with the '", opts.action,
+      "' action.",
+      sep='', file=sys.stderr)
 
-  # input files
-  in1 = argv.popleft()
-  in2 = argv.popleft()
+  rv = schema_matching(**vars(opts))
 
-  # output file
-  if argv:
-    forbidden_suffix = '.py'
-    if (len(argv[0]) > len(forbidden_suffix) and
-        argv[0][-len(forbidden_suffix):] == forbidden_suffix
-    ):
-      print("Error: To prevent usage errors, we don't allow writing to *{} files." \
-        .format(forbidden_suffix), file=sys.stderr)
-      return 2
-    out = utilities.file.openspecial(argv.popleft(), 'w')
-  else:
-    out = sys.stdout
-
-
-  # read and analyse data
-  rv = schema_matching(action, in1, in2, argv, out)
   if (__interrupted):
     print(
-      'The time limit of', time_limit, 'seconds was reached. '
+      'The time limit of', opts.time_limit, 'seconds was reached. '
       'The results may be incomplete or inaccurate.',
       file=sys.stderr)
+    if __debug__:
+      print('INFO:', __timer() - __interrupted,
+        'seconds between interruption and program termination.',
+        file=sys.stderr)
+  assert __interrupted is not None or not opts.time_limit or opts.action != 'match'
+  __interrupted = None
+
   return rv
 
 
+def __get_argument_parser():
+  p = argparse.ArgumentParser(description='Match data schema attributes.')
 
-def schema_matching(action, in1, in2, collector_descriptions=None, out=sys.stdout):
-  in_paths = [in1, in2]
+  action_group = p.add_mutually_exclusive_group(required=True)
+  def add_action(name, shortopt='-'):
+    flags = ['--' + name]
+    if shortopt is not None:
+      if shortopt == '-':
+        shortopt = name[0].upper()
+      assert len(shortopt) == 1 and shortopt.isalpha()
+      flags.insert(0, '-' + shortopt)
+    return action_group.add_argument(*flags, dest='action',
+      action='store_const', const=name)
+
+  add_action('match')
+  add_action('validate')
+  add_action('compare-descriptions')
+
+  p.add_argument('schema_instances', nargs=range(2, sys.maxsize),
+    type=argparse.FileType('r'), action=utilities.argparse.NargsRangeAction,
+    metavar='schema-instances')
+
+  p.add_argument('-d', '--desc', action='append', dest='collector_descriptions',
+    type=collector.description.argparser, metavar='collector-descriptions')
+
+  p.add_argument('-o', '--output', type=argparse.FileType('w'),
+    default=sys.stdout)
+
+  p.add_argument('--time-limit', type=int, choices=range(sys.maxsize),
+    default=0, metavar='seconds')
+
+  p.add_argument('--field-delimiter', default=';')
+  p.add_argument('--number-format', default='.3e')
+  p.add_argument('-v', '--verbose', action='count', default=int(__debug__))
+
+  return p
+
+__argument_parser = __get_argument_parser()
+
+
+def schema_matching(action, schema_instances, collector_descriptions=None, **kwargs):
+  if len(schema_instances) < 2:
+    raise IndexError("At least 2 schema instances are required")
+  if len(schema_instances) > 2:
+    raise NotImplementedError("More than 2 schema instances aren't implemented yet")
+  if not isinstance(schema_instances, list):
+    list(schema_instances)
 
   if collector_descriptions is None:
     collector_descriptions = ()
   elif collector_descriptions:
-    collector_descriptions = collections.deque(collector_descriptions)
+    collector_descriptions = list(collector_descriptions)
 
   # determine collector descriptions to use
-  collector_description = get_collector_description(
-    collector_descriptions.popleft() if collector_descriptions else None)
+  if collector_descriptions:
+    collector_description = collector_descriptions.pop()
+  else:
+    from collector.description import default as collector_description
 
   # read and analyse data
   collectors, isreversed, best_match = \
-    collect_analyse_match(in_paths, collector_description, out)
+    collect_analyse_match(schema_instances, collector_description, **kwargs)
   best_match_norm, best_match = best_match
+
   if isreversed:
-    in_paths.reverse()
+    schema_instances.reverse()
+  each(operator.methodcaller('close'), schema_instances)
+  map_inplace(operator.attrgetter('name'), schema_instances)
 
   # print or validate best match
-  if action is None:
-    if verbosity >= 1:
-      print('norm:', format(best_match_norm, number_format), file=sys.stderr)
-    print_result(best_match, isreversed, out)
+  if action == 'match':
+    if kwargs.get('verbose', 0) >= 1:
+      print('norm:', format(best_match_norm, kwargs.get('number_format', '')),
+        file=sys.stderr)
+    print_result(best_match, isreversed, **kwargs)
 
   elif action == 'validate':
     invalid_count, impossible_count, missing_count = \
-      validate_result(in_paths, best_match, best_match_norm, out)
+      validate_result(schema_instances, best_match, best_match_norm, **kwargs)
     return int(bool(invalid_count | missing_count))
 
   elif action == 'compare-descriptions':
-    return compare_descriptions(in_paths, collectors, collector_descriptions,
-      (collector_description, best_match_norm, best_match), out)
+    return compare_descriptions(schema_instances, collectors, collector_descriptions,
+      (collector_description, best_match_norm, best_match), **kwargs)
 
   else:
     print('Unknown action:', action, file=sys.stderr)
@@ -109,44 +148,15 @@ def schema_matching(action, in1, in2, collector_descriptions=None, out=sys.stdou
   return 0
 
 
-def get_collector_description(srcpath=None):
-  """
-  :param srcpath: str
-  :return: dict
-  """
-  if srcpath is None or srcpath == ':':
-    from collector.description import default as collector_description
-  elif srcpath.startswith(':'):
-    import importlib
-    collector_description = importlib.import_module(srcpath[1:])
-  else:
-    import os, imp
-    import collector.description as parent_package # needs to be imported before its child modules
-    with open(srcpath) as f:
-      module_name = \
-        '{0}._anonymous_{1.st_dev}_{1.st_ino}'.format(
-          parent_package.__name__, os.fstat(f.fileno()))
-      collector_description = imp.load_source(module_name, srcpath, f)
-    assert isinstance(getattr(collector_description, '__file__', None), str)
-
-  utilities.setattr_default(collector_description, '__file__', '<unknown file>')
-  if not hasattr(collector_description, 'descriptions'):
-    raise NameError(
-      "The collector description module doesn't contain any collector description.",
-      collector_description, collector_description.__file__,
-      "missing attribute 'description'")
-
-  return collector_description
-
-
-def collect_analyse_match(collectors, collector_descriptions, out=sys.stdout):
+def collect_analyse_match(collectors, collector_descriptions, **kwargs):
   """
   :param collectors: list[str | MultiphaseCollector]
   :param collector_descriptions: object
   :return: list[MultiphaseCollector], bool, tuple[int]
   """
   assert isinstance(collectors, collections.Sequence) and len(collectors) == 2
-  collect_functor = memberfn(collect, collector_descriptions.descriptions, out)
+  collect_functor = \
+    memberfn(collect, collector_descriptions.descriptions, **kwargs)
 
   if isinstance(collectors[0], MultiphaseCollector):
     assert isinstance(collectors[1], MultiphaseCollector)
@@ -162,9 +172,9 @@ def collect_analyse_match(collectors, collector_descriptions, out=sys.stdout):
   # analyse collected data
   norms = MultiphaseCollector.results_norms(*collectors,
     weights=collector_descriptions.weights)
-  if verbosity >= 1:
+  if kwargs.get('verbose', 0) >= 1:
     print(collectors[1].name, collectors[0].name, sep=' / ', end='\n| ', file=sys.stderr)
-    formatter = memberfn(format, number_format)
+    formatter = memberfn(format, kwargs.get('number_format', ''))
     print(*('  '.join(map(formatter, row)) for row in norms),
       sep=' |\n| ', end=' |\n\n', file=sys.stderr)
 
@@ -172,7 +182,7 @@ def collect_analyse_match(collectors, collector_descriptions, out=sys.stdout):
   return collectors, isreversed, get_best_schema_mapping(norms)
 
 
-def collect(src, collector_descriptions, out=sys.stdout):
+def collect(src, collector_descriptions, **kwargs):
   """
   Collects info about the columns of the data set in file "path" according
   over multiple phases based on a description of those phases.
@@ -181,27 +191,30 @@ def collect(src, collector_descriptions, out=sys.stdout):
   :param collector_descriptions: tuple[type | ItemCollector | callable]
   :return: MultiphaseCollector
   """
+  verbosity = kwargs.get('verbose', 0)
+
   if isinstance(src, MultiphaseCollector):
     multiphasecollector = src.reset()
 
   else:
     if verbosity >= 2:
-      print(src, end=':\n', file=sys.stderr)
+      print(src.name, end=':\n', file=sys.stderr)
 
-    with open(src) as f:
-      reader = csv.reader(f, delimiter=';', skipinitialspace=True)
-      reader = map(partialfn(map_inplace, str.strip), reader)
-      multiphasecollector = MultiphaseCollector(reader, os.path.basename(src))
+    reader = map(partialfn(map_inplace, str.strip),
+      csv.reader(src, delimiter=kwargs.get('field_delimiter', ','),
+        skipinitialspace=True))
+    multiphasecollector = \
+      MultiphaseCollector(reader, os.path.basename(src.name), verbosity)
 
   multiphasecollector.do_phases(collector_descriptions,
-    print_phase_results if verbosity >= 2 else None)
+    memberfn(print_phase_results, kwargs.get('number_format', '')) if verbosity >= 2 else None)
   if verbosity >= 2:
     print(file=sys.stderr)
 
   return multiphasecollector
 
 
-def print_phase_results(multiphasecollector):
+def print_phase_results(multiphasecollector, number_format=''):
   print(multiphasecollector.merged_predecessors.as_str(number_format), file=sys.stderr)
 
 
@@ -250,13 +263,14 @@ def get_best_schema_mapping(distance_matrix):
   return sweep_row(0, maxI - maxJ)
 
 
-def validate_result(in_paths, found_mappings, norm, out=sys.stdout, offset=1):
+def validate_result(in_paths, found_mappings, norm, **kwargs):
   """
   :param in_paths: list[str]
   :param found_mappings: list[int]
   :param offset: int
   :return: (int, int, int)
   """
+  out = kwargs.get('output', sys.stdout)
 
   # read expected column mappings
   def read_descriptor(path):
@@ -274,6 +288,7 @@ def validate_result(in_paths, found_mappings, norm, out=sys.stdout, offset=1):
   rschema_desc = tuple(map(utilities.rdict, schema_desc))
 
   # build column mapping dictionary
+  offset = kwargs.get('column_offset', 1)
   found_mappings = {k + offset: v + offset for k, v in enumerate(found_mappings) if v is not None}
   invalid_count = 0
   impossible_count = 0
@@ -301,44 +316,49 @@ def validate_result(in_paths, found_mappings, norm, out=sys.stdout, offset=1):
       missing_count += 1
 
   print('\n{} invalid, {} impossible, and {} missing matches, norm = {:{}}'.format(
-    invalid_count, impossible_count, missing_count, norm, number_format),
+    invalid_count, impossible_count, missing_count, norm, kwargs.get('number_format', '')),
     file=out)
 
   return invalid_count, impossible_count, missing_count
 
 
-def compare_descriptions(in_paths, collectors, to_compare, desc=None, out=sys.stdout):
+def compare_descriptions(in_paths, collectors, to_compare, desc=None, **kwargs):
   """
   :param collectors: list[str | MultiphaseCollector]
-  :param to_compare: tuple[str]
+  :param to_compare: tuple[object]
   :param desc: dict, float, tuple(int)
   :return:
   """
+  from collector.description import default as default_description
+  out = kwargs.get('output', sys.stdout)
   descriptions = []
 
   if desc:
     desc, best_match_norm, best_match = desc
-    if not to_compare:
-      from collector.description import default as default_description
-      if os.path.samefile(desc.__file__, default_description.__file__):
-        print("Error: I won't compare the default description to itself.", file=sys.stderr)
-        return 2
+    if not to_compare and (desc is default_description or
+      os.path.samefile(desc.__file__, default_description.__file__)
+    ):
+      print("Warning: I won't compare the default description to itself.", file=sys.stderr)
 
     invalid_count, _, missing_count = \
-      validate_result(in_paths, best_match, best_match_norm, out)
+      validate_result(in_paths, best_match, best_match_norm, **kwargs)
     print_description_comment(desc, out)
     descriptions.append((desc, invalid_count + missing_count, best_match_norm))
 
-  for desc in map(get_collector_description, to_compare or (None,)):
-    collectors, _, best_match = collect_analyse_match(collectors, desc, out)
+  if not to_compare:
+    to_compare = (default_description,)
+
+  for desc in to_compare:
+    collectors, _, best_match = collect_analyse_match(collectors, desc, **kwargs)
     best_match_norm, best_match = best_match
     invalid_count, _, missing_count = \
-      validate_result(in_paths, best_match, best_match_norm, out)
+      validate_result(in_paths, best_match, best_match_norm, **kwargs)
     print_description_comment(desc, out)
     descriptions.append((desc, invalid_count + missing_count, best_match_norm))
 
   i = 1
   last_error_count = None
+  number_format = kwargs.get('number_format', '')
   descriptions.sort(key=operator.itemgetter(slice(1, 3)))
   for desc in descriptions:
     print('{}. {}, errors={}, norm={:{}}'.format(
@@ -351,7 +371,7 @@ def compare_descriptions(in_paths, collectors, to_compare, desc=None, out=sys.st
 
 
 
-def print_result(column_mappings, reversed=False, out=sys.stdout, offset=1):
+def print_result(column_mappings, reversed=False, **kwargs):
   """
   :param column_mappings: list[int]
   :param reversed: bool
@@ -360,13 +380,15 @@ def print_result(column_mappings, reversed=False, out=sys.stdout, offset=1):
   if not column_mappings:
     return
 
+  offset = kwargs.get('column_offset', 1)
   column_mappings = [
-    map(str, range(offset, offset.__add__(len(column_mappings)))),
+    map(str, range(offset, offset + len(column_mappings))),
     map(composefn(offset.__add__, str), column_mappings)
   ]
   if reversed:
     column_mappings.reverse()
-  print(*map(','.join, zip(*column_mappings)), sep='\n', file=out)
+  print(*map(','.join, zip(*column_mappings)),
+    sep='\n', file=kwargs.get('output', sys.stdout))
 
 
 def print_description_comment(desc, out):
@@ -378,13 +400,8 @@ def print_description_comment(desc, out):
 def __timeout_handler(signum, frame):
   if signum == signal.SIGALRM:
     global __interrupted
-    __interrupted = timeit.default_timer() if __debug__ else True
+    __interrupted = __timer() if __debug__ else True
 
 
 if __name__ == '__main__':
-  rv = main(sys.argv[1:], default_timelimit)
-  if __debug__ and __interrupted:
-    print('INFO:', timeit.default_timer() - __interrupted,
-      'seconds between interruption and program termination.',
-      file=sys.stderr)
-  sys.exit(rv)
+  sys.exit(main())
