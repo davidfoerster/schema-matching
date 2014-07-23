@@ -1,25 +1,37 @@
 import utilities.operator as uoperator
 from operator import methodcaller
-from . import verbosity
 from utilities.iterator import each
 from utilities.string import join
-
-if verbosity >= 2:
-  import sys
 
 
 
 class RowCollector(list):
   """Manages collectors for a set of rows"""
 
+  def __init__(self, initialiser, verbosity=0):
+    list.__init__(self, initialiser)
+
+    self.__rowcount = 0
+    if verbosity >= 2:
+      import sys
+      self.__stderr = sys.stderr
+    else:
+      self.__stderr = None
+
+
   def reset(self, collectors):
     self[:] = collectors
+    self.__rowcount = 0
 
 
   def collect(self, items):
     """Collects the data of all columns of a row"""
-    if verbosity >= 2 and len(self) != len(items):
-      print('Row has {} columns, expected {}: {}'.format(len(items), len(self), items), file = sys.stderr)
+    if self.__stderr is not None and len(self) != len(items):
+      self.__rowcount += 1
+      print(
+        'Row {} has {} columns, expected {}: {}'.format(
+          self.__rowcount, len(items), len(self), items),
+        file=self.__stderr)
 
     assert len(self) <= len(items)
     each(self.__collect_column, self, items)

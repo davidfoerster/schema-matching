@@ -20,15 +20,17 @@ if __debug__:
 class MultiphaseCollector(object):
   """Manages a sequence of collection phases"""
 
-  def __init__(self, rowset, name=None):
+  def __init__(self, rowset, name=None, verbosity=0):
     self.name = name
+    self.verbosity = verbosity
     self.rowset = rowset if isinstance(rowset, collections.Sequence) else tuple(rowset)
     #assert operator.eq(*utilities.minmax(map(len, self.rowset)))
     self.reset(None)
 
 
   def reset(self, keep=(ItemCountCollector, ColumnTypeItemCollector)):
-    self.merged_predecessors = RowCollector(self.__emit_itemcollector_set(keep))
+    self.merged_predecessors = \
+      RowCollector(self.__emit_itemcollector_set(keep), self.verbosity)
     return self
 
 
@@ -168,7 +170,7 @@ class MultiphaseCollector(object):
 
 
   def __do_phase_magic(self, itemcollector_sets):
-    phase = RowCollector(itemcollector_sets)
+    phase = RowCollector(itemcollector_sets, self.verbosity)
     phase.collect_all(self.rowset)
     phase.transform_all(self.rowset)
     self.merged_predecessors = phase
