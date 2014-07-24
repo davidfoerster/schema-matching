@@ -186,3 +186,8 @@ class MultiphaseCollector(object):
     :return: list[list[float]]
     """
     return a.merged_predecessors.results_norms(b.merged_predecessors, weights)
+
+
+  def copy(self):
+    return MultiphaseCollector(
+      copy.deepcopy(self.rowset), self.name, self.verbosity)
