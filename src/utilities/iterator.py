@@ -1,4 +1,5 @@
-import itertools
+import itertools, operator
+from . import functional as ufunctional
 
 
 if __debug__:
@@ -77,3 +78,40 @@ def countif(function, *iterables):
 
 def teemap(iterable, *functions):
   return map(lambda item: [item if f is None else f(item) for f in functions], iterable)
+
+
+def issorted(iterable, key=None, reverse=False):
+  if key is not None:
+    iterable = map(key, iterable)
+  it = iter(iterable)
+  last_item_key = next(it, __iterator_cookie)
+  if last_item_key is not __iterator_cookie:
+    not_in_order = operator.lt if reverse else operator.gt
+    for item_key in it:
+      if not_in_order(last_item_key, item_key):
+        return False
+      last_item_key = item_key
+  return True
+
+
+def order(sequence, key=None, reverse=False):
+  key2 = sequence.__getitem__
+  if key is not None:
+    key2 = ufunctional.composefn(key2, key)
+  order = list(range(len(sequence)))
+  order.sort(key=key2, reverse=reverse)
+  return order
+
+
+def sorted_with_order(iterable, key=None, reverse=False, inplace=False):
+  assert not inplace or hasattr(iterable, '__setitem__')
+  if not inplace:
+    iterable = list(iterable)
+  _order = order(iterable, key, reverse)
+  iterable[:] = sort_by_order(iterable, _order)
+  return _order, iterable
+
+
+def sort_by_order(sequence, order):
+  assert all(map(len(sequence).__gt__, order))
+  return map(sequence.__getitem__, order)
