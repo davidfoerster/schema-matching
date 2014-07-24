@@ -58,10 +58,10 @@ class MultiphaseCollector(object):
         yield ics
 
 
-  def do_phases(self, collector_descriptions, callback=None):
+  def do_phases(self, collectorset_description, callback=None):
     phase_count = 0
     while True:
-      phase_descriptions = self.get_phase_descriptions(collector_descriptions)
+      phase_descriptions = self.get_phase_descriptions(collectorset_description)
       if __debug__:
         phase_descriptions = tuple(phase_descriptions)
 
@@ -78,7 +78,7 @@ class MultiphaseCollector(object):
 
     if __debug__:
       for coll_set in self.merged_predecessors:
-        independent = frozenset((template.get_type(coll_set) for template in collector_descriptions))
+        independent = frozenset((template.get_type(coll_set) for template in collectorset_description))
         for ctype, coll in coll_set.items():
           assert coll.isdependency is (ctype not in independent)
 
@@ -99,28 +99,28 @@ class MultiphaseCollector(object):
       for ctype in chain(*filter(None, phase_desc))))
 
 
-  def get_phase_descriptions(self, collector_descriptions):
+  def get_phase_descriptions(self, collectorset_description):
     # column-first ordering
     phase_descriptions = map(
-      partialfn(self.__get_dependency_chain, collector_descriptions),
+      partialfn(self.__get_dependency_chain, collectorset_description),
       self.merged_predecessors)
     # transpose to phase-first ordering
     phase_descriptions = zip_longest(*phase_descriptions)
     return phase_descriptions
 
 
-  def __get_dependency_chain(self, collector_descriptions, predecessors=None):
+  def __get_dependency_chain(self, collectorset_description, predecessors=None):
     """
     Returns a list of phase-wise collector descriptions for a single column.
 
-    :param collector_descriptions: iterable
+    :param collectorset_description: iterable
     :param predecessors: ItemCollectorSet
     :return: list[dict]
     """
     phase = dict(filterfalse(
       lambda item: item[0] is None or item[0] in predecessors,
       ((template.get_type(predecessors), template)
-        for template in collector_descriptions)))
+        for template in collectorset_description)))
     independent = TagCollector('independent', frozenset(phase.keys()), True)
 
     phases = []
