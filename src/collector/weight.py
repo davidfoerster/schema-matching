@@ -1,4 +1,4 @@
-import utilities
+import itertools
 import utilities.iterator as uiterator
 import utilities.operator as uoperator
 from math import expm1, fsum
