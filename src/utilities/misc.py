@@ -1,4 +1,5 @@
 import operator
+from . import operator as uoperator
 
 
 infinity = float('inf')
@@ -31,6 +32,13 @@ def minmax(*args, **kwargs):
         min_value = value
         min_item = item
   return min_item, max_item
+
+
+def minmax2(a, b, key=uoperator.identity, reverse=False):
+  """Guarantees the return of two distinct values iff a is not b."""
+  if isinstance(key, str):
+    key = operator.attrgetter(key)
+  return (a, b) if (key(a) <= key(b)) is not reverse else (b, a)
 
 
 def sliceout(sequence, start, end=None):
