@@ -179,6 +179,10 @@ class MultiphaseCollector(object):
   __call__ = do_phase
 
 
+  def columncount(self):
+    return len(self.merged_predecessors)
+
+
   def results_norms(a, b, weights=None):
     """
     :param a: self
