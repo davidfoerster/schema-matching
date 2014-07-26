@@ -339,7 +339,7 @@ def compare_descriptions(in_paths, collectors, to_compare, desc=None, out=sys.st
 
   i = 1
   last_error_count = None
-  descriptions.sort(key=utilities.operator.getitemfn(slice(1, 3)))
+  descriptions.sort(key=operator.itemgetter(slice(1, 3)))
   for desc in descriptions:
     print('{}. {}, errors={}, norm={:{}}'.format(
       i, desc[0].__file__, desc[1], desc[2], number_format),

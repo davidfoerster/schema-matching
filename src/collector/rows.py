@@ -1,7 +1,7 @@
 import utilities.operator as uoperator
+from operator import methodcaller
 from . import verbosity
 from utilities.iterator import each
-from utilities.functional import memberfn
 from utilities.string import join
 
 if verbosity >= 2:
@@ -32,7 +32,7 @@ class RowCollector(list):
 
   def collect_all(self, rows):
     each(self.collect, rows)
-    each(memberfn('set_collected'), self)
+    each(methodcaller('set_collected'), self)
 
 
   class __transformer(tuple):
@@ -45,7 +45,7 @@ class RowCollector(list):
   def get_transformer(self):
     column_transformers = tuple(
       filter(uoperator.second,
-        enumerate(map(memberfn('get_transformer'), self))))
+        enumerate(map(methodcaller('get_transformer'), self))))
 
     if column_transformers:
       def row_transformer(items):
@@ -61,11 +61,11 @@ class RowCollector(list):
     transformer = self.get_transformer()
     if transformer is not None:
       each(transformer, rows)
-      each(memberfn('set_transformed'), self)
+      each(methodcaller('set_transformed'), self)
 
 
   def results_norms(a, b, weights=None):
-    get_result = memberfn('get_result')
+    get_result = methodcaller('get_result')
     # Materialise results of inner loop because they'll be scanned multiple times.
     resultsA = tuple(map(get_result, a))
     resultsB = map(get_result, b)
@@ -76,7 +76,7 @@ class RowCollector(list):
 
 
   def as_str(self, format_spec=''):
-    return join('(', ', '.join(map(memberfn('as_str', None, format_spec), self)), ')')
+    return join('(', ', '.join(map(methodcaller('as_str', None, format_spec), self)), ')')
 
 
   def __str__(self): return self.as_str()

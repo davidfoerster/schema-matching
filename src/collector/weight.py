@@ -1,4 +1,4 @@
-import math, utilities
+import utilities
 import utilities.iterator as uiterator
 import utilities.operator as uoperator
 from math import expm1, fsum
@@ -20,8 +20,12 @@ class WeightDict(dict):
 
     def __init__(self, weight):
       super().__init__()
-      self.weightfn = weight if callable(weight) else weight.__mul__
-      self.for_infinity = self.weightfn(utilities.infinity)
+      if callable(weight):
+        self.weightfn = weight
+        self.coefficient = 1
+      else:
+        self.weightfn = weight.__mul__
+        self.coefficient = weight
       self.__cache.setdefault(weight, self)
 
     def __call__(self, x):
@@ -32,7 +36,7 @@ class WeightDict(dict):
     return super(WeightDict, cls).__new__(cls)
 
 
-  def __init__(self, default=uoperator.identity, sum=(math.fabs, uoperator.identity), *args, **kwargs):
+  def __init__(self, default=uoperator.identity, sum=(abs, uoperator.identity), *args, **kwargs):
     super().__init__()
     self.default = WeightDict.WeightFunctor(default)
     self.sum_data = sum

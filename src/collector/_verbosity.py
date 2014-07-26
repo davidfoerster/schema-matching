@@ -1,5 +1,4 @@
 import os
-from .base import ItemCollector
 
 
 verbosity = os.getenv('VERBOSE', '')

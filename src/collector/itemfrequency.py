@@ -1,4 +1,4 @@
-import numbers
+import numbers, operator
 import utilities.iterator, utilities.functional
 from .base import ItemCollector
 from .columntype import ColumnTypeItemCollector
@@ -26,8 +26,7 @@ class ItemFrequencyCollector(ItemCollector):
       else:
         table_ctor = UniformBinDistributionTable.for_variance
       assert all(prereqs)
-      utilities.iterator.map_inplace(
-        utilities.functional.memberfn('get_result'), prereqs)
+      utilities.iterator.map_inplace(operator.methodcaller('get_result'), prereqs)
       prereqs.append('I')
       self.frequencies = table_ctor(*prereqs)
     else:

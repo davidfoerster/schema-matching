@@ -1,20 +1,36 @@
-
+import operator
 
 
 infinity = float('inf')
 NaN = float('NaN')
 
 
-def minmax(*args):
+def minmax(*args, **kwargs):
+  keyfn = kwargs.get('key')
+  if isinstance(keyfn, str):
+    keyfn = operator.attrgetter(keyfn)
+
   iterator = iter(args if len(args) > 1 else args[0])
-  min = next(iterator)
-  max = min
-  for x in iterator:
-    if max < x:
-      max = x
-    if x > min:
-      min = x
-  return min, max
+  min_item = next(iterator)
+  max_item = min_item
+  if keyfn is None:
+    for item in iterator:
+      if max_item < item:
+        max_item = item
+      elif item < min_item:
+        min_item = item
+  else:
+    min_value = keyfn(min_item)
+    max_value = min_value
+    for item in iterator:
+      value = keyfn(item)
+      if max_value < value:
+        max_value = value
+        max_item = item
+      elif value < min_value:
+        min_value = value
+        min_item = item
+  return min_item, max_item
 
 
 def sliceout(sequence, start, end=None):
