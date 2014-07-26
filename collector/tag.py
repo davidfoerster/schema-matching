@@ -6,7 +6,7 @@ from utilities.string import join
 class TagCollector(ItemCollector):
 
   def __init__(self, id, data=None, isdependency=False):
-    ItemCollector.__init__(self)
+    super().__init__()
     self.set_collected()
     self.set_transformed()
     self.isdependency = isdependency

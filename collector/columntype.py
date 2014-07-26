@@ -83,7 +83,7 @@ class ColumnTypeItemCollector(ItemCollector):
 
 
   def __init__(self, collector_set=None, max_invalid_absolute=2, max_invalid_relative=0.25, total_max_invalid=0.05):
-    ItemCollector.__init__(self)
+    super().__init__()
     self.__type_index = -1
     self.__tolerance_exceeded_count = 0
 
@@ -156,7 +156,7 @@ class factory(object):
 
 
   def __init__(self, string_collector, numeric_collector):
-    object.__init__(self)
+    super().__init__()
     self.string_collector = string_collector
     self.numeric_collector = numeric_collector
     self.pre_dependencies = frozenset(itertools.chain(self.__pre_dependencies,

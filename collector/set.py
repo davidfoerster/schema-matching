@@ -36,7 +36,7 @@ class ItemCollectorSet(ItemCollector, collections.OrderedDict):
   class __result_type(object):
 
     def __init__(self, collector_set):
-      object.__init__(self)
+      super().__init__()
       self.__collector_set = collector_set
 
     def __iter__(self):

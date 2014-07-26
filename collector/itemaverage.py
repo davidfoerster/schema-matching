@@ -9,7 +9,7 @@ class ItemAverageCollector(ItemCollector):
   result_dependencies = (ItemCountCollector, ItemSumCollector)
 
   def __init__(self, previous_collector_set = None):
-    ItemCollector.__init__(self, previous_collector_set)
+    super().__init__(previous_collector_set)
 
 
   def get_result(self, collector_set):

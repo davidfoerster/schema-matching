@@ -10,7 +10,7 @@ class ItemCollector(object):
     """Initialises a new collector from a set of collectors of a previous phase.
     This may be relevant for some derived collectors.
     """
-    object.__init__(self)
+    super().__init__()
     self.isdependency = False
     self.__has_collected = False
     self.__has_transformed = False

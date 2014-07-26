@@ -9,7 +9,7 @@ if __debug__:
 class LetterFrequencyCollector(ItemCollector):
 
   def __init__(self, previous_collector_set=None):
-    ItemCollector.__init__(self, previous_collector_set)
+    super().__init__(previous_collector_set)
     self.frequencies = SparseDistributionTable(int)
 
 

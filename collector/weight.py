@@ -12,12 +12,14 @@ class WeightDict(dict):
     __cache = dict()
 
     def __new__(cls, weight):
-      return \
-        weight if type(weight) is cls else \
-          cls.__cache.get(weight) or object.__new__(cls)
+      return (
+            weight
+        if type(weight) is cls else (
+          cls.__cache.get(weight) or
+          super(WeightDict.WeightFunctor, cls).__new__(cls)))
 
     def __init__(self, weight):
-      object.__init__(self)
+      super().__init__()
       self.weightfn = weight if callable(weight) else weight.__mul__
       self.for_infinity = self.weightfn(utilities.infinity)
       self.__cache.setdefault(weight, self)
@@ -27,16 +29,15 @@ class WeightDict(dict):
 
 
   def __new__(cls, *args, **kwargs):
-    return dict.__new__(cls)
+    return super(WeightDict, cls).__new__(cls)
 
 
   def __init__(self, default=uoperator.identity, sum=(math.fabs, uoperator.identity), *args, **kwargs):
-    dict.__init__(self)
+    super().__init__()
     self.default = WeightDict.WeightFunctor(default)
     self.sum_data = sum
     self.tags = kwargs.pop('tags', frozenset())
-    uiterator.stareach(self.__setitem__, args)
-    uiterator.stareach(self.__setitem__, kwargs.items())
+    uiterator.stareach(self.__setitem__, itertools.chain(args, kwargs.items()))
 
 
   def __missing__(self, key):
