@@ -14,7 +14,7 @@ class LetterVarianceCollector(ItemCollector):
 
 
   def __init__(self, previous_collector_set):
-    ItemCollector.__init__(self, previous_collector_set)
+    super().__init__(previous_collector_set)
     self.sum_of_squares = 0
     self.letter_average = \
       previous_collector_set[ItemLetterAverageCollector] \

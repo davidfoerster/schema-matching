@@ -7,7 +7,7 @@ from .set import ItemCollectorSet
 class ItemCountCollector(ItemCollector):
 
   def __init__(self, previous_collector_set = None):
-    ItemCollector.__init__(self, previous_collector_set)
+    super().__init__(previous_collector_set)
     if isinstance(previous_collector_set, numbers.Integral):
       self.count = previous_collector_set
       self.set_collected()

@@ -75,7 +75,7 @@ class SparseDistributionTable(DistributionTable, defaultdict):
 class UniformBinDistributionTable(DistributionTable):
 
   def __init__(self, start, stop, bincount=None, datatype=None, initializer=None):
-    DistributionTable.__init__(self)
+    super().__init__()
 
     assert stop > start
     if bincount is None:

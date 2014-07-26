@@ -10,7 +10,7 @@ class ItemVarianceCollector(ItemCollector):
   pre_dependencies = (ItemAverageCollector,)
 
   def __init__(self, previous_collector_set):
-    ItemCollector.__init__(self, previous_collector_set)
+    super().__init__(previous_collector_set)
     self.average = \
       previous_collector_set[ItemAverageCollector]. \
         get_result(previous_collector_set)
