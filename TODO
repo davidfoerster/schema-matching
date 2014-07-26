@@ -3,8 +3,4 @@ Necessary:
 
 Optional:
  - Find better weights or weight functions for collectors
- - Comparison between distributions with different bins
-
-Stylistic:
- - Try to avoid calling utilities.functional.apply_memberfn() with a string as
-   its first argument by virtualising the underlying function.
+ - Earth mover's distance for distributions
