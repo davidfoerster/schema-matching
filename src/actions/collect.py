@@ -1,4 +1,4 @@
-import sys, io, os.path, csv
+import sys, os.path, csv
 from functools import partial as partialfn
 from utilities.iterator import map_inplace
 from utilities.functional import memberfn
@@ -20,7 +20,7 @@ def collect(src, collectorset_description, **kwargs):
   if isinstance(src, MultiphaseCollector):
     multiphasecollector = src.reset()
   else:
-    if verbosity >= 2 and isinstance(src, io.IOBase):
+    if verbosity >= 2:
       src_name = getattr(src, 'name', None)
       if src_name:
         print(src_name, end=':\n', file=sys.stderr)
@@ -35,7 +35,7 @@ def collect(src, collectorset_description, **kwargs):
 
 
 def read_schema_instance(src, field_delimiter=',', verbosity=0, **kwargs):
-  src_name = getattr(src, 'name', None) if isinstance(src, io.IOBase) else None
+  src_name = getattr(src, 'name', None)
   src_name = '<unknown schema instance>' if src_name is None else os.path.basename(src_name)
   reader = map(partialfn(map_inplace, str.strip),
     csv.reader(src, delimiter=field_delimiter,

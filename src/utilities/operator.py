@@ -14,5 +14,9 @@ def identity(x):
   return x
 
 
+def noop():
+  pass
+
+
 def square(x):
   return x * x
