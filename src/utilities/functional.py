@@ -1,4 +1,7 @@
-import functools, utilities.operator
+import utilities.operator as uoperator
+from operator import methodcaller
+from functools import reduce
+from functools import partial as partialfn
 
 
 
@@ -6,7 +9,7 @@ def memberfn(memberfn, *args, **kwargs):
   if callable(memberfn):
     return lambda instance: memberfn(instance, *args, **kwargs)
   else:
-    return lambda instance: getattr(instance, memberfn)(*args, **kwargs)
+    return methodcaller(memberfn, *args, **kwargs)
 
 
 def rapply(arg, function):
@@ -15,8 +18,8 @@ def rapply(arg, function):
 
 def composefn(*functions):
   if not functions:
-    return utilities.operator.identity
+    return uoperator.identity
   if len(functions) == 1:
     return functions[0]
   else:
-    return functools.partial(functools.reduce, rapply, functions)
+    return partialfn(reduce, rapply, functions)

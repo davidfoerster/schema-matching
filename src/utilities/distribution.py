@@ -6,7 +6,7 @@ from utilities.string import join, format_char
 
 
 
-default_number_format = '.4g'
+default_number_format = '.3g'
 
 
 
