@@ -6,6 +6,7 @@ from collector.variance import ItemVariationCoefficientCollector
 from collector.lettervariance import LetterVariationCoefficient
 from collector.itemprobability import ItemProbabilityCollector
 from collector.letterprobability import LetterProbablilityCollector
+from collector.letterentropy import NormalizedLetterEntropyCollector
 
 
 
@@ -17,7 +18,9 @@ descriptions = (
   columntype.factory(
     LetterVariationCoefficient, ItemVariationCoefficientCollector),
   columntype.factory(
-    LetterProbablilityCollector, ItemProbabilityCollector)
+    LetterProbablilityCollector, ItemProbabilityCollector),
+  columntype.factory(
+    NormalizedLetterEntropyCollector, None)
 )
 
 
