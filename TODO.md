@@ -1,6 +1,9 @@
 Necessary:
+
  - None! :>
 
+
 Optional:
+
  - Find better weights or weight functions for collectors
  - Earth mover's distance for distributions
