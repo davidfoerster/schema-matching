@@ -1,0 +1,108 @@
+GE90-76B;GE90 Eval Engineering;34.88;360.6;-;97.3 - 98.2
+GE90-76B ;General Electric Peebles Test Operation;35.45;354.32;-;98.41 - 98.66
+GE90-76B ;General Electric Peebles Test Operation;35.50;363.22;-;98.41 - 98.66
+GE90-77B;GE90 Eval Engineering;35.20;363.42;-;97.38-98.59
+GE90-77B;GE90 Eval Engineering;35.3;363.42;-;97.52-98.62
+GE90-77B;GE90 Eval Engineering;35.1;363.4;-;97.3 - 98.2
+GE90-77B ;General Electric Peebles Test Operation;35.68;357.07;-;98.41 - 98.66
+GE90-77B ;General Electric Peebles Test Operation;35.80;366.75;-;98.41 - 98.66
+GE90-85B;GE90 Eval Engineering;38.1;395.31;-;97.38-98.59
+GE90-85B;GE90 Eval Engineering;38;395.31;-;97.52-98.62
+GE90-85B;GE90 Eval Engineering;37.7;395.3;-;97.3 - 98.2
+GE90-85B ;General Electric Peebles Test Operation;38.37;388.40;-;98.41 - 98.66
+GE90-85B ;General Electric Peebles Test Operation;38.16;397,21;-;98.41 - 98.66
+GE90-90B;GE90 Eval Engineering;39.7;418.13;-;97.38-98.59
+GE90-90B;GE90 Eval Engineering;39.8;418.13;-;97.52-98.62
+GE90-90B;GE90 Eval Engineering;39.38;418.1;-;97.3 - 98.2
+GE90-90B ;General Electric Peebles Test Operation;40.32;410.82;-;98.41 - 98.66
+GE90-90B ;General Electric Peebles Test Operation;39.85;419.25;-;98.41 - 98.66
+GE90-92B;GE90 Eval Engineering;40.4;426.72;-;97.38-98.59
+GE90-92B;GE90 Eval Engineering;40.6;426.72;-;97.52-98.62
+GE90-94B;GE90 Eval Engineering;40.53;432.8;8GE100;97.3 - 98.2
+GE90-94B;GE90 Eval Engineering;40.53;432.8;-;97.3 - 98.2
+GE90-94B ;General Electric Peebles Test Operation;40.82;430.92;-;98.41 - 98.66
+GEnx-1B54;GE Aviation;35.2;255.3;-;97.4 to 98.6
+GEnx-1B58;GE Aviation;37.2;271.3;-;97.4 to 98.6
+GEnx-1B64;GE Aviation;40.6;298;-;97.4 to 98.6
+GEnx-1B67;GE Aviation;41.9;308.7;-;97.4 to 98.6
+GEnx-1B70;GE Aviation;43.5;321.6;-;97.4 to 98.6
+GEnx-2B67;GE Aviation;42.4;299.8;-;97.4 to 98.6
+GEnx-1B54/P1;GE Aviation;35.1;255.3;-;97.4 to 98.6
+GEnx-1B58/P1;GE Aviation;37.1;271.3;-;97.4 to 98.6
+GEnx-1B64/P1;GE Aviation;40.5;298.0;-;97.4 to 98.6
+GEnx-1B67/P1;GE Aviation;41.9;308.7;-;97.4 to 98.6
+GEnx-1B70/P1;GE Aviation;43.5;321.6;-;97.4 to 98.6
+GEnx-1B70/72/P1;GE Aviation;43.5;321.6;-;97.4 to 98.6
+GEnx-1B70/75/P1;GE Aviation;43.5;321.6;-;97.4 to 98.6
+GEnx-1B74/75/P1;GE Aviation;46.0;341.2;-;97.4 to 98.6
+GEnx-1B75/P1;GE Aviation;46.5;345.2;-;97.4 to 98.6
+AS907-1-1A;Honeywell;21.95;30.62;-;96.48-97.46
+ HTF 7000  (AS907-1-1A);Honeywell;21.95;30.62;-;96.75-97.59
+ HTF7000 (AS907-1-1A);Honeywell;21.95;30.62;-;96.44-97.59
+ HTF7250G (AS907-2-1G);Honeywell;22.58;32.86;-;96.44-97.35
+ HTF7250G (AS907-2-1G);Honeywell;22.58;32.86;-;96.44-97.59
+V2500-A1;Pratt & Whitney;29.8;111.2;-;101.3
+V2522-A5;Pratt & Whitney;25.6;102.66;-;101.0-101.8
+V2522-A5 SelectOne™ Upgrade Package;Pratt & Whitney;25.7;102.5;-;100.35-102.88
+V2524-A5;Pratt & Whitney;26.9;109.06;-;101.0-101.8
+V2524-A5 SelectOne™ Upgrade Package;Pratt & Whitney;27;108.9;-;100.35-102.88
+V2525-D5;Pratt & Whitney;27.2;111.2;-;101.0-101.8
+V2527-A5;Pratt & Whitney;27.2;111.2;-;101.0-101.8
+V2527-A5 SelectOne™ Upgrade Package;Pratt & Whitney;27.1;110.3;-;100.35-102.88
+V2527-A5E SelectOne™ Upgrade Package;Pratt & Whitney;27.1;110.3;-;100.35-102.88
+V2527-A5M SelectOne™ Upgrade Package;Pratt & Whitney;27.1;110.3;-;100.35-102.88
+V2527E-A5;P&W;27.2;111.2;-;101.0 - 101.8
+V2527M-A5;P&W;27.2;111.2;-;101.0 - 101.8
+V2528-D5;Pratt & Whitney;30.0 ;124.5;-;101.0-101.8
+V2530-A5;Pratt & Whitney;32.1;133.4;-;101.0-101.8
+V2530-A5 SelectOne™ Upgrade Package;Pratt & Whitney;32;133;-;100.35-102.88
+V2533-A5;Pratt & Whitney;33.44;140.56;-;101.0-101.8
+V2533-A5 SelectOne™ Upgrade Package;Pratt & Whitney;33.7;140.6;-;100.35-102.88
+NK-8-2U;State Inst for Civ Aviation;10.8;103;-;102.6
+NK-8-2U;State Inst for Civ Aviation;10.8;103;-;102.7
+NK-86;State Inst for Civ Aviation;13.4;127.53;-;102.7-103.0
+NK-86A;KKBM;13.2;130.47;-;102.3
+NK-86MA;KKBM;13.2;130.47;-;101.2-102.4
+SaM146-1S17;PowerJet S.A.;21.85;69.21;-;100.43 -101.26
+SaM146-1S18;PowerJet S.A.;22.8;72.67;-;100.43 -101.26
+JT15D-1 series;Pratt & Whitney (Canada);9.76;9.79;-;100.526
+JT15D-4 series;Pratt & Whitney (Canada);10.1;11.12;-;103.146
+JT15D-5, -5A, -5B;Pratt & Whitney (Canada);12.3;12.90 ;-;99.42
+JT15D-5C;Pratt & Whitney (Canada);13.3;14.19;-;101.7
+JT3D-3B;P&WA;13.6;80.06;-;-
+JT3D-7 series;P&WA;13.4;84.52;-;-
+JT3D-7 series;P&WA;13.4;84.52;-;-
+JT8D-11;P&WA;17.17;66.72;-;-
+JT8D-15;P&WA;16.81;68.94;-;-
+JT8D-15;P&WA;16.81;68.94;-;-
+JT8D-15A;P&WA;16.45;68.94;-;-
+PW307A;PW307 Development Engineering;20.21;28.49;-;98.39 - 100.80
+RB211-524C2;Rolls Royce Ltd;29.1 ;224.8;-;102
+RB211-524D4;Rolls Royce Ltd;29.7 ;231.3;-;101
+RB211-524D4;Rolls Royce Ltd;30.22;231.3;-;103
+RB211-524G;Rolls Royce Ltd;32.1;253;1RR010;101
+RB211-524G;Rolls Royce Ltd;32.1;253;-;101
+RB211-524G-T;Rolls-Royce plc;32.1;253;-;100.2
+Trent 1000-E;Rolls-Royce;37.51;279.8;12RR058;98.9 - 102.1
+Trent 1000-G;Rolls-Royce;42.53;323.7;12RR059;98.9 - 102.1
+Trent 1000-H;Rolls-Royce;38.33;286.7;12RR060;98.9 - 102.1
+Trent 1000-A;Rolls-Royce;41.04;310.9;-;98.9 - 102.1
+Trent 1000-C;Rolls-Royce;43.78;334.7;-;98.9 - 102.1
+Trent 1000-D;Rolls-Royce;43.78;334.7;-;98.9 - 102.1
+Trent 1000-E;Rolls-Royce;36.19;268;-;98.9 - 102.1
+Trent 1000-G;Rolls-Royce;42.53;323.7;-;98.9 - 102.1
+Trent 1000-H;Rolls-Royce;38.33;287.1;-;98.9 - 102.1
+Trent 1000-A2;Rolls-Royce;41.3;310.9;-;98.9 - 102.1
+Trent 1000-C2;Rolls-Royce;44.1;334.7;-;98.9 - 102.1
+Trent 1000-D2;Rolls-Royce;44.1;334.7;-;98.9 - 102.1
+Trent 1000-E2;Rolls-Royce;36.32;268;-;98.9 - 102.1
+Trent 1000-G2;Rolls-Royce;42.81;323.7;-;98.9 - 102.1
+Trent 1000-H2;Rolls-Royce;38.52;287.1;-;98.9 - 102.1
+Trent 1000-J2;Rolls-Royce;46.08;350.9;-;98.9 - 102.1
+Trent 1000-K2;Rolls-Royce;46.08;350.9;-;98.9 - 102.1
+Trent 1000-L2;Rolls-Royce;44.1;334.7;-;98.9 - 102.1
+ALF 502L-2;Textron Lycoming;13.15;33.4;-;101.7
+ALF 502R-3;Textron Lycoming;11.4;29.8;-;101.3-102.4
+ALF 502R-5;Textron Lycoming;12.0 ;31.0 ;-;101.3-102.4
+LF507-1F, -1H ;Textron Lycoming;13.0 ;31.0 ;-;101.3-102.4
+D-36;ZMKB;19.9 ;63.765;-;99.9-101.5

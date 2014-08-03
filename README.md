@@ -7,7 +7,7 @@ Match schema attributes by value similarity.
 Usage
 -----
 
-Run `./schema-matching --help` to see a usage description.
+Run `./schema-matching --help` to see a usage description or try the shell scripts in `demo`.
 
 
 Pre-requisites

@@ -1,0 +1,97 @@
+Heading,Full Description if different from heading
+Ambient  Baro, 
+Ambient Humidity,Ambient humidity in kg water per kg dry air
+Ambient temp, 
+B/P ratio,Bypass ratio
+Characteristic % of Reg limit,The characteristic Dp/Foo value expressed as a percentage of the regulatory limit.
+Characteristic % of Reg limit,The characteristic Dp/Foo value expressed as a percentage of the regulatory limit.
+Characteristic % of Reg limit,The characteristic smoke number value expressed as a percentage of the regulatory limit.
+Characteristic as % of standard - CAEP/ 6,The characteristic Dp/Foo value expressed as a percentage of the CAEP/6 NOx regulatory limit (see part d of the NOx regulatory standards in section 7 of Background).
+Characteristic as % of standard - CAEP/ 8,The characteristic Dp/Foo value expressed as a percentage of the CAEP/8 NOx regulatory limit (see part d of the NOx regulatory standards in section 7 of Background).
+Characteristic as % of standard - CAEP/2,The characteristic Dp/Foo value expressed as a percentage of the CAEP/2 NOx regulatory limit (see part b of the NOx regulatory standards in section 7 of Background).
+Characteristic as % of standard - CAEP/4,The characteristic Dp/Foo value expressed as a percentage of the CAEP/4 NOx regulatory limit (see part c of the NOx regulatory standards in section 7 of Background).
+Characteristic as % of standard - original,The characteristic Dp/Foo value expressed as a percentage of the original NOx regulatory limit (see part a of the NOx regulatory standards in section 7 of Background).
+Combustor,Type of combustor where more than one type available on an engine.
+Compliance with fuel venting requirements,
+Data corr as Annex 16,"The emissions data has been corrected according to ICAO Annex 16, Vol 2, Part III, Appendix 3."
+Data Source - DTEPS,Data from dedicated test engines to production standards
+Data source - NME,Data from newly manufactured engines
+Data superseded,Data for which a revised set has been supplied (data row shaded mid-grey)
+Data Type - C,Certification data
+Data type - PR,Data generated prior to regulations being applied
+Data Type - R,Data revised by manufacturer after initial submission.
+Date,Date on which the engine ceased to be produced
+Date,Date on which the engine ceased to be in service
+Dp/Foo (CO) Average,Carbon monoxide Dp/Foo (g/kN) average
+Dp/Foo (CO) characteristic,Carbon monoxide characteristic Dp/Foo value
+Dp/Foo (CO) range,Carbon monoxide Dp/Foo (g/kN) range
+Dp/Foo (CO) Sigma,Carbon monoxide Dp/Foo (g/kN) standard deviation
+Dp/Foo (HC) average,Hydrocarbon Dp/Foo (g/kN) average
+Dp/Foo (HC) Characteristic,Hydrocarbon characteristic Dp/Foo value
+Dp/Foo (HC) range,Hydrocarbon Dp/Foo (g/kN) range
+Dp/Foo (HC) Sigma,Hydrocarbon Dp/Foo (g/kN) standard deviation
+Dp/Foo (NOx) Average,Oxides of nitrogen Dp/Foo (g/kN) average
+Dp/Foo (NOx) characteristic,Oxides of nitrogen characteristic Dp/Foo value
+Dp/Foo (NOx) range,Oxides of nitrogen Dp/Foo (g/kN) range
+Dp/Foo (NOx) Sigma,Oxides of nitrogen Dp/Foo (g/kN) standard deviation
+EI CO App,Carbon Monoxide emission index (g/kg) at approach condition
+EI CO C/O,Carbon Monoxide emission index (g/kg) at climb out condition
+EI CO C/O,Oxides of nitrogen emission index (g/kg) at climb out condition
+EI CO Idle,Carbon Monoxide emission index (g/kg) at idle condition
+EI CO T/O,Carbon Monoxide emission index (g/kg) at take off condition
+EI HC App,Hydrocarbon emission index (g/kg) at approach condition
+EI HC C/O,Hydrocarbon emission index (g/kg) at climb out condition
+EI HC Idle,Hydrocarbon emission index (g/kg) at idle condition
+EI HC T/O,Hydrocarbon emission index (g/kg) at take off condition
+EI NOx App,Oxides of nitrogen emission index (g/kg) at approach condition
+EI NOx Idle,Oxides of nitrogen emission index (g/kg) at idle condition
+EI NOx T/O,Oxides of nitrogen emission index (g/kg) at take off condition
+Eng Type,"Engine type.  TF = turbofan,  MTF = mixed turbofan"
+Engine Identification,
+Fuel  Arom %,Percentage of aromatic hydrocarbons in the fuel
+Fuel  Spec,Fuel specification
+Fuel flow App,Fuel flow (kg/sec) at approach condition
+Fuel flow C/O,Fuel flow (kg/sec) at climb out condition
+Fuel Flow Idle,Fuel flow (kg/sec) at idle condition
+Fuel flow T/O,Fuel flow (kg/sec) at take off condition
+Fuel H/C ratio,Ratio of hydrogen atoms to carbon atoms in the fuel
+Fuel per LTO cycle (kg),kg of fuel used during the LTO cycle.
+Loads Power extraction @  Power,Power setting at which load extracted
+Loads Power extraction kW,Load extracted during tests
+Loads Stage bleeds - %CF,% core flow taken as stage bleeds
+Loads Stage bleeds @ power,Power setting at which stage bleeds taken
+LTO total mass (g),The total mass of hydrocarbons emitted during the LTO cycle (sum of time in mode x fuel flow x average EI at each of the four power settings).
+LTO total mass (g),The total mass of carbon monoxide emitted during the LTO cycle (sum of time in mode x fuel flow x average EI at each of the four power settings).
+LTO total mass (g),The total mass of oxides of nitrogen emitted during the LTO cycle (sum of time in mode x fuel flow x average EI at each of the four power settings).
+Manufacturer,Engine manufacturer
+NOx Compliance paragraph,2.3.2. c)
+NOx Compliance paragraph,2.3.2. d)
+NOx Compliance paragraph,2.3.2. e)
+Number  test,Number of tests done for oxides of nitrogen
+Number eng,Number of engines tested for hydrocarbon
+Number eng,Number of engines tested for carbon monoxide
+Number eng,Number of engines tested for oxides of nitrogen
+Number eng,Number of engines tested for smoke
+Number test,Number of tests done for hydrocarbon
+Number test,Number of tests done for carbon monoxide
+Number test,Number of tests done for smoke
+Other,Data from engines other than NME or DTEPS.  See remarks on engine data sheet.
+Out of production,Engine which the manufacturer has confirmed is no longer produced (data row shaded light blue)
+Out of service,Engine which the manufacturer has confirmed is no longer in service (data row shaded very dark grey)
+Press ratio,Engine pressure ratio
+"Rated Output, kN","Engine maximum rated thrust, in kilonewtons"
+Remarks,
+Smoke Number App,Smoke number at approach condition
+Smoke Number C/O,Smoke number at climb out condition
+Smoke Number characteristic,
+Smoke Number idle,Smoke number at idle condition
+Smoke Number Max,Maximum smoke number measured
+Smoke Number range, 
+Smoke Number sigma,Smoke number standard deviation
+Smoke Number T/O,Smoke number at take off condition
+Superseded by UID NO,UID of data which replaced the superseded data
+Test dates from,
+Test dates to,
+Test location,
+Test organization, 
+UID No,Unique Identification Number

@@ -1,0 +1,102 @@
+4AL003;Allison Engine Company;"Indianapolis, Indiana, USA";3-Mar-94;33.73;AE3007A
+4AL002;Allison Engine Company;"Indianapolis, Indiana, USA";3-May-94;33.73;AE3007A1
+6AL014;Rolls-Royce Corporation;"Indianapolis, Indiana, USA";3-Mar-94;34.74;AE3007A1/3
+10AL026;Rolls-Royce Corporation;"Indianapolis, Indiana, USA";9-Jun-01;42.23;AE3007A2
+6AL017;Rolls-Royce Corporation;"Indianapolis, Indiana, USA";3-Mar-94;33;AE3007A3
+6AL019;Rolls-Royce Corporation;"Indianapolis, Indiana, USA";9-Jun-01;33;AE3007A3
+3AL001;Allison Engine Company;"Indianapolis, Indiana, USA";3-Mar-94;28.6;AE3007C
+1AA005;AO 'Aviadgatel';Perm City;17-Apr-89;156.9;PS-90A
+4BR009;BMW Rolls-Royce GmbH;"BVW Rolls-Royce GmbH, Dahlewitz, Germany";19-Oct-96;65.61;BR700-710A2-20
+6BR010;Rolls-Royce;Dahlewitz;19-Oct-96;68.77;BR-700-710C4-11
+4BR002;BMW Rolls-Royce GmbH;"BMW Rolls-Royce GmbH, Dahlewitz, Germany";7-May-98;84.16;BR700-715A1-30
+4BR004;BMW Rolls-Royce GmbH;"BMW Rolls-Royce GmbH, Dahlewitz, German";7-May-98;95.33;BR700-715C1-30
+11BR011;Rolls-Royce;Dahlewitz;6-Aug-08;75.7;BR-700-725A1-12
+1CM003;CFMI;Peebles Site IVD;11-Nov-83;97.86;CFM56-2-C5
+1CM008;CFMI;Peebles Site IIIC;19-Nov-86;111.2;CFM56-5-A1
+3CM020;CFM International;"Peebles Ohio, USE + Liers, Belgium";Aug-96;133.5;CFM56-5B1/2P
+8CM052;CFM International;"PTO, Ohio, USA";Sep-05;133.4;CFM56-5B1/3
+2CM013;CFMI;Peebles Site IIIB;Oct-42;137.9;CFM56-5B2
+2CM017;CFMI;PTO Site IIIC;Jun-94;137.9;CFM56-5B2/2
+3CM021;CFM International;"Peebles, Ohio, USE + Liers, Belgium";Aug-96;120.1;CFM56-5B4/2P
+3CM022;CFM International;"Peebles, Ohio, USE + Liers, Belgium";Aug-96;104.5;CFM56-5B6/2P
+7CM050;CFM International;"GEAE PTO and Techspace Aero, Liege, Belgium"; 1-Aug-96;102.2;CFM56-5B9/2P
+8CM060;CFM International;"PTO, Ohio, USA";Sep-05;103.6;CFM56-5B9/3
+1CM010;CFMI;PTO Site IVD;4-Jun-91;138.78;CFM56-5C2
+7CM045;CFM International;PTO Site IV-D;4-Jun-91;137.61;CFM56-5C2/P
+7CM046;CFM International;PTO Site IV-D;Jun-91;143.33;CFM56-5C3/P
+11CM071;CFM International;"PTO, Ohio, USA";29-Sep-05;107.6;CFM56-7B24E/B1 
+11CM072;CFM International;"PTO, Ohaio, USA";29-Sep-05;117;CFM56-7B26E
+11CM075;CFM International;"PTO, Ohio, USA";29-Sep-05;117;CFM56-7B26E/F
+3CM034;U2;"Peebles Test Operation, Peebles, Ohio, USA";Jul-96;121.44;CFM56-7B27
+11CM080;CFM International;"PTO, Ohio, USA";29-Sep-05;121.4;CFM56-7B27AE
+9EA001;Engine Alliance;Site 4D;28-05-05;332.39;GP7270
+8GE114;GE Transportation;Site 4D;24-Jul-04;75.44;CF34-10E2A1
+11GE142;GE Transportation;Site 3C;5-Jun-09;77.4;CF34-10E5
+11GE144;GE Transportation;Site 3C;5-Jun-09;83.7;CF34-10E5A1
+10GE132;GE Transportation;Site 4D;5-Sep-06;83.7;CF34-10E6A1
+11GE145;GE Transportation;Site 3C;5-Jun-09;83.7;CF34-10E6A1
+8GE118;GE Transportation;Site 4D;24-Jul-04;83.7;CF34-10E6A1
+8GE119;GE Transportation;Site 4D;24-Jul-04;83.7;CF34-10E7
+8GE112;GE;PTO Site 3B Peebles;27-Jan-02;56.35;CF34-8C5B1
+8GE108;GE;PTO Site 3B Peebles;27-Jan-02;59.68;CF34-8E5
+8GE105;GE;PTO Site 3B Peebles;27-Jan-02;62.49;CF34-8E5A1
+3GE067;GE;"Site IVD, Peebles, Ohio";28-Jul-87;202.8;CF6-45A
+3GE069;GE;"Site IVD, Peebles, Ohio";28Jul87;215.3;CF6-50A
+3GE070;GE;"Site IVD, Peebles, Ohio";28-Jul-87;224.2;CF6-50C
+3GE079;GE;"Site IVD, Peebles, Ohio";28-Jul-87;236.7;CF6-50E2B
+1GE004;GE Aircraft Engines;Production Test Cells M34 & M35;16-Aug-79;181.9;CF6-6K2
+1GE010;GE Aircraft Engines;Production Test Cells M35;11-Nov-83;208.8;CF6-80A
+1GE011;GE Aircraft Engines;Production Test Cells M35;11-Nov-83;209.0 ;CF6-80A1
+1GE022;GE Aircraft Engines;"Site IIIC, PTO, Peebles, Ohio"; 29-May-85;249.0;CF6-80C2B1
+1GE026;GE Aircraft Engines;"Site IIIC, PTO, Peebles, Ohio"; 29-May-85;231.35;CF6-80C2B2F
+2GE046;GE;"Site IIIB, PTO Peebles";13-Jan-95;231.35;CF6-80C2B2F
+2GE044;GE;"Site IIIB, PTO Peebles";13-Jan-95;267.20;CF6-80C2B6
+1GE030;GE Aircraft Engines;"Site IIIC, PTO, Peebles, Ohio"; 29-May-85;267.03;CF6-80C2B6F
+2GE048;GE;"Site IIIB; PTO Peebles";13-Jan-95;267.03;CF6-80C2B6F
+1GE032;GE Airkraft Engines;"Sites IIIC & IIID, Peebles Test Facility";8-Jun-94;281.5;CF6-80E1A1
+4GE080;GE;"Site IIIB, PTO, Ohio";13-Jan-95;297.44;CF6-80E1A4
+7GE097;GE Transportation;Site 4D;23-Nov-03;492.6;GE90-110B1
+6GE087;GE;"Site IIID, PTO, Peebles, OH";9-Jan-00;360.6;GE90-76B
+3GE059;GE;"Site IVD & 6, PTO, Peebles, Ohio, USA";28-Jul-95;363.42;GE90-77B
+2GE053;GE;"Site IVD and 6, PTO, Peebles";24-Feb-95;395.31;GE90-85B
+3GE064;GE;"Site IIID, PTO, Peebles, Ohio, USA";24-Apr-97;395.31;GE90-85B
+3GE065;GE;"Site IIID, PTO, Peebles, Ohio, USA";24-Apr-97;418.13;GE90-90B
+8GE100;GE;"Site IIID, PTO, Peebles, OH";9-Jan-00;432.8;GE90-94B
+11GE135;GAviation;"PTO, Ohio, USA";29-Sep-09;271.3;GEnx-1B58
+11GE137;GE Aviation;"PTO, Ohio, USA";29-Sep-09;308.7;GEnx-1B67
+11GE139;GE Aviation;"PTO, Ohio, USA";29-Sep-09;299.8;GEnx-2B67
+11HN002;Honeywell;"Phoenix, AZ";7-Apr-10;30.62; HTF 7000  (AS907-1-1A)
+11HN003;Honeywell;"Phoenix, AZ";7-Apr-10;30.62; HTF7000 (AS907-1-1A)
+11HN004;Honeywell;"Phoenix, AZ";16-Jun-10;32.86; HTF7250G (AS907-2-1G)
+3IA007;International Aero Engines;"West Hartford, CT, USA";12-Aug-92;109.06;V2524-A5
+1PW037;Pratt & Whitney (Canada);"Longueuil, Quebec";16-Apr-93;12.90;JT15D-5
+1PW009;Pratt & Whitney;"E Hartford, CT, USA";Apr-76;68.94;JT8D-15
+1PW010;Pratt & Whitney;"E Hartford, CT, USA";7-Dec-79;68.94;JT8D-15
+1PW016;Pratt & Whitney;"E Hartford, CT, USA";7-Dec-79;77.42;JT8D-17R
+1PW017;Pratt & Whitney;"E Hartford, CT, USA";7-Nov-83;85.60;JT8D-209
+4PW068;Pratt & Whitney;"East Hartford, CT, USA";24-Feb-99;92.74;JT8D-217
+8PW085;Pratt & Whitney;"E Hartford, DE, USA";26-Feb-80;62.27;JT8D-7 series
+1PW033;Pratt & Whitney;"E Hartford, CT, USA";Apr-76;235.8;JT9D-59A
+1PW025;Pratt & Whitney;"E Hartford, CT, USA";Apr-76;235.75;JT9D-7Q
+11PW100;Pratt & Whitney Canada Inc.;"Mississauga, Ontario, Canada";7-Aug-07;28.49;PW307A
+1PW042;Pratt & Whitney;-;17-Auf-87;249.1;PW4056
+2PW062;Pratt and Whitney;"East Hartford, Ct, USA"; 26-Apr-94;369.6;PW4084
+10PW098;Pratt & Whitney;"Middletown, CT";13-Apr-10;385.9;PW4084D
+3PW066;Pratt & Whitney;"East Hartford, Conn, USA";15-Jun-96;395.0;PW4090
+1PW046;Pratt & Whitney;"P7 Stand, P&W, Middletown, CT";14-May-86;252.4;PW4156
+5PW075;Pratt and Whitney;"East Hartford, Conn. USA";10-Apr-00;302.5;PW4168
+1PW054;Pratt & Whitney;"Middletown, CT";15-Jan-93;231.3;PW4x52
+7PW084;Pratt & Whitney;"Stand X8, Pratt & Whitney, East Hartford, CT";12-Dec-03;105.87;PW6124A
+1RR004;Rolls Royce Ltd;"Derby";Jun-79;218.5;RB211-524B series
+1RR009;Rolls Royce Ltd;"SINFIN-Derby";Apr-87;253;RB211-524G
+1RR014;Rolls Royce Ltd;"SINFIN-Derby";2-Jul-84;176.1;RB211-535E4
+1RR017;Lolls Royce Ltd;"Derby";26-May-05;43.8;SPEY Mk555
+3RR031;Rolls Royce plc;"SINFIN, Derby";Jun-97;67.2;TAY 650
+3RR029;Rolls Royce plc;"SINFIN, Derby";Sep-94;300.3;Trent 768
+11RR049;Rolls-Royce;Derby;24-Sep-09;310.8;Trent 1000-A
+11RR051;Rolls-Royce;Derby;24-Sep-09;334.7;Trent 1000-D
+11RR053;Rolls-Royce;Derby;24-Sep-09;323.7;Trent 1000-G
+12RR056;Rolls-Loyce;Derby;24-Sep-09;334.7;Trent 1000-C
+12RR058;Rolls-Royce;Derby;24-Sep-09;268;Trent 1000-E
+12RR067;Rolls-Royce;Derby;24-Sep-09;350.9;Trent 1000-J2
+1ZM001;ZMKB;Zaporoje;17-May-84;63.765;D-36

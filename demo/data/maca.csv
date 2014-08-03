@@ -1,0 +1,131 @@
+6AL013;AE3007A1/3;Rolls-Royce Corporation;MTF;12.55;64.0;98.9 - 99.0
+6AL020;AE3007A1E;Rolls-Royce Corporation;MTF;10.93;55.8;98.9 - 99.0
+6AL014;AE3007A1P;Rolls-Royce Corporation;MTF;11.55;58.9;
+6AL015;AE3007A1P;Rolls-Royce Corporation;MTF;16.34;83.4;99.6 - 99.7
+6AL016;AE3007A1P;Rolls-Royce Corporation;MTF;12.41;63.3;98.9 - 99.0
+10AL026;AE3007A2;Rolls-Royce Corporation;MTF;5.32;27.12;101.3
+6AL017;AE3007A3;Rolls-Royce Corporation;MTF;14.22;72.6;
+6AL018;AE3007A3;Rolls-Royce Corporation;MTF;18.7;95.4;99.6 - 99.7
+6AL019;AE3007A3;Rolls-Royce Corporation;MTF;13.48;68.8;98.9 - 99.0
+3AL001;AE3007C;Allison Engine Company;MTF;17.5 ;89.3 ;101.3
+6AL021;AE3007C;Rolls-Royce Corporation;MTF;14.04;71.6;
+6AL022;AE3007C;Rolls-Royce Corporation;MTF;17.85;91.1;99.6 - 99.7
+1AA005;PS-90A;AO 'Aviadgatel';MTF;1.4 ;7.1 ;102.9-104
+3BR001;BR700-710A1-10;BMW Rolls-Royce GmbH;MTF;6.6 ;33.7 ;101.5-102.1
+4BR008;BR700-710A1-10;BMW Rolls-Royce GmbH;MTF;3.7 ;18.6 ;100.9-101.2
+4BR009;BR700-710A2-20;BMW Rolls-Royce GmbH;MTF;3.8 ;19.2 ;100.9-101.2
+6BR010;BR700-710C4-11;Rolls-Royce;MTF;6.7;34.2;100.9 - 101.2
+4BR002;BR700-715A1-30;BMW Rolls-Royce GmbH;MTF;0.6 ;3.1 ;101.3-101.9
+4BR005;BR700-715A1-30;BMW Rolls-Royce GmbH;MTF;0.5 ;2.5 ;100.9-101.3
+4BR003;BR700-715B1-30;BMW Rolls-Royce GmbH;MTF;0.5 ;2.3 ;101.3-101.9
+4BR006;BR700-715B1-30;BMW Rolls-Royce GmbH;MTF;0.4 ;1.8 ;100.9-101.3
+4BR004;BR700-715C1-30;BMW Rolls-Royce GmbH;MTF;0.4 ;1.8 ;101.3-101.9
+4BR007;BR700-715C1-30;BMW Rolls-Royce GmbH;MTF;0.3 ;1.4 ;100.9-101.3
+3CM020;CFM56-5B1/2P;GEAE Peebles Testing Facility + Techspace Aero (CFMI);TF;8.8 ;44.9 ;98.5-99.74
+8CM052;CFM56-5B1/3;GE Aviation;TF;2.1;10.7;97.6 to 98.5
+8CM054;CFM56-5B3/3;GE Aviation;TF;1.67;8.5;97.6 to 98.5
+3CM025;CFM56-5B3/P;CFM56-5B Eval Engineering;TF;7.7 ;39.3 ;98.2-99.6
+2CM014;CFM56-5B4;CFM56 Evaluation Engineering;TF;8.8 ;44.8 ;97.49 - 98.18
+2CM018;CFM56-5B4/2;CFM56 Evaluation Engineering;TF;14.6 ;74.5 ;100.67-101.01
+3CM021;CFM56-5B4/2P;GEAE Peebles Testing Facility + Techspace Aero (CFMI);TF;12.0 ;61.2 ;98.5-99.74
+8CM055;CFM56-5B4/3;GE Aviation;TF;3.05;15.6;97.6 to 98.5
+3CM026;CFM56-5B4/P;CFM56-5B Eval Engineering;TF;10.4 ;53.1 ;98.2-99.6
+8CM056;CFM56-5B5/3;GE Aviation;TF;6.2;31.6;97.6 to 98.5
+3CM027;CFM56-5B5/P;CFM56-5B Eval Engineering;TF;15.3 ;78.1 ;98.2-99.6
+2CM019;CFM56-5B6/2;"SNECMA; Villaroche; France";TF;6.7 ;34.0 ;99.29-101.01
+3CM022;CFM56-5B6/2P;GEAE Peebles Testing Facility + Techspace Aero (CFMI);TF;10.3 ;52.6 ;98.5-99.74
+8CM057;CFM56-5B6/3;GE Aviation;TF;4.95;25.3;97.6 to 98.5
+3CM028;CFM56-5B6/P;CFM56-5B Eval Engineering;TF;13.3 ;67.9 ;98.2-99.6
+8CM058;CFM56-5B7/3;GE Aviation;TF;3.05;15.6;97.6 to 98.5
+6CM044;CFM56-5B7/P;CFM56-5B Eval Engineering;TF;10.4 ;53.2 ;98.2 - 99.6
+8CM059;CFM56-5B8/3;GE Aviation;TF;6.61;33.7;97.6 to 98.5
+7CM048;CFM56-5B8/P;CFM56 Evaluation Engineering;TF;16.6 ;84.7 ;98.2 - 99.6
+7CM050;CFM56-5B9/2P;CFM56 Evaluation Engineering;TF;9.9;50.5;98.5 - 99.74
+8CM060;CFM56-5B9/3;GE Aviation;TF;5.09;26.0;97.6 to 98.5
+7CM049;CFM56-5B9/P;CFM56 Evaluation Engineering;TF;14.4 ;73.5 ;98.2 - 99.6
+1CM010;CFM56-5C2;CFM56 Evaluation Engineering;MTF;11.6 ;59.4 ;97.77-98.11
+7CM045;CFM56-5C2/P;CFM56 Evaluation Engineering;MTF;11.1;56.6;97.77 - 98.11
+1CM011;CFM56-5C3;CFM56 Evaluation Engineering;MTF;10.8 ;55.0 ;97.77-98.11
+7CM046;CFM56-5C3/P;CFM56 Evaluation Engineering;MTF;10.2 ;52.0 ;97.77 - 98.11
+2CM015;CFM56-5C4;CFM56 Evaluation Engineering;MTF;9.9 ;50.5 ;97.77-98.11
+11CM069;CFM56-7B22E/B1;GE Aviation;TF;5.16;26.3;97.6 to 98.5
+3CM032;CFM56-7B24;CFM56-7B Eval Engineering;TF;6.0 ;30.6 ;97.8-98.0
+4CM041;CFM56-7B24/2;CFM56-7B Eval Engineering;TF;17.1 ;87.2 ;97.9-98.0
+8CM064;CFM56-7B24/3;GE Aviation;TF;4.09;20.9;97.6 to 98.5
+11CM070;CFM56-7B24E;GE Aviation;TF;4.09;20.9;97.6 to 98.5
+11CM071;CFM56-7B24E/B1 ;GE Aviation;TF;4.09;20.9;97.6 to 98.5
+3CM033;CFM56-7B26;CFM56-7B Eval Engineering;TF;4.7 ;24.0 ;97.8-98.0
+8CM051;CFM56-7B26;CFM56-7B Eval Engineering;TF;4.7 ;24.0 ;97.8-98.0
+4CM042;CFM56-7B26/2;CFM56-7B Eval Engineering;TF;14.2 ;72.7 ;97.9-98.0
+8CM065;CFM56-7B26/3;GE Aviation;TF;3.01;15.4;97.6 to 98.5
+11CM072;CFM56-7B26E;GE Aviation;TF;3.01;15.4;97.6 to 98.5
+11CM073;CFM56-7B26E/B1;GE Aviation;TF;3.01;15.4;97.6 to 98.5
+11CM078;CFM56-7B27E/B1;GE Aviation;TF;2.62;13.4;97.6 to 98.5
+11CM082;CFM56-7B27E/B1F ;GE Aviation;TF;2.62;13.4;97.6 to 98.5
+11CM079;CFM56-7B27E/B3;GE Aviation;TF;2.62;13.4;97.6 to 98.5
+11CM081;CFM56-7B27E/F;GE Aviation;TF;2.62;13.4;97.6 to 98.5
+9EA001;GP7270;General Electric Peebles Test Operation;TF;6.94;35.4;97.396 - 97.812
+11GE140;CF34-10A16;Peebles Test Operation;TF;18.4;93.9;97.2-97.9
+11GE141;CF34-10A18;Peebles Test Operation;TF;14.6;74.5;97.2-97.9
+8GE114;CF34-10E2A1;Peebles Test Operation;TF;14.72;75.1;98.4-98.6
+10GE129;CF34-10E5;Peebles Test Operation;TF;16.89;86.17;97.2-97.9
+11GE142;CF34-10E5;Peebles Test Operation;TF;13.34;68.1;97.2-97.9
+8GE115;CF34-10E5;Peebles Test Operation;TF;13.77;70.2;98.4-98.6
+10GE130;CF34-10E5A1;Peebles Test Operation;TF;12.7;64.80;97.2-97.9
+8GE119;CF34-10E7;Peebles Test Operation;TF;11.05;56.4;98.4-98.6
+11GE147;CF34-10E7-B;Peebles Test Operation;TF;10.46;53.4;97.2-97.9
+1GE034;CF34-3A;"GE Aircraft Engines; Lynn; MA";TF;11.8 ;60.0 ;101.6-102.9
+1GE035;CF34-3A1;"GE Aircraft Engines; Lynn; MA";TF;11.8 ;60.0 ;101.6-102.9
+5GE084;CF34-3B;"GE Aircraft Engines; Lynn; MA";TF;13.7 ;69.9 ;101.6-102.9
+5GE083;CF34-8C1;Peebles Test Opeation;TF;0.3 ;1.5 ;96.87 - 97.62
+6GE096;CF34-8C1 Block 1;Peebles Test Operation;TF;0.5;2.6;97.1 - 98.1
+6GE092;CF34-8C5;Peebles Test Operation;TF;0.5 ;2.6 ;97.1 - 98.1
+3GE067;CF6-45A;GE Development/Production Test Operation;TF;6.0 ;30.6 ;97.73-97.91
+1GE005;CF6-45A2;Production Engine Test;TF;44.2 ;225.3 ;98.3-100.4
+3GE068;CF6-45A2;GE Development/Production Test Operation;TF;6.0 ;30.6 ;97.73-97.91
+3GE069;CF6-50A;GE Development/Production Test Operation;TF;5.6 ;28.6 ;97.73-97.91
+1GE006;CF6-50C;Production Engine Test;TF;39.2 ;199.8 ;98.3-100.4
+3GE070;CF6-50C;GE Development/Production Test Operation;TF;5.3 ;27.0 ;97.73-97.91
+3GE073;CF6-50C1;GE Development/Production Test Operation;TF;5.3 ;27.0 ;97.73-97.91
+1GE007;"CF6-50C1; -C2";Production Engine Test;TF;37.3 ;190.1 ;98.3-100.4
+3GE074;CF6-50C2;GE Development/Production Test Operation;TF;5.3 ;27.0 ;97.73-97.91
+3GE078;CF6-50C2B;GE Development/Production Test Operation;TF;5.1 ;26.0 ;97.73-97.91
+1GE008;CF6-50C2R;Production Engine Test;TF;39.2 ;199.8 ;98.3-100.4
+3GE072;CF6-50C2R;GE Development/Production Test Operation;TF;5.3 ;27.0 ;97.73-97.91
+3GE071;CF6-50CA;GE Development/Production Test Operation;TF;5.3 ;27.0 ;97.73-97.91
+3GE075;CF6-50E;GE Development/Production Test Operation;TF;5.3 ;27.0 ;97.73-97.91
+3GE076;CF6-50E1;GE Development/Production Test Operation;TF;5.3 ;27.0 ;97.73-97.91
+1GE009;CF6-50E2;Production Engine Test;TF;37.3 ;190.1 ;98.3-100.4
+3GE077;CF6-50E2;GE Development/Production Test Operation;TF;5.3 ;27.0 ;97.73-97.91
+3GE079;CF6-50E2B;GE Development/Production Test Operation;TF;5.1 ;26.0 ;97.73-97.91
+1GE001;CF6-6D;Production Engine Test;TF;36.7 ;187.4 ;99.15-100.46
+1GE002;CF6-6D1A;Production Engine Test;TF;34.1 ;173.9 ;99.15-100.46
+1GE003;CF6-6K;Production Engine Test;TF;36.7 ;187.4 ;99.15-100.46
+1GE004;CF6-6K2;Production Engine Test;TF;34.1 ;173.9 ;99.15-100.46
+1GE010;CF6-80A;Production Engine Test;TF;12.1 ;61.7 ;99.08-99.78
+1GE017;CF6-80C2A3;CF6 Evaluation Engineering;TF;14.7 ;75.0 ;97.40-97.82
+1GE018;CF6-80C2A3;CF6 Evaluation Engineering;TF;14.2 ;72.6 ;97.40-97.82
+2GE038;CF6-80C2A3;CF6 Eval Engineering;TF;2.6 ;13.2 ;97.61-98.15
+6GE088;GE90-77B;GE90 Eval Engineering;TF;1.0 ;5.3 ;97.3 - 98.2
+9GE121;GE90-77B ;General Electric Peebles Test Operation;TF;6.68;34.1;98.41 - 98.66
+9GE125;GE90-77B ;General Electric Peebles Test Operation;TF;5.49;28.0;98.41 - 98.66
+2GE053;GE90-85B;GE90 Eval Engineering;TF;5.3 ;26.9 ;97.38-98.59
+3GE064;GE90-85B;GE90 Eval Engineering;TF;0.7 ;3.6 ;97.52-98.62
+6GE089;GE90-85B;GE90 Eval Engineering;TF;0.9 ;4.5 ;97.3 - 98.2
+9GE122;GE90-85B ;General Electric Peebles Test Operation;TF;5.47;27.9;98.41 - 98.66
+9GE126;GE90-85B ;General Electric Peebles Test Operation;TF;4.70;24.0;98.41 - 98.66
+3GE060;GE90-90B;GE90 Eval Engineering;TF;4.7 ;24.0 ;97.38-98.59
+3GE065;GE90-90B;GE90 Eval Engineering;TF;0.6 ;3.1 ;97.52-98.62
+6GE090;GE90-90B;GE90 Eval Engineering;TF;0.8 ;4.2 ;97.3 - 98.2
+9GE123;GE90-90B ;General Electric Peebles Test Operation;TF;4.87;24.8;98.41 - 98.66
+9GE127;GE90-90B ;General Electric Peebles Test Operation;TF;4.26;21.7;98.41 - 98.66
+6RR041;Trent 556-61;Rolls Royce;TF;0.2 ;1.0 ;100.04 - 102.91
+8RR045;Trent 556-61;Rolls-Royce;TF;0.3;1.5;100.04 - 102.91
+2RR022;Trent 768;Rolls Royce plc;MTF;3.9 ;19.8 ;100.6
+3RR029;Trent 768;Rolls Royce plc;MTF;4.2 ;21.4 ;100.2
+2RR023;Trent 772;Rolls Royce plc;MTF;3.5 ;18.0 ;100.6
+3RR030;Trent 772;Rolls Royce plc;MTF;3.2 ;16.3 ;100.2
+2RR024;Trent 875;Rolls Royce plc;TF;3.4 ;17.3 ;100.2
+2RR025;Trent 877;Rolls Royce plc;TF;2.9 ;14.9 ;100.2
+2RR026;Trent 884;Rolls Royce plc;TF;1.9 ;9.5 ;100.2
+5RR040;Trent 895;Rolls-Royce plc;TF;1.7 ;8.6 ;100.2
