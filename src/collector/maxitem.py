@@ -5,15 +5,15 @@ from utilities import infinity
 
 class MaxItemCollector(ItemCollector):
 
-  def __init__(self, previous_collector_set = None):
-    super().__init__(previous_collector_set)
-    self.max = -infinity
+	def __init__(self, previous_collector_set = None):
+		super().__init__(previous_collector_set)
+		self.max = -infinity
 
 
-  def collect(self, item, collector_set = None):
-    if item is not None and item > self.max:
-      self.max = item
+	def collect(self, item, collector_set = None):
+		if item is not None and item > self.max:
+			self.max = item
 
 
-  def get_result(self, collector_set = None):
-    return self.max
+	def get_result(self, collector_set = None):
+		return self.max

@@ -1,22 +1,22 @@
 def first(sequence):
-  return sequence[0]
+	return sequence[0]
 
 
 def second(sequence):
-  return sequence[1]
+	return sequence[1]
 
 
 def isnone(x):
-  return x is None
+	return x is None
 
 
 def identity(x):
-  return x
+	return x
 
 
 def noop():
-  pass
+	pass
 
 
 def square(x):
-  return x * x
+	return x * x

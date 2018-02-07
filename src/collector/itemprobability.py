@@ -5,4 +5,4 @@ from .itemfrequency import ItemFrequencyCollector
 
 class ItemProbabilityCollector(BaseProbabilityCollector):
 
-  result_dependencies = (ItemCountCollector, ItemFrequencyCollector)
+	result_dependencies = (ItemCountCollector, ItemFrequencyCollector)

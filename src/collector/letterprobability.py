@@ -5,4 +5,4 @@ from .letterfrequency import LetterFrequencyCollector
 
 class LetterProbablilityCollector(BaseProbabilityCollector):
 
-  result_dependencies = (ItemLetterCountCollector, LetterFrequencyCollector)
+	result_dependencies = (ItemLetterCountCollector, LetterFrequencyCollector)

@@ -11,16 +11,16 @@ from collector.letterentropy import NormalizedLetterEntropyCollector
 
 
 descriptions = (
-  columntype.ColumnTypeItemCollector,
+	columntype.ColumnTypeItemCollector,
 
-  columntype.factory(
-    ItemLetterAverageCollector, ItemAverageCollector),
-  columntype.factory(
-    LetterVariationCoefficient, ItemVariationCoefficientCollector),
-  columntype.factory(
-    LetterProbablilityCollector, ItemProbabilityCollector),
-  columntype.factory(
-    NormalizedLetterEntropyCollector, None)
+	columntype.factory(
+		ItemLetterAverageCollector, ItemAverageCollector),
+	columntype.factory(
+		LetterVariationCoefficient, ItemVariationCoefficientCollector),
+	columntype.factory(
+		LetterProbablilityCollector, ItemProbabilityCollector),
+	columntype.factory(
+		NormalizedLetterEntropyCollector, None)
 )
 
 
