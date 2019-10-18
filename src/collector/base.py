@@ -46,7 +46,7 @@ class ItemCollector(object):
 
 	def get_result(self, collector_set):
 		"""Returns the result of this collector after all items have been collected."""
-		return NotImplemented
+		raise NotImplementedError
 
 
 	@property

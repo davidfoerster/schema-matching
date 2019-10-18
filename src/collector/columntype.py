@@ -91,8 +91,8 @@ class ColumnTypeItemCollector(ItemCollector):
 		self.max_invalid_relative = max_invalid_relative
 		self.total_max_invalid = total_max_invalid
 		set_length = self.__get_set_length(collector_set)
-		self.__total_max_invalid_absolute = \
-			None if set_length is None else int(set_length * self.total_max_invalid)
+		self.__total_max_invalid_absolute = (
+			set_length and int(set_length * self.total_max_invalid))
 
 
 	def collect(self, item, collector_set = None):
@@ -108,7 +108,9 @@ class ColumnTypeItemCollector(ItemCollector):
 			if info:
 				if not info[2]:
 					return
-				if info[2] <= self.max_invalid_absolute and info[2] <= info[1] * self.max_invalid_relative:
+				if (info[2] <= self.max_invalid_absolute and
+					info[2] <= info[1] * self.max_invalid_relative
+				):
 					self.__tolerance_exceeded_count += 1
 					if not self.__total_max_invalid_absolute < self.__tolerance_exceeded_count:
 						return

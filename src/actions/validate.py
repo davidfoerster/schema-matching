@@ -16,10 +16,10 @@ def validate(schema_instances, collectorset_description, **kwargs):
 		possible_count = stats[0] + stats[1]
 		avg_norm = fsum(map(itemgetter(2), best_matches)) / len(best_matches)
 		print("Total:",
-			"{3} invalid, {4} impossible, and {5} missing matches, "
+			"{3:d} invalid, {4:d} impossible, and {5:d} missing matches, "
 			"mean norm = {0:{1}}".format(
 				avg_norm, kwargs.get('number_format', ''), *stats),
-			"{} successful out of {} possible matches ({:.1%})".format(
+			"{:d} successful out of {:d} possible matches ({:.1%})".format(
 				stats[0], possible_count, stats[0] / possible_count),
 			sep='\n', file=kwargs.get('output', sys.stdout))
 
@@ -71,8 +71,10 @@ def validate_result(schema_instance_paths, found_mappings, norm, print_names=Fal
 		else:
 			invalid_count += operator.ne(*original_mapping)
 
-		print('found {2} => {3}, expected {2} => {0} -- {1}'.format(
-			expected, 'ok' if found_mapping[1] == expected else 'MISMATCH!', *found_mapping),
+		print(
+			'found {2:d} => {3}, expected {2:d} => {0} -- {1:s}'.format(
+				expected, ('MISMATCH!', 'ok')[found_mapping[1] == expected],
+				*found_mapping),
 			file=out)
 
 	# find missing matches
@@ -81,13 +83,13 @@ def validate_result(schema_instance_paths, found_mappings, norm, print_names=Fal
 		v = rschema_desc[1].get(k)
 		k = rschema_desc[0].get(k)
 		if k is not None and v is not None and k not in found_mappings:
-			print('expected {} => {} -- MISSED!'.format(k, v))
+			print('expected {:d} => {:d} -- MISSED!'.format(k, v))
 			missing_count += 1
 
 	successful_count = len(found_mappings) - invalid_count - impossible_count
 	print(
-		'{} successful, {} invalid, {} impossible, and {} missing matches, '
-		'norm = {:{}}'.format(
+		'{:d} successful, {:d} invalid, {:d} impossible, and {:d} missing '
+		'matches, norm = {:{}}'.format(
 			successful_count, invalid_count, impossible_count, missing_count, norm,
 			kwargs.get('number_format', '')),
 		end='\n\n', file=out)

@@ -1,4 +1,4 @@
-import itertools, operator
+import itertools, operator, collections.abc
 from . import functional as ufunctional
 
 
@@ -98,20 +98,24 @@ def order(sequence, key=None, reverse=False):
 	key2 = sequence.__getitem__
 	if key is not None:
 		key2 = ufunctional.composefn(key2, key)
-	order = list(range(len(sequence)))
-	order.sort(key=key2, reverse=reverse)
-	return order
+	return sorted(range(len(sequence)), key=key2, reverse=reverse)
 
 
 def sorted_with_order(iterable, key=None, reverse=False, inplace=False):
-	assert not inplace or hasattr(iterable, '__setitem__')
 	if not inplace:
 		iterable = list(iterable)
+	else:
+		assert callable(getattr(iterable, '__setitem__', None))
 	_order = order(iterable, key, reverse)
 	iterable[:] = sort_by_order(iterable, _order)
 	return _order, iterable
 
 
 def sort_by_order(sequence, order):
-	assert all(map(len(sequence).__gt__, order))
+	if __debug__:
+		if not isinstance(order, collections.abc.Sized):
+			order = tuple(order)
+		assert \
+			all(map((0).__le__, order)) and all(map(len(sequence).__gt__, order))
+
 	return map(sequence.__getitem__, order)
