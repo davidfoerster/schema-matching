@@ -2,6 +2,8 @@ import sys, signal
 
 if __debug__:
 	from timeit import default_timer as _timer
+else:
+	_timer = None
 
 
 
@@ -17,30 +19,34 @@ class Timelimit(object):
 
 	def __enter__(self):
 		if self.seconds > 0:
-			if Timelimit.interrupted_flag is not None:
+			if self.interrupted_flag is not None:
 				raise RuntimeError("Multiple time limits aren't supported")
-			Timelimit.interrupted_flag = False
-			signal.signal(signal.SIGALRM, Timelimit.__timeout_handler)
+			self.interrupted_flag = False
+			signal.signal(signal.SIGALRM, self.__timeout_handler)
 			if signal.alarm(self.seconds):
 				raise RuntimeError('Who set the alarm before us?!!')
+		return self
 
 
 	def __exit__(self, exc_type, exc_val, exc_tb):
-		if (Timelimit.interrupted_flag):
+		if self.interrupted_flag:
 			print(
-				'The time limit of', self.seconds, 'seconds was reached. '
-				'The results may be incomplete or inaccurate.',
+				'The time limit of {} seconds was reached. The results may be '
+					'incomplete or inaccurate.'.format(self.seconds),
 				file=sys.stderr)
-			if __debug__:
-				print('INFO:', _timer() - Timelimit.interrupted_flag,
+			if _timer:
+				print('INFO:', _timer() - self.interrupted_flag,
 					'seconds between interruption and program termination.',
 					file=sys.stderr)
 
-		assert Timelimit.interrupted_flag is not None or not self.seconds
-		Timelimit.interrupted_flag = None
+		assert self.interrupted_flag is not None or not self.seconds
+		self.interrupted_flag = None
 
 
-	@staticmethod
-	def __timeout_handler(signum, frame):
+	@classmethod
+	def __timeout_handler(cls, signum, frame):
 		if signum == signal.SIGALRM:
-			Timelimit.interrupted_flag = _timer() if __debug__ else True
+			if _timer:
+				cls.interrupted_flag = _timer()
+			else:
+				cls.interrupted_flag = True
