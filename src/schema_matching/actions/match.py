@@ -25,7 +25,7 @@ def match(schema_instances, collectorset_description, **kwargs):
 			print('norm:', format(best_match_norm, kwargs.get('number_format', '')),
 				file=sys.stderr)
 		print_match_result(best_match, isreversed, **kwargs)
-		return 0
+	return 0
 
 
 def collect_analyse_match(collectors, collectorset_description, **kwargs):
@@ -59,8 +59,9 @@ def collect_analyse_match(collectors, collectorset_description, **kwargs):
 	if kwargs.get('verbose', 0) >= 1:
 		formatter = memberfn(format, kwargs.get('number_format', ''))
 		for c1_idx, c2_idx, norms, _ in norms_combinations:
-			print(collectors[c2_idx].name, collectors[c1_idx].name,
-				sep=' / ', end='\n| ', file=sys.stderr)
+			print('Per-column norms:',
+				collectors[c2_idx].name, '/', collectors[c1_idx].name,
+				end='\n| ', file=sys.stderr)
 			print(*('	 '.join(map(formatter, row)) for row in norms),
 				sep=' |\n| ', end=' |\n\n', file=sys.stderr)
 
@@ -133,5 +134,5 @@ def print_match_result(column_mappings, reversed=False, **kwargs):
 	]
 	if reversed:
 		column_mappings.reverse()
-	print(*map(','.join, zip(*column_mappings)),
+	print(*map(' <-> '.join, map(tuple, zip(*column_mappings))),
 		sep='\n', file=kwargs.get('output', sys.stdout))

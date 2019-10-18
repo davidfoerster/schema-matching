@@ -20,7 +20,8 @@ def add_action(name, max_collectorset_descriptions, shortopt='-', help=None):
 
 add_action('match', 1, help=
 	"Tries to match the attributes/columns of two schema instances to each "
-	"other.")
+	"other. The result is a list of guessed pairs of column mapping between the "
+	"left and right schema instances, one per line.")
 add_action('validate', 1, help=
 	"Validates a discovered schema instance mapping against corresponding known "
 	"schema mappings from files '${SCHEMA-INSTANCE%%.*}_desc.txt' to a common "
