@@ -2,12 +2,12 @@ import collections, inspect
 from operator import methodcaller, attrgetter
 from .base import ItemCollector
 from .weight import WeightDict
-import utilities
-import utilities.operator as uoperator
+from .. import utilities
+from ..utilities import operator as uoperator
 from itertools import filterfalse
-from utilities.iterator import each
-from utilities.functional import composefn
-from utilities.string import join
+from ..utilities.iterator import each
+from ..utilities.functional import composefn
+from ..utilities.string import join
 
 
 

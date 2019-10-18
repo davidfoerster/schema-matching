@@ -2,10 +2,10 @@
 
 import re, itertools
 from numbers import Number
-import utilities, utilities.string, utilities.functional
-from utilities import infinity
-from utilities.iterator import countif
-from . import ItemCollector
+from .. import utilities
+from ..utilities import functional, string, infinity
+from ..utilities.iterator import countif
+from .base import ItemCollector
 from .itemcount import ItemCountCollector
 
 

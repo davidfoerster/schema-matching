@@ -1,7 +1,7 @@
 from .base import ItemCollector
 
 if __debug__:
-	from utilities.string import basestring
+	from ..utilities.string import basestring
 
 
 

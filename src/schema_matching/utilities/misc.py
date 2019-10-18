@@ -78,8 +78,8 @@ class NonLocal:
 
 
 def setattr_default(obj, attr, value):
-	if hasattr(obj, attr):
-		return getattr(obj, attr)
-	else:
+	try:
+		value = getattr(obj, attr)
+	except AttributeError:
 		setattr(obj, attr, value)
-		return value
+	return value

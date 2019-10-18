@@ -1,5 +1,5 @@
 from .base import ItemCollector
-from utilities import infinity
+from ..utilities import infinity
 
 
 

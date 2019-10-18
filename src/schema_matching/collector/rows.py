@@ -1,7 +1,7 @@
-import utilities.operator as uoperator
+from ..utilities import operator as uoperator
 from operator import methodcaller
-from utilities.iterator import each
-from utilities.string import join
+from ..utilities.iterator import each
+from ..utilities.string import join
 
 
 

@@ -1,4 +1,5 @@
-import sys, argparse, utilities.argparse, collector.description
+import sys, argparse
+from .. import collector, utilities
 
 
 p = argparse.ArgumentParser(

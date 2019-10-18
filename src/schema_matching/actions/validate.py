@@ -1,9 +1,9 @@
 import sys, os.path, operator
 from math import fsum
 from operator import itemgetter
-import utilities
-from utilities.iterator import sort_by_order
-from utilities.functional import memberfn
+from .. import utilities
+from ..utilities.iterator import sort_by_order
+from ..utilities.functional import memberfn
 from .match import collect_analyse_match
 
 

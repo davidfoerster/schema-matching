@@ -1,7 +1,6 @@
-import utilities.operator as uoperator
+from . import operator as uoperator
 from operator import methodcaller
-from functools import reduce
-from functools import partial as partialfn
+from functools import reduce, partial as partialfn
 
 
 

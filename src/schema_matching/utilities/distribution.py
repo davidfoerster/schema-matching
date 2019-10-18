@@ -1,8 +1,8 @@
 import numbers, array, itertools, operator, math
 from collections import defaultdict
 from math import fsum
-from utilities import minmax2
-from utilities.string import join, format_char
+from .misc import minmax2
+from .string import join, format_char
 
 
 

@@ -1,6 +1,5 @@
 import itertools
-import utilities.iterator as uiterator
-import utilities.operator as uoperator
+from ..utilities import iterator as uiterator, operator as uoperator
 from math import expm1, fsum
 
 

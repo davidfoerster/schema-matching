@@ -1,9 +1,9 @@
 import sys, os.path, csv
 from functools import partial as partialfn
-from utilities.iterator import map_inplace
-from utilities.functional import memberfn
-from utilities.operator import noop
-from collector.multiphase import MultiphaseCollector
+from ..utilities.iterator import map_inplace
+from ..utilities.functional import memberfn
+from ..utilities.operator import noop
+from ..collector.multiphase import MultiphaseCollector
 
 
 

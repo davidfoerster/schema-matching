@@ -2,12 +2,12 @@ import sys
 import collections, itertools, operator
 from itertools import repeat
 from functools import partial as partialfn
-import utilities.iterator
-from utilities import infinity
-from utilities.iterator import each, map_inplace
-from utilities.functional import memberfn, composefn
-from collector.multiphase import MultiphaseCollector
-from utilities.timelimit import Timelimit
+from .. import utilities
+from ..utilities import iterator, infinity
+from ..utilities.iterator import each, map_inplace
+from ..utilities.functional import memberfn, composefn
+from ..collector.multiphase import MultiphaseCollector
+from ..utilities.timelimit import Timelimit
 from .collect import collect
 
 

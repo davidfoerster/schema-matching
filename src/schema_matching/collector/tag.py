@@ -1,5 +1,5 @@
 from .base import ItemCollector
-from utilities.string import join
+from ..utilities.string import join
 
 
 

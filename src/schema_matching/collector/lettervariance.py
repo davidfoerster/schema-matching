@@ -1,5 +1,5 @@
 from math import sqrt
-from utilities.operator import square
+from ..utilities.operator import square
 from .base import ItemCollector
 from .lettercount import ItemLetterCountCollector
 from .letteraverage import ItemLetterAverageCollector

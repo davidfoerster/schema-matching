@@ -1,12 +1,13 @@
 import numbers, operator
-import utilities.iterator, utilities.functional
+from .. import utilities
 from .base import ItemCollector
 from .columntype import ColumnTypeItemCollector
 from .itemcount import ItemCountCollector
 from .minitem import MinItemCollector
 from .maxitem import MaxItemCollector
 from .variance import ItemVarianceCollector
-from utilities.distribution import UniformBinDistributionTable, SparseDistributionTable
+from ..utilities.distribution import (
+	UniformBinDistributionTable, SparseDistributionTable)
 
 
 

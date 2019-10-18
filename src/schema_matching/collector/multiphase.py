@@ -1,9 +1,9 @@
 import copy, collections
-import utilities.iterator as uiterator
+from ..utilities import iterator as uiterator
 from itertools import filterfalse, zip_longest, islice, chain
 from functools import partial as partialfn
-from utilities.iterator import each, consume
-from utilities.functional import memberfn, composefn
+from ..utilities.iterator import each, consume
+from ..utilities.functional import memberfn, composefn
 
 from .base import ItemCollector
 from .tag import TagCollector

@@ -1,8 +1,8 @@
 from .base import ItemCollector
-from utilities.distribution import SparseDistributionTable
+from ..utilities.distribution import SparseDistributionTable
 
 if __debug__:
-	from utilities.string import basestring
+	from ..utilities.string import basestring
 
 
 

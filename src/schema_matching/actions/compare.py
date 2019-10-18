@@ -1,7 +1,7 @@
 import sys, math
 from operator import itemgetter
-from utilities.functional import memberfn
-from collector.multiphase import MultiphaseCollector
+from ..utilities.functional import memberfn
+from ..collector.multiphase import MultiphaseCollector
 from .collect import read_schema_instance
 from .validate import validate_stats
 

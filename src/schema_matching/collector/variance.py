@@ -1,5 +1,5 @@
 from math import isnan, sqrt
-from utilities.operator import square
+from ..utilities.operator import square
 from .base import ItemCollector
 from .itemaverage import ItemAverageCollector
 
