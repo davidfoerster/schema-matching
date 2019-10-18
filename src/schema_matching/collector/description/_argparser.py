@@ -1,24 +1,18 @@
-import utilities
+import importlib
 
 
 def parse(src):
-	if src == ':':
-		from ..description import default as desc
-	elif src.startswith(':'):
-		import importlib
-		desc = importlib.import_module(src[1:])
-	else:
-		import os, imp
-		from .. import description as parent_package # needs to be imported before its child modules
-		with open(src) as f:
-			module_name = \
-				'{0}._anonymous_{1.st_dev}_{1.st_ino}'.format(
-					parent_package.__name__, os.fstat(f.fileno()))
-			desc = imp.load_source(module_name, src, f)
-		assert isinstance(getattr(desc, '__file__', None), str)
+	try:
+		if src == ':':
+			from ..description import default as desc
+		elif src.startswith(':'):
+			desc = importlib.import_module(src[1:], __package__.partition('.')[0])
+		else:
+			desc = importlib.machinery.SourceFileLoader(src, src).load_module()
+	except:
+		raise ImportError(src)
 
-	utilities.setattr_default(desc, '__file__', '<unknown file>')
-	if not hasattr(desc, 'descriptions'):
+	if not getattr(desc, 'descriptions', None):
 		raise NameError(
 			"The collector description module doesn't contain any collector description.",
 			desc, desc.__file__,
